@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:ows="http://www.opengeospatial.net/ows" xmlns:wps="http://www.opengeospatial.net/wps">
+	<wps:ProcessDescription>
+		<ows:Identifier>Buffer</ows:Identifier>
+		<ows:Title>缓冲区分析</ows:Title>
+		<wps:DataInputs>
+			<wps:Input>
+				<ows:Identifier>Geometry</ows:Identifier>
+				<ows:Title>几何要素</ows:Title>
+				<wps:ComplexData defaultSchema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#Polygon" defaultFormat="text/xml" defaultEncoding="UTF-8">
+					<wps:SupportedComplexData>
+						<wps:Format>text/xml</wps:Format>
+						<wps:Encoding>UTF-8</wps:Encoding>
+						<wps:Schema>http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#Polygon</wps:Schema>
+					</wps:SupportedComplexData>
+					<wps:SupportedComplexData>
+						<wps:Format>text/xml</wps:Format>
+						<wps:Encoding>UTF-8</wps:Encoding>
+						<wps:Schema>http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#MultiSurface</wps:Schema>
+					</wps:SupportedComplexData>
+				</wps:ComplexData>
+				<wps:MinimumOccurs>0</wps:MinimumOccurs>
+			</wps:Input>
+			<wps:Input>
+				<ows:Identifier>Distance</ows:Identifier>
+				<ows:Title>缓冲距离</ows:Title>
+				<wps:LiteralData>
+					<ows:DataType>xs:float</ows:DataType>
+					<ows:AnyValue></ows:AnyValue>
+				</wps:LiteralData>
+				<wps:MinimumOccurs>1</wps:MinimumOccurs>
+			</wps:Input>
+		</wps:DataInputs>
+		<wps:ProcessOutputs>
+			<wps:Output>
+				<ows:Identifier>BufferedGeometry</ows:Identifier>
+				<ows:Title>缓冲后的几何要素</ows:Title>
+				<wps:ComplexOutput defaultSchema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#Polygon" defaultFormat="text/xml" defaultEncoding="UTF-8">
+					<wps:SupportedComplexData>
+						<wps:Format>text/xml</wps:Format>
+						<wps:Encoding>UTF-8</wps:Encoding>
+						<wps:Schema>http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#Polygon</wps:Schema>
+					</wps:SupportedComplexData>
+					<wps:SupportedComplexData>
+						<wps:Format>text/xml</wps:Format>
+						<wps:Encoding>UTF-8</wps:Encoding>
+						<wps:Schema>http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#MultiSurface</wps:Schema>
+					</wps:SupportedComplexData>
+				</wps:ComplexOutput>
+			</wps:Output>
+		</wps:ProcessOutputs>
+	</wps:ProcessDescription>
+</wps:ProcessDescriptions>
