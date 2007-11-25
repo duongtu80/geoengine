@@ -1,0 +1,6 @@
+com.vividsolutions.jts.geom.Polygon={"http://www.opengis.net/gml", "Polygon"}
+com.vividsolutions.jts.geom.MultiPolygon={"http://www.opengis.net/gml", "MultiSurface"}
+com.vividsolutions.jts.geom.Point={"http://www.opengis.net/gml", "Point"}
+com.vividsolutions.jts.geom.MultiPoint={"http://www.opengis.net/gml", "MultiPoint"}
+com.vividsolutions.jts.geom.LineString={"http://www.opengis.net/gml", "LineString"}
+com.vividsolutions.jts.geom.MultiLineString={"http://www.opengis.net/gml", "MultiCurve"}
