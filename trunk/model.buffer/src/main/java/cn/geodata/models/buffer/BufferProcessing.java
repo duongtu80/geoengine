@@ -21,10 +21,10 @@ public class BufferProcessing extends GeoProcessing {
 //		Parser _parser = new Parser(new GMLConfiguration());
 //		GmlReference _ref = new GmlReference(new URI("http://www.geodata.cn"));
 //
-		Float _distance = (Float)((LiteralValue)this.getInputs().get("Distance")).getValue();
+		Float _distance = (Float)((LiteralValue)this.getInputs().get("Distance").get(0)).getValue();
 //		MultiPolygon _polygon = (MultiPolygon)((ComplexValue)this.getInputs().get("Geometry")).getValue();
 		
-		Geometry _geometry = (Geometry)((ComplexValue)this.getInputs().get("Geometry")).getValue();
+		Geometry _geometry = (Geometry)((ComplexValue)this.getInputs().get("Geometry").get(0)).getValue();
 		if (_geometry instanceof MultiPolygon) {
 			MultiPolygon _polygons = (MultiPolygon) _geometry;
 			Collection<Polygon> _col = new ArrayList<Polygon>();

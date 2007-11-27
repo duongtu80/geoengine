@@ -2,11 +2,11 @@
 <wps:ProcessDescriptions xmlns:ows="http://www.opengeospatial.net/ows" xmlns:wps="http://www.opengeospatial.net/wps">
 	<wps:ProcessDescription>
 		<ows:Identifier>Buffer</ows:Identifier>
-		<ows:Title>缓冲区分析</ows:Title>
+		<ows:Title>Buffer geometries</ows:Title>
 		<wps:DataInputs>
 			<wps:Input>
 				<ows:Identifier>Geometry</ows:Identifier>
-				<ows:Title>几何要素</ows:Title>
+				<ows:Title>Geometry</ows:Title>
 				<wps:ComplexData defaultSchema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#Polygon" defaultFormat="text/xml" defaultEncoding="UTF-8">
 					<wps:SupportedComplexData>
 						<wps:Format>text/xml</wps:Format>
@@ -23,7 +23,7 @@
 			</wps:Input>
 			<wps:Input>
 				<ows:Identifier>Distance</ows:Identifier>
-				<ows:Title>缓冲距离</ows:Title>
+				<ows:Title>Distance</ows:Title>
 				<wps:LiteralData>
 					<ows:DataType>xs:float</ows:DataType>
 					<ows:AnyValue></ows:AnyValue>
