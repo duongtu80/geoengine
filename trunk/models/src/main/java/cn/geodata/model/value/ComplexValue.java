@@ -50,7 +50,7 @@ public class ComplexValue extends ModelValue {
 	public ComplexValue(IOValueType type) throws Exception{
 		super(type);
 		
-		if(type.getComplexValue().getEncoding().equalsIgnoreCase("text/xml") || type.getComplexValue().getEncoding().equalsIgnoreCase("text/gml")){
+		if(type.getComplexValue().getFormat().equalsIgnoreCase("text/xml") || type.getComplexValue().getFormat().equalsIgnoreCase("text/gml")){
 			if(type.getComplexValue().getSchema().startsWith(GeoNamespaceContext.URI_GML_3_1_1_SCHEMA) == false){
 				throw new Exception("Only supports GML 3.1.1");
 			}
@@ -85,7 +85,7 @@ public class ComplexValue extends ModelValue {
 	
 	public void setValue(Object value) throws Exception {
 		if(value == null){
-			throw new NullPointerException("不能提供空值");
+			throw new NullPointerException("Can not be empty");
 		}
 		
 		if(Utilities.createInstance().getGmlElementMap().containsKey(value.getClass().getName())){
@@ -93,14 +93,14 @@ public class ComplexValue extends ModelValue {
 			this.value = value;
 		}
 		else{
-			throw new Exception("不支持当前GML元素类型:" + value.getClass().getName());
+			throw new Exception("Does not support the GML element type:" + value.getClass().getName());
 		}
 	}
 
 	@Override
 	protected Element encodeValue(Document doc) throws Exception {
 		if(this.value == null){
-			throw new NullPointerException("没有赋值");
+			throw new NullPointerException("No value");
 		}
 		
 		Element _valueNode = doc.createElementNS(GeoNamespaceContext.URI_WPS, "ComplexValue");
@@ -130,7 +130,7 @@ public class ComplexValue extends ModelValue {
 		ComplexValueType _valueNode = type.addNewComplexValue();
 
 		_valueNode.setEncoding("UTF-8");
-		_valueNode.setFormat("text/xml");
+		_valueNode.setFormat("text/gml");
 		
 		ByteArrayOutputStream _bufferStream = new ByteArrayOutputStream();
 		
