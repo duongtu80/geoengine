@@ -50,12 +50,12 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try{
-			String _service = request.getParameter("Service");
-			String _request = request.getParameter("Request");
-			String _version = request.getParameter("Version");
+			String _service = request.getParameter("service");
+			String _request = request.getParameter("request");
+			String _version = request.getParameter("AcceptVersions");
 			
 			if(_service == null){
-				throw new MissingParameterValueException("Service");
+				throw new MissingParameterValueException("service");
 			}
 			
 			if(_service.equalsIgnoreCase("WPS") == false){
@@ -69,7 +69,7 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 			}
 			
 			if(_request == null){
-				throw new MissingParameterValueException("Request");
+				throw new MissingParameterValueException("request");
 			}
 			
 			XmlObject _doc = null;

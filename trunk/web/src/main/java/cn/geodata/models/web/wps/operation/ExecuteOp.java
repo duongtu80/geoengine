@@ -1,6 +1,8 @@
 package cn.geodata.models.web.wps.operation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.opengeospatial.wps.ExecuteResponseDocument;
@@ -35,12 +37,17 @@ public class ExecuteOp extends WpsOperation {
 		String _processId = _execute.getIdentifier().getStringValue();
 		ProcessingFactory _model = ProcessingLibray.createInstance().getModelFactories().get(_processId);
 		
-		Map<String, ModelValue> _inputMap = new HashMap<String, ModelValue>();
+		Map<String, List<ModelValue>> _inputMap = new HashMap<String, List<ModelValue>>();
 		for(IOValueType _identifier : _execute.getDataInputs().getInputArray()){
-			_inputMap.put(_identifier.getIdentifier().getStringValue(), ValueParser.parse(_identifier));
+			String _key = _identifier.getIdentifier().getStringValue();
+			if(_inputMap.containsKey(_key) == false){
+				_inputMap.put(_key, new ArrayList<ModelValue>());
+			}
+			
+			_inputMap.get(_key).add(ValueParser.parse(_identifier));
 		}
 		
-		Map<String, ModelValue> _outputMap = new HashMap<String, ModelValue>();
+		Map<String, List<ModelValue>> _outputMap = new HashMap<String, List<ModelValue>>();
 		
 		GeoProcessing _processing = _model.createProcessing(null);
 		_processing.setInputs(_inputMap);
@@ -59,8 +66,9 @@ public class ExecuteOp extends WpsOperation {
 		
 		ProcessOutputs _outputs = _executeResponse.addNewProcessOutputs();
 		for(String _outputKey : _processing.getOutput().keySet()){
-			ModelValue _output = _processing.getOutput().get(_outputKey);
-			_output.encode(_outputs.addNewOutput());
+			for(ModelValue _outputValue : _processing.getOutput().get(_outputKey)){
+				_outputValue.encode(_outputs.addNewOutput());
+			}
 		}
 		
 		return _doc;
