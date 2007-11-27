@@ -2,10 +2,12 @@ package cn.geodata.models.buffer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import cn.geodata.model.GeoProcessing;
 import cn.geodata.model.value.ComplexValue;
 import cn.geodata.model.value.LiteralValue;
+import cn.geodata.model.value.ModelValue;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -34,11 +36,18 @@ public class BufferProcessing extends GeoProcessing {
 			GeometryFactory _geometryFactory = new GeometryFactory();
 			MultiPolygon _result = _geometryFactory.createMultiPolygon((Polygon[])_col.toArray(new Polygon[0]));
 			
-			this.getOutput().put("BufferedGeometry", new ComplexValue("BufferedGeometry", "BufferedGeometry", null ,_result));
+			ArrayList<ModelValue> _output = new ArrayList<ModelValue>();
+			_output.add(new ComplexValue("BufferedGeometry", "BufferedGeometry", null ,_result));
+			
+			this.getOutput().put("BufferedGeometry", _output);
 		}
 		else if(_geometry instanceof Polygon) {
 			Polygon _polygon = (Polygon) _geometry;
-			this.getOutput().put("BufferedGeometry", new ComplexValue("BufferedGeometry", "BufferedGeometry", null ,_polygon.buffer(_distance.floatValue())));
+			
+			ArrayList<ModelValue> _output = new ArrayList<ModelValue>();
+			_output.add(new ComplexValue("BufferedGeometry", "BufferedGeometry", null ,_polygon.buffer(_distance.floatValue())));
+			
+			this.getOutput().put("BufferedGeometry", _output);
 		}
 		
 //		this.getOutput().put("BufferedGeometry", new ComplexValue("BufferedGeometry", "BufferedGeometry", null ,_polygon.buffer(_distance.floatValue())));
