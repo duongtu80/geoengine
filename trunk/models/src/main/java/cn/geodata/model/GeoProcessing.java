@@ -1,5 +1,6 @@
 package cn.geodata.model;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -20,12 +21,12 @@ import cn.geodata.model.value.ModelValue;
 public abstract class GeoProcessing implements Runnable {
 	private static Logger Log = Logger.getLogger(GeoProcessing.class);
 	
-	private Map<String, ModelValue> inputs;
-	private Map<String, ModelValue> output;
+	private Map<String, List<ModelValue>> inputs;
+	private Map<String, List<ModelValue>> output;
 	
 	private Status Status;
 	
-	public Map<String, ModelValue> getInputs() {
+	public Map<String, List<ModelValue>> getInputs() {
 		return inputs;
 	}
 
@@ -33,7 +34,7 @@ public abstract class GeoProcessing implements Runnable {
 	 * 设置输入参数
 	 * @param inputs
 	 */
-	public void setInputs(Map<String, ModelValue> inputs) {
+	public void setInputs(Map<String, List<ModelValue>> inputs) {
 		this.inputs = inputs;
 	}
 
@@ -41,7 +42,7 @@ public abstract class GeoProcessing implements Runnable {
 	 * 获取输出参数
 	 * @return
 	 */
-	public Map<String, ModelValue> getOutput() {
+	public Map<String, List<ModelValue>> getOutput() {
 		return output;
 	}
 
@@ -49,7 +50,7 @@ public abstract class GeoProcessing implements Runnable {
 	 * 设置输出参数
 	 * @param output
 	 */
-	public void setOutputs(Map<String, ModelValue> output) {
+	public void setOutputs(Map<String, List<ModelValue>> output) {
 		this.output = output;
 	}
 
