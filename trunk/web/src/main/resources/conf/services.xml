@@ -5,8 +5,8 @@
 		<port>8080</port>
 	</global>
 	<identification>
-		<title></title>
-		<abstract></abstract>
+		<title>Geo-spatial model sharing</title>
+		<abstract>Share geo-spatial models on Internet</abstract>
 		<keywords>
 			<keyword>WPS</keyword>
 			<keyword>test</keyword>
@@ -19,20 +19,18 @@
 	<provider>
 		<name>UNEP</name>
 		<site>http://www.na.unep.net/</site>
-		<contacts>
-			<contact>
-				<name>Min Feng</name>
-				<position>Visiting scientist</position>
-				<email>mfeng@usgs.org</email>
-				<phone>+1 605 594 2582</phone>
-				<address>
-					<deliveryPoint>47914 252nd Street</deliveryPoint>
-					<city>Sioux Falls</city>
-					<administrativeArea>SD</administrativeArea>
-					<postCode>57198</postCode>
-					<country>US</country>
-				</address>
-			</contact>
-		</contacts>
+		<contact>
+			<name>Min Feng</name>
+			<position>Visiting scientist</position>
+			<email>mfeng@usgs.org</email>
+			<phone>+1 605 594 2582</phone>
+			<address>
+				<deliveryPoint>47914 252nd Street</deliveryPoint>
+				<city>Sioux Falls</city>
+				<administrativeArea>SD</administrativeArea>
+				<postCode>57198</postCode>
+				<country>US</country>
+			</address>
+		</contact>
 	</provider>
 </services>
