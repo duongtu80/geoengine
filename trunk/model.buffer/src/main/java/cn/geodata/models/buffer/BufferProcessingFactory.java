@@ -31,7 +31,7 @@ public class BufferProcessingFactory extends ProcessingFactory {
 	@Override
 	public InputStream getMetadataStream() throws Exception {
 		//返回地学处理的元数据信息流
-		return BufferProcessing.class.getResourceAsStream("/META-INF/metadata/model.xml");
+		return BufferProcessing.class.getResourceAsStream("/META-INF/metadata/buffer.xml");
 	}
 
 	@Override
