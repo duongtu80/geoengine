@@ -88,13 +88,15 @@ public class ComplexValue extends ModelValue {
 			throw new NullPointerException("Can not be empty");
 		}
 		
-		if(Utilities.createInstance().getGmlElementMap().containsKey(value.getClass().getName())){
-			this.qname = Utilities.createInstance().getGmlElementMap().get(value.getClass().getName());
-			this.value = value;
+		for(String _key : Utilities.createInstance().getGmlElementMap().keySet()){
+			if(Class.forName(_key).isInstance(value)){
+				this.qname = Utilities.createInstance().getGmlElementMap().get(_key);
+				this.value = value;
+				
+				return;
+			}
 		}
-		else{
-			throw new Exception("Does not support the GML element type:" + value.getClass().getName());
-		}
+		throw new Exception("Does not support the GML element type:" + value.getClass().getName());
 	}
 
 	@Override

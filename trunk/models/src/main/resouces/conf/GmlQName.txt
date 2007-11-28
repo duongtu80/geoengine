@@ -4,3 +4,4 @@ com.vividsolutions.jts.geom.Point={"http://www.opengis.net/gml", "Point"}
 com.vividsolutions.jts.geom.MultiPoint={"http://www.opengis.net/gml", "MultiPoint"}
 com.vividsolutions.jts.geom.LineString={"http://www.opengis.net/gml", "LineString"}
 com.vividsolutions.jts.geom.MultiLineString={"http://www.opengis.net/gml", "MultiCurve"}
+org.geotools.feature.FeatureCollection={"http://www.opengis.net/gml", "FeatureCollection"}
