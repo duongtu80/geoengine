@@ -40,6 +40,13 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class BufferClientTest extends TestCase {
+	public void testSwampCities() throws Exception {
+		WpsClient _client = new WpsClient(new URI("http://127.0.0.1:8080/web/wps"));
+		ModelValue[] _inputs = new ModelValue[1];
+		_inputs[0] = new LiteralValue("rise", "rise", "", 100f);
+		
+		ExecuteResponseDocument _execute = _client.execute("SwampCities", _inputs);
+	}
 	
 	public void atestBuffer() throws Exception {
 		WpsClient _client = new WpsClient(new URI("http://127.0.0.1:8080/web/wps"));
