@@ -1,7 +1,5 @@
 package cn.geodata.gml.define;
 
-import java.util.logging.Logger;
-
 import org.jdom.Element;
 
 import cn.geodata.gml.GMLConfiguration;
@@ -9,20 +7,19 @@ import cn.geodata.gml.UnsupportedType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 
-public class PointDef implements Definition {
-	private static Logger log = Logger.getAnonymousLogger();
-	
+public class MultiPointDef implements Definition {
 	protected GMLConfiguration config;
 	
-	public PointDef(GMLConfiguration config){
+	public MultiPointDef(GMLConfiguration config){
 		this.config = config;
 	}
 
 	@Override
 	public boolean canEncode(Object obj) {
-		if (obj instanceof Point) {
+		if (obj instanceof MultiPoint) {
 			return true;
 		}
 		return false;
@@ -31,7 +28,7 @@ public class PointDef implements Definition {
 	@Override
 	public boolean canParse(Element ele) {
 		if(ele.getNamespace().equals(this.config.getUriGML())
-				&& ele.getName().equals("Point")
+				&& ele.getName().equals("MultiPoint")
 				){
 			return true;
 		}
@@ -44,13 +41,14 @@ public class PointDef implements Definition {
 			throw new UnsupportedType();
 		}
 		
-		Point _pt = (Point) obj;
-		
-		Element _pos = new Element("pos", this.config.getUriGML());
-		_pos.setText(_pt.getX() + " " + _pt.getY());
+		Element _ele = new Element("MultiPoint", this.config.getUriGML());
+		MultiPoint _pts = (MultiPoint) obj;
 
-		Element _ele = new Element("Point", this.config.getUriGML());
-		_ele.addContent(_pos);
+		PointDef _pointDef = new PointDef(this.config);
+		for(int i=0;i<_pts.getNumPoints();i++){
+			Element _member = new Element("pointMember", this.config.getUriGML());
+			_member.addContent(_pointDef.encode(_pts.getGeometryN(i)));
+		}
 		
 		return _ele;
 	}

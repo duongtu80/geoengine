@@ -1,42 +1,43 @@
 package cn.geodata.gml;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.jdom.Namespace;
+
 public class GMLConfiguration {
-	private URI uriGML;
-	private URI uriWPS;
-	private URI uriOWS;
+	private Namespace uriGML;
+	private Namespace uriWPS;
+	private Namespace uriOWS;
 	
 	private String version;
 	
 	public GMLConfiguration() throws URISyntaxException{
-		this.uriWPS = new URI("http://www.opengeospatial.net/wps");
-		this.uriGML = new URI("http://www.opengis.net/gml");
-		this.uriOWS = new URI("http://www.opengeospatial.net/ows");
+		this.uriWPS = Namespace.getNamespace("wps", "http://www.opengeospatial.net/wps");
+		this.uriGML = Namespace.getNamespace("gml", "http://www.opengis.net/gml");
+		this.uriOWS = Namespace.getNamespace("ows", "http://www.opengeospatial.net/ows");
 	}
 	
-	public URI getUriGML() {
+	public Namespace getUriGML() {
 		return uriGML;
 	}
 
-	public void setUriGML(URI uriGML) {
+	public void setUriGML(Namespace uriGML) {
 		this.uriGML = uriGML;
 	}
 
-	public URI getUriWPS() {
+	public Namespace getUriWPS() {
 		return uriWPS;
 	}
 
-	public void setUriWPS(URI uriWPS) {
+	public void setUriWPS(Namespace uriWPS) {
 		this.uriWPS = uriWPS;
 	}
 
-	public URI getUriOWS() {
+	public Namespace getUriOWS() {
 		return uriOWS;
 	}
 
-	public void setUriOWS(URI uriOWS) {
+	public void setUriOWS(Namespace uriOWS) {
 		this.uriOWS = uriOWS;
 	}
 
