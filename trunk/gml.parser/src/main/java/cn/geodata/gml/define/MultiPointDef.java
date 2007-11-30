@@ -13,7 +13,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 
-public class MultiPointDef extends AbstractDefinition {
+public class MultiPointDef extends AbstractParser {
 
 	@Override
 	public boolean canEncode(Object obj) {
@@ -44,7 +44,7 @@ public class MultiPointDef extends AbstractDefinition {
 
 		for(int i=0;i<_pts.getNumPoints();i++){
 			Element _member = new Element("pointMember", this.config.getUriGML());
-			_member.addContent(ParserFinder.getInstance().encode(_pts.getGeometryN(i)));
+			_member.addContent(this.getParserFinder().encode(_pts.getGeometryN(i)));
 		}
 		
 		return _ele;
@@ -58,7 +58,7 @@ public class MultiPointDef extends AbstractDefinition {
 		
 		ArrayList<Coordinate> _pts = new ArrayList<Coordinate>();
 		for(Element _ptMemberNode : (List<Element>)ele.getChildren("pointMember", this.config.getUriGML())){
-			Point _pt = (Point) ParserFinder.getInstance().parse(_ptMemberNode.getChild("Point", this.config.getUriGML()));
+			Point _pt = (Point) this.getParserFinder().parse(_ptMemberNode.getChild("Point", this.config.getUriGML()));
 			_pts.add(_pt.getCoordinate());
 		}
 		

@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 import org.jdom.Element;
 
 import cn.geodata.gml.GMLConfiguration;
+import cn.geodata.gml.ParserUtil;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -25,8 +26,7 @@ public class LineStringDefTest extends TestCase {
 		Element _ele = new Element("LineString", _config.getUriGML());
 		_ele.addContent(_posList);
 		
-		LineStringDef _lineDef = new LineStringDef(new GMLConfiguration());
-		LineString _line = (LineString) _lineDef.parse(_ele);
+		LineString _line = (LineString) ParserUtil.createParserFinder().parse(_ele);
 		
 		assertTrue(_line.getNumPoints() == 3);
 	}
@@ -40,10 +40,8 @@ public class LineStringDefTest extends TestCase {
 				new Coordinate(30, 50),
 				new Coordinate(40, 60)}
 				);
-		
-		LineStringDef _lineDef = new LineStringDef(_config);
 
-		Element _ele = _lineDef.encode(_line);
+		Element _ele = ParserUtil.createParserFinder().encode(_line);
 		assertNotNull(_ele);
 		assertEquals(_ele.getChild("posList", _config.getUriGML()).getText(), "20.0 30.0 30.0 50.0 40.0 60.0");
 	}

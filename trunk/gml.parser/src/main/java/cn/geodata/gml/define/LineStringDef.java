@@ -5,22 +5,14 @@ import java.util.logging.Logger;
 
 import org.jdom.Element;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-
-import cn.geodata.gml.GMLConfiguration;
 import cn.geodata.gml.UnsupportedType;
 
-public class LineStringDef extends AbstractDefinition {
-	private static Logger log = Logger.getAnonymousLogger();
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 
-	public LineStringDef(GMLConfiguration config){
-		this.config = config;
-	}
+public class LineStringDef extends AbstractParser {
+	private static Logger log = Logger.getAnonymousLogger();
 
 	@Override
 	public boolean canEncode(Object obj) {

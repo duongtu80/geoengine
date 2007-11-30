@@ -12,6 +12,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
 import cn.geodata.gml.GMLConfiguration;
+import cn.geodata.gml.ParserUtil;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -26,7 +27,7 @@ public class PolygonDefTest extends TestCase {
 		Document _doc = (new SAXBuilder()).build(new ByteArrayInputStream("<gml:Polygon xmlns:gml=\"http://www.opengis.net/gml\"><gml:exterior><gml:posList dimension=\"2\">0.0 20.0 20.0 20.0 20.0 40.0 0.0 20.0</gml:posList></gml:exterior></gml:Polygon>".getBytes()));
 		Element _ele = _doc.getRootElement();
 		
-		Polygon _poly = (Polygon) ParserFinder.getInstance().parse(_ele);
+		Polygon _poly = (Polygon) ParserUtil.createParserFinder().parse(_ele);
 		
 		log.info("" + _poly.getExteriorRing().getNumPoints());
 		assertTrue(_poly.getExteriorRing().getNumPoints() > 0);
@@ -45,7 +46,7 @@ public class PolygonDefTest extends TestCase {
 		GMLConfiguration _config = new GMLConfiguration();
 
 		log.info(_polygon.getClass().getName());
-		Element _ele = ParserFinder.getInstance().encode(_polygon);
+		Element _ele = ParserUtil.createParserFinder().encode(_polygon);
 		
 		assertNotNull(_ele);
 		

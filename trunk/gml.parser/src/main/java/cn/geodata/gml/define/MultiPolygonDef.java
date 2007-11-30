@@ -12,7 +12,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
-public class MultiPolygonDef extends AbstractDefinition {
+public class MultiPolygonDef extends AbstractParser {
 
 	@Override
 	public boolean canEncode(Object obj) {
@@ -43,7 +43,7 @@ public class MultiPolygonDef extends AbstractDefinition {
 
 		for(int i=0;i<_polys.getNumGeometries();i++){
 			Element _member = new Element("polygonMember", this.config.getUriGML());
-			_member.addContent(ParserFinder.getInstance().encode(_polys.getGeometryN(i)));
+			_member.addContent(this.getParserFinder().encode(_polys.getGeometryN(i)));
 			
 			_ele.addContent(_member);
 		}
@@ -59,7 +59,7 @@ public class MultiPolygonDef extends AbstractDefinition {
 		
 		ArrayList<Polygon> _polys = new ArrayList<Polygon>();
 		for(Element _lineMemberNode : (List<Element>)ele.getChildren("polygonMember", this.config.getUriGML())){
-			Polygon _poly = (Polygon) ParserFinder.getInstance().parse(_lineMemberNode.getChild("Polygon", this.config.getUriGML()));
+			Polygon _poly = (Polygon) this.getParserFinder().parse(_lineMemberNode.getChild("Polygon", this.config.getUriGML()));
 			_polys.add(_poly);
 		}
 		

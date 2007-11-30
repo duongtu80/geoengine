@@ -1,6 +1,0 @@
-cn.geodata.gml.define.PointDef
-cn.geodata.gml.define.LineStringDef
-cn.geodata.gml.define.PolygonDef
-cn.geodata.gml.define.MultiPointDef
-cn.geodata.gml.define.MultiLineStringDef
-cn.geodata.gml.define.MultiPolygonDef

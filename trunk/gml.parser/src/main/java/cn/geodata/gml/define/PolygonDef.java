@@ -15,7 +15,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
-public class PolygonDef extends AbstractDefinition {
+public class PolygonDef extends AbstractParser {
 	private static Logger log = Logger.getAnonymousLogger();
 
 	@Override

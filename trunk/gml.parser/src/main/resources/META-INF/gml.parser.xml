@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="gml.configuration" class="cn.geodata.gml.GMLConfiguration">
+	</bean>
+	
+	<bean id="gml.parserFinder" class="cn.geodata.gml.ParserFinder">
+		<property name="config" ref="gml.configuration" />
+	</bean>
+	
+	<bean id="gml.pointDef" class="cn.geodata.gml.define.PointDef">
+	</bean>
+	
+	<bean id="gml.lineStringDef" class="cn.geodata.gml.define.LineStringDef">
+	</bean>
+
+	<bean id="gml.polygonDef" class="cn.geodata.gml.define.PolygonDef">
+	</bean>
+
+	<bean id="gml.multiPointDef" class="cn.geodata.gml.define.MultiPointDef">
+	</bean>
+
+	<bean id="gml.multiLineStringDef" class="cn.geodata.gml.define.MultiLineStringDef">
+	</bean>
+
+	<bean id="gml.multiPolygonDef" class="cn.geodata.gml.define.MultiPolygonDef">
+	</bean>
+	
+	<bean id="gml.featureCollectionDef" class="cn.geodata.gml.define.FeatureCollectionDef">
+	</bean>
+
+	<bean id="gml.featureDef" class="cn.geodata.gml.define.FeatureDef">
+	</bean>	
+</beans>
