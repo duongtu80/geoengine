@@ -24,8 +24,7 @@ public class PointDefTest extends TestCase {
 		Element _ele = new Element("Point", _config.getUriGML());
 		_ele.addContent(_pos);
 		
-		PointDef _pointDef = new PointDef(new GMLConfiguration());
-		Point _pt = (Point) _pointDef.parse(_ele);
+		Point _pt = (Point) ParserFinder.getInstance().parse(_ele);
 		
 		assertEquals(_pt.getX(), 20.0);
 		assertEquals(_pt.getY(), 50.0);
@@ -37,9 +36,7 @@ public class PointDefTest extends TestCase {
 		GeometryFactory _factory = new GeometryFactory();
 		Point _pt = _factory.createPoint(new Coordinate(20, 30));
 		
-		PointDef _pointDef = new PointDef(_config);
-
-		Element _ele = _pointDef.encode(_pt);
+		Element _ele = ParserFinder.getInstance().encode(_pt);
 		assertNotNull(_ele);
 		assertEquals(_ele.getChild("pos", _config.getUriGML()).getText(), "20.0 30.0");
 	}

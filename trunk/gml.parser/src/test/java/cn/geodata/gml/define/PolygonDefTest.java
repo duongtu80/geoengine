@@ -26,8 +26,7 @@ public class PolygonDefTest extends TestCase {
 		Document _doc = (new SAXBuilder()).build(new ByteArrayInputStream("<gml:Polygon xmlns:gml=\"http://www.opengis.net/gml\"><gml:exterior><gml:posList dimension=\"2\">0.0 20.0 20.0 20.0 20.0 40.0 0.0 20.0</gml:posList></gml:exterior></gml:Polygon>".getBytes()));
 		Element _ele = _doc.getRootElement();
 		
-		PolygonDef _polygonDef = new PolygonDef(new GMLConfiguration());
-		Polygon _poly = (Polygon) _polygonDef.parse(_ele);
+		Polygon _poly = (Polygon) ParserFinder.getInstance().parse(_ele);
 		
 		log.info("" + _poly.getExteriorRing().getNumPoints());
 		assertTrue(_poly.getExteriorRing().getNumPoints() > 0);
@@ -46,8 +45,7 @@ public class PolygonDefTest extends TestCase {
 		GMLConfiguration _config = new GMLConfiguration();
 
 		log.info(_polygon.getClass().getName());
-		PolygonDef _polygonDef = new PolygonDef(_config);
-		Element _ele = _polygonDef.encode(_polygon);
+		Element _ele = ParserFinder.getInstance().encode(_polygon);
 		
 		assertNotNull(_ele);
 		

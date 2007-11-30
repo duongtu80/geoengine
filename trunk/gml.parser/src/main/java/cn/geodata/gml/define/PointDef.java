@@ -11,15 +11,9 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
-public class PointDef implements Definition {
+public class PointDef extends AbstractDefinition {
 	private static Logger log = Logger.getAnonymousLogger();
 	
-	protected GMLConfiguration config;
-	
-	public PointDef(GMLConfiguration config){
-		this.config = config;
-	}
-
 	@Override
 	public boolean canEncode(Object obj) {
 		if (obj instanceof Point) {
@@ -41,7 +35,7 @@ public class PointDef implements Definition {
 	@Override
 	public Element encode(Object obj) throws Exception {
 		if(this.canEncode(obj) == false){
-			throw new UnsupportedType();
+			throw new UnsupportedType(obj.toString());
 		}
 		
 		Point _pt = (Point) obj;
@@ -58,7 +52,7 @@ public class PointDef implements Definition {
 	@Override
 	public Object parse(Element ele) throws Exception {
 		if(this.canParse(ele) == false){
-			throw new UnsupportedType();
+			throw new UnsupportedType("Element " + ele.getName());
 		}
 		
 		String[] _items = ele.getChild("pos", this.config.getUriGML()).getTextTrim().split("\\s+");

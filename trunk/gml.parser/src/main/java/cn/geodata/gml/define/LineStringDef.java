@@ -15,11 +15,9 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import cn.geodata.gml.GMLConfiguration;
 import cn.geodata.gml.UnsupportedType;
 
-public class LineStringDef implements Definition {
+public class LineStringDef extends AbstractDefinition {
 	private static Logger log = Logger.getAnonymousLogger();
 
-	protected GMLConfiguration config;
-	
 	public LineStringDef(GMLConfiguration config){
 		this.config = config;
 	}
@@ -45,7 +43,7 @@ public class LineStringDef implements Definition {
 	@Override
 	public Element encode(Object obj) throws Exception {
 		if(this.canEncode(obj) == false){
-			throw new UnsupportedType();
+			throw new UnsupportedType(obj.toString());
 		}
 		
 		LineString _line = (LineString) obj;
@@ -71,7 +69,7 @@ public class LineStringDef implements Definition {
 	@Override
 	public Object parse(Element ele) throws Exception {
 		if(this.canParse(ele) == false){
-			throw new UnsupportedType();
+			throw new UnsupportedType("Element " + ele.getName());
 		}
 		
 		ArrayList<Coordinate> _list = new ArrayList<Coordinate>();
