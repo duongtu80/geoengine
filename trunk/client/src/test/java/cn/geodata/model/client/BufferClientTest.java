@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 import net.opengeospatial.wps.ExecuteResponseDocument;
@@ -40,12 +41,15 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class BufferClientTest extends TestCase {
+	private static Logger log = Logger.getAnonymousLogger();
+	
 	public void testSwampCities() throws Exception {
 		WpsClient _client = new WpsClient(new URI("http://127.0.0.1:8080/web/wps"));
 		ModelValue[] _inputs = new ModelValue[1];
-		_inputs[0] = new LiteralValue("rise", "rise", "", 100f);
+		_inputs[0] = new LiteralValue("rise", "rise", "", 1000f);
 		
 		ExecuteResponseDocument _execute = _client.execute("SwampCities", _inputs);
+		log.info(_execute.getExecuteResponse().xmlText());
 	}
 	
 	public void atestBuffer() throws Exception {
