@@ -61,18 +61,17 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 		FeatureType _featureType = _feature.getFeatureType();
 		
 		Namespace _namespace = Namespace.getNamespace(_featureType.getNamespace().toString());
-		log.info("Feature namespace " + _featureType.getNamespace().toString());
+//		log.info("Feature namespace " + _featureType.getNamespace().toString());
 		
 		Element _ele = new Element(_featureType.getTypeName(), _namespace);
 		_ele.setAttribute("id", _feature.getID());
 		
-		ParserFinder _finder = ParserUtil.createParserFinder();
 		for(int i=0;i<_featureType.getAttributeCount();i++){
 			AttributeType _attributeType = _featureType.getAttributeType(i);
 			
 			Element _c = new Element(_attributeType.getLocalName(), _namespace);
 			if(_attributeType.equals(_featureType.getDefaultGeometry())){
-				_c.addContent(_finder.encode(_feature.getAttribute(i)));
+				_c.addContent(this.finder.encode(_feature.getAttribute(i)));
 			}
 			else{
 				String _val = "";

@@ -2,6 +2,7 @@ package cn.geodata.gml;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import org.geotools.feature.AttributeTypeFactory;
 import org.geotools.feature.FeatureType;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 
 import com.vividsolutions.jts.geom.LineString;
@@ -74,6 +76,11 @@ public class ParserFinder {
 	
 	public Object parse(Element ele) throws Exception {
 		return this.findParser(ele).parse(ele);
+	}
+	
+	public Object parse(InputStream stream) throws Exception {
+		SAXBuilder _builder = new SAXBuilder();
+		return this.parse(_builder.build(stream).getRootElement());
 	}
 	
 	public Parser findParser(Element ele) throws UnsupportedType {

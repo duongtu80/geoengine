@@ -43,7 +43,6 @@ public class FeatureCollectionDef extends AbstractParser {
 			throw new UnsupportedType(obj.toString());
 		}
 		
-		ParserFinder _finder = ParserUtil.createParserFinder();
 		Element _ele = new Element("FeatureCollection", this.config.getUriGML());
 
 		FeatureCollection _fs = (FeatureCollection) obj;
@@ -51,7 +50,7 @@ public class FeatureCollectionDef extends AbstractParser {
 		try{
 			while(_it.hasNext()){
 				Element _fm = new Element("featureMember", this.config.getUriGML());
-				_fm.addContent(_finder.encode(_it.next()));
+				_fm.addContent(this.finder.encode(_it.next()));
 				
 				_ele.addContent(_fm);
 			}
@@ -69,8 +68,7 @@ public class FeatureCollectionDef extends AbstractParser {
 			throw new UnsupportedType("Element " + ele.getName());
 		}
 		
-		ParserFinder _finder = ParserUtil.createParserFinder();
-		FeatureParser _featureParser = _finder.findFeatureParser();
+		FeatureParser _featureParser = this.finder.findFeatureParser();
 		
 		List<Element> _list = new ArrayList<Element>();
 		for(Element _fm : (List<Element>)ele.getChildren("featureMember", this.config.getUriGML())){

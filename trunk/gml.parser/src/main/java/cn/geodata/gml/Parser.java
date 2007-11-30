@@ -6,7 +6,7 @@ import org.jdom.Element;
 
 
 public interface Parser {
-	
+
 	boolean canParse(Element ele);
 	boolean canEncode(Object obj);
 	
