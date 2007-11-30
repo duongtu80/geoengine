@@ -100,23 +100,23 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 				_doc = (new DescribeProcessOp()).execute(_requestDoc);
 			}
 			else if(_request.equalsIgnoreCase("Execute")){
-				throw new Exception("Execute不支持GET方式");
+				throw new Exception("Execute operation does not support GET");
 			}
 			else{
-				throw new InvalidParameterValueException("不支持的操作:" + _request);
+				throw new InvalidParameterValueException("Does not support operation :" + _request);
 			}
 			
 			this.outputDocument(_doc, response, false);
 		}
 		catch(ProcessingException err){
-			log.error("调用服务失败", err);
+			log.error("Failed to call the operation", err);
 			ExceptionReportDocument _errDoc = ExceptionReportDocument.Factory.newInstance();
 			err.encode(_errDoc.addNewExceptionReport().addNewException());
 			
 			this.outputDocument(_errDoc, response, true);
 		}
 		catch(Exception err){
-			log.error("未知的异常", err);
+			log.error("Unknown error", err);
 			ExceptionReportDocument _errDoc = ExceptionReportDocument.Factory.newInstance();
 			new NoApplicableCodeException(err.getMessage()).encode(_errDoc.addNewExceptionReport().addNewException());
 			
@@ -148,14 +148,14 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 			this.outputDocument(_outDoc, response, false);
 		}
 		catch(ProcessingException err){
-			log.error("调用服务失败", err);
+			log.error("Failed to call the operation", err);
 			ExceptionReportDocument _errDoc = ExceptionReportDocument.Factory.newInstance();
 			err.encode(_errDoc.addNewExceptionReport().addNewException());
 			
 			this.outputDocument(_errDoc, response, true);
 		}
 		catch(Exception err){
-			log.error("未知的异常", err);
+			log.error("Unknown error", err);
 			ExceptionReportDocument _errDoc = ExceptionReportDocument.Factory.newInstance();
 			new NoApplicableCodeException(err.getMessage()).encode(_errDoc.addNewExceptionReport().addNewException());
 			
@@ -164,7 +164,7 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 	}
 	
 	/**
-	 * 输出DOM
+	 * Output DOM
 	 * @param doc
 	 * @param response
 	 * @throws IOException
@@ -174,7 +174,7 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 		response.setContentType("text/xml");
 		response.setCharacterEncoding("utf-8");
 		
-		//添加WPS自定义头信息
+		//Add WPS headers
 		HttpServletResponse _request = (HttpServletResponse) response;
 		if(isException){
 			_request.addHeader(WPS.WPS_SERVICE, WPS.EXCEPTION_TYPE);
@@ -186,7 +186,7 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 		try {
 			element.save(response.getOutputStream());
 		} catch (IOException e) {
-			log.warn("输出错误", e);
+			log.warn("Failed to output", e);
 		}
 	}
 }
