@@ -7,9 +7,11 @@ import java.util.HashMap;
 import net.opengeospatial.ows.ExceptionReportDocument;
 import net.opengeospatial.ows.GetCapabilitiesDocument;
 import net.opengeospatial.wps.DataInputsType;
+import net.opengeospatial.wps.DescribeProcessDocument;
 import net.opengeospatial.wps.ExecuteDocument;
 import net.opengeospatial.wps.ExecuteResponseDocument;
 import net.opengeospatial.wps.ProcessDescriptionsDocument;
+import net.opengeospatial.wps.DescribeProcessDocument.DescribeProcess;
 import net.opengeospatial.wps.ExecuteDocument.Execute;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -130,25 +132,22 @@ public class WpsClient {
 	}
 	
 	public ProcessDescriptionsDocument describeProcess(String[] identifiers) throws Exception{
-		Document _requestDoc = Utilities.createInstance().createBlankDocument();
-		Element _describeProcessNode = _requestDoc.createElementNS(GeoNamespaceContext.URI_WPS, "DescribeProcess");
-		_requestDoc.appendChild(_describeProcessNode);
+		DescribeProcessDocument _requestDoc = DescribeProcessDocument.Factory.newInstance();
+		DescribeProcess _describeProcess = _requestDoc.addNewDescribeProcess();
 		
-		_describeProcessNode.setAttribute("service", this.service);
-		_describeProcessNode.setAttribute("version", this.version);
-		
+		_describeProcess.setService(this.service);
+		_describeProcess.setVersion(this.version);
+
 		for(String _identifier : identifiers){
-			Element _identifierNode = _requestDoc.createElementNS(GeoNamespaceContext.URI_OWS, "Identifier");
-			_describeProcessNode.appendChild(_identifierNode);
-			
-			_identifierNode.setTextContent(_identifier);
+			_describeProcess.addNewIdentifier().setStringValue(_identifier);
 		}
+		
+		Log.debug("Request:" + _requestDoc.toString());
 		
 		HttpClient _http = new HttpClient();
 		PostMethod _post = new PostMethod(this.getDescribeUri().toString());
-		Log.debug(Utilities.createInstance().outputDocument2Text(_describeProcessNode));
 		
-		_post.setRequestBody(Utilities.createInstance().outputDocument2Text(_describeProcessNode));
+		_post.setRequestBody(_requestDoc.newInputStream());
 
 		int _status = _http.executeMethod(_post);
 		Log.debug("DescribeProcess:" + _status);

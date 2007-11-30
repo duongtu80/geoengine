@@ -1,24 +1,20 @@
 package cn.geodata.model.value;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import javax.xml.namespace.QName;
 
 import net.opengeospatial.wps.ComplexValueType;
 import net.opengeospatial.wps.IOValueType;
 
 import org.apache.log4j.Logger;
-import org.geotools.gml3.GMLConfiguration;
-import org.geotools.xml.Encoder;
-import org.geotools.xml.Parser;
+import org.jdom.input.DOMBuilder;
+import org.jdom.output.DOMOutputter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import cn.geodata.model.GeoNamespaceContext;
-import cn.geodata.model.util.Utilities;
+import cn.geodata.gml.ParserFinder;
+import cn.geodata.gml.ParserUtil;
 
 /**
  * The complex value
@@ -44,17 +40,18 @@ public class ComplexValue extends ModelValue {
 	public ComplexValue(String identifier, String title, String describe, Object value) throws Exception{
 		super(identifier, title, describe);
 		
-		this.setValue(value);
+		this.value = value;
+		this.qname = null;
 	}
 	
 	public ComplexValue(IOValueType type) throws Exception{
 		super(type);
 		
 		if(type.getComplexValue().getFormat().equalsIgnoreCase("text/xml") || type.getComplexValue().getFormat().equalsIgnoreCase("text/gml")){
-			if(type.getComplexValue().getSchema().startsWith(GeoNamespaceContext.URI_GML_3_1_1_SCHEMA) == false){
-				throw new Exception("Only supports GML 3.1.1");
-			}
-			
+//			if(type.getComplexValue().getSchema().startsWith(GeoNamespaceContext.URI_GML_3_1_1_SCHEMA) == false){
+//				throw new Exception("Only supports GML 3.1.1");
+//			}
+//			
 			NodeList _nodeList = type.getComplexValue().getDomNode().getChildNodes();
 			Element _element = null;
 			for(int i=0;i<_nodeList.getLength();i++){
@@ -67,55 +64,43 @@ public class ComplexValue extends ModelValue {
 				throw new NullPointerException("No data found");
 			}
 			else{
-				ByteArrayOutputStream _stream = new ByteArrayOutputStream();
-				Utilities.createInstance().outputDocument(_element, _stream);
-
+//				ByteArrayOutputStream _stream = new ByteArrayOutputStream();
+//				Utilities.createInstance().outputDocument(_element, _stream);
+//
 //				Log.debug("Complex type:" + new String(_stream.toByteArray(), "UTF-8"));
-				setValue(Utilities.createInstance().getGmlParser().parse(new ByteArrayInputStream(_stream.toByteArray())));
+				
+				this.value = ParserUtil.createParserFinder().encode((new DOMBuilder()).build(_element));
+				this.qname = null;
 			}
 			
 			this.parsed = true;
 		}
 		else{
 			//Set the complex value to object if not GML
-			setValue(type.getComplexValue());
+			this.value = type.getComplexValue();
+			this.value = null;
 			this.parsed = false;
 		}
 	}
 	
-	public void setValue(Object value) throws Exception {
-		if(value == null){
-			throw new NullPointerException("Can not be empty");
-		}
-		
-		for(String _key : Utilities.createInstance().getGmlElementMap().keySet()){
-			if(Class.forName(_key).isInstance(value)){
-				this.qname = Utilities.createInstance().getGmlElementMap().get(_key);
-				this.value = value;
-				
-				return;
-			}
-		}
-		throw new Exception("Does not support the GML element type:" + value.getClass().getName());
-	}
-
-	@Override
-	protected Element encodeValue(Document doc) throws Exception {
-		if(this.value == null){
-			throw new NullPointerException("No value");
-		}
-		
-		Element _valueNode = doc.createElementNS(GeoNamespaceContext.URI_WPS, "ComplexValue");
-		
-		ByteArrayOutputStream _stream = new ByteArrayOutputStream();
-		Encoder _encoder = new Encoder(new GMLConfiguration());
-		_encoder.encode(this.value, this.qname, _stream);
-		
-		Document _gmlDoc = Utilities.createInstance().getDocumentBuilder().parse(new ByteArrayInputStream(_stream.toByteArray()));
-		_valueNode.appendChild(doc.importNode(_gmlDoc.getDocumentElement(), true));
-		
-		return _valueNode;
-	}
+//	@Override
+//	protected Element encodeValue(Document doc) throws Exception {
+//		if(this.value == null){
+//			throw new NullPointerException("No value");
+//		}
+//		
+//		return ParserUtil.createParserFinder().encode(obj)
+//		Element _valueNode = doc.createElementNS(GeoNamespaceContext.URI_WPS, "ComplexValue");
+//		
+//		ByteArrayOutputStream _stream = new ByteArrayOutputStream();
+//		Encoder _encoder = new Encoder(new GMLConfiguration());
+//		_encoder.encode(this.value, this.qname, _stream);
+//		
+//		Document _gmlDoc = Utilities.createInstance().getDocumentBuilder().parse(new ByteArrayInputStream(_stream.toByteArray()));
+//		_valueNode.appendChild(doc.importNode(_gmlDoc.getDocumentElement(), true));
+//		
+//		return _valueNode;
+//	}
 
 	public Object getValue() {
 		return value;
@@ -129,20 +114,19 @@ public class ComplexValue extends ModelValue {
 			throw new NullPointerException("Not found input complex value");
 		}
 		
+		ParserFinder _finder = ParserUtil.createParserFinder();
+		org.jdom.Document _doc = new org.jdom.Document(_finder.encode(this.value));
+		
+		Document _outputDoc = (new DOMOutputter()).output(_doc);
+		
 		ComplexValueType _valueNode = type.addNewComplexValue();
 
 		_valueNode.setEncoding("UTF-8");
 		_valueNode.setFormat("text/gml");
+		_valueNode.setSchema(_finder.getConfig().getUriGML().getURI());
 		
-		ByteArrayOutputStream _bufferStream = new ByteArrayOutputStream();
-		
-		Utilities.createInstance().getGmlEncoder().encode(this.getValue(), this.getQname(), _bufferStream);
-		
-		Document _gmlDoc = Utilities.createInstance().getDocumentBuilder().parse(new ByteArrayInputStream(_bufferStream.toByteArray()));
 		Node _node = _valueNode.getDomNode();
-		_node.appendChild(_node.getOwnerDocument().importNode(_gmlDoc.getDocumentElement(), true));
-
-		_valueNode.setSchema(GeoNamespaceContext.URI_GML_3_1_1_SCHEMA + "#" + _gmlDoc.getDocumentElement().getLocalName());
+		_node.appendChild(_node.getOwnerDocument().importNode(_outputDoc.getDocumentElement(), true));
 	}
 
 	/**

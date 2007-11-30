@@ -6,8 +6,6 @@ import net.opengeospatial.wps.LiteralValueType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import cn.geodata.model.GeoNamespaceContext;
-
 public class LiteralValue extends ModelValue {
 	protected Object value;
 	protected String dataType;
@@ -80,18 +78,18 @@ public class LiteralValue extends ModelValue {
 		return value;
 	}
 
-	@Override
-	protected Element encodeValue(Document doc) {
-		if(this.value == null){
-			throw new NullPointerException("没有赋值");
-		}
-		
-		Element _valueNode = doc.createElementNS(GeoNamespaceContext.URI_WPS, "LiteralValue");
-		_valueNode.setTextContent(this.value.toString());
-		
-		return _valueNode;
-	}
-
+//	@Override
+//	protected Element encodeValue(Document doc) {
+//		if(this.value == null){
+//			throw new NullPointerException("No value");
+//		}
+//		
+//		Element _valueNode = doc.createElementNS(GeoNamespaceContext.URI_WPS, "LiteralValue");
+//		_valueNode.setTextContent(this.value.toString());
+//		
+//		return _valueNode;
+//	}
+//
 	@Override
 	public void encode(IOValueType type) throws Exception {
 		super.encode(type);

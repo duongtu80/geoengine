@@ -11,7 +11,7 @@ public abstract class ValueParser {
 			return new ComplexValue(value);
 		}
 		else{
-			throw new Exception("不支持的数据类型");
+			throw new Exception("Does not support the data type " + value.getTitle());
 		}
 	}
 }
