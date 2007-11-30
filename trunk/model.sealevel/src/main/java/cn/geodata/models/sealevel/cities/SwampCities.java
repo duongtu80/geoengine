@@ -27,10 +27,11 @@ public class SwampCities extends GeoProcessing {
 		float _rise = ((Float)((LiteralValue)this.getInputs().get("rise").get(0)).getValue()).floatValue();
 		
 		FilterFactory2 _filterFactory = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
-		Filter _filter = _filterFactory.lessOrEqual(_filterFactory.property("altitude"), _filterFactory.literal(_rise));
+		Filter _filter = _filterFactory.greater(_filterFactory.property("altitude"), _filterFactory.literal(_rise));
 		
 		FeatureCollection _fs = this.getCities().getFeatures(_filter);
 		
+		log.info("Cities number:" + _fs.size());
 		ArrayList<ModelValue> _output = new ArrayList<ModelValue>();
 		_output.add(new ComplexValue("cities", "", "", _fs));
 		
