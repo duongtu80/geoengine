@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+#map {
+	width: 700px;
+	height: 400px;
+	border: 1px solid #AAAAAA;
+	cursor: crosshair;
+}
+
+div.resultItem {
+	line-height: 18px;
+	vertical-align: bottom;
+}
