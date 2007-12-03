@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import net.opengeospatial.ows.ExceptionReportDocument;
 import net.opengeospatial.ows.GetCapabilitiesDocument;
+import net.opengeospatial.wps.CapabilitiesDocument;
 import net.opengeospatial.wps.DataInputsType;
 import net.opengeospatial.wps.DescribeProcessDocument;
 import net.opengeospatial.wps.ExecuteDocument;
@@ -52,9 +53,9 @@ public class WpsClient {
 			}
 		}
 		
-		_params.put("Service", this.service);
-		_params.put("Version", this.version);
-		_params.put("Request", "GetCapabilities");
+		_params.put("service", this.service);
+		_params.put("version", this.version);
+		_params.put("request", "GetCapabilities");
 		
 		String _queryStr = null;
 		for(String _key : _params.keySet()){
@@ -102,7 +103,7 @@ public class WpsClient {
 		this.executeUri = capibilitiesUri;
 	}
 	
-	public GetCapabilitiesDocument getCapibilities() throws Exception {
+	public CapabilitiesDocument getCapibilities() throws Exception {
 		URI _query = this.getCapibilitiesUri();
 		Log.debug("GetCapibilities uri:" + _query.toString());
 
@@ -124,7 +125,7 @@ public class WpsClient {
 				throw ExceptionParser.parse(ExceptionReportDocument.Factory.parse(_get.getResponseBodyAsStream(), _option).getExceptionReport());
 			}
 			
-			return GetCapabilitiesDocument.Factory.parse(_get.getResponseBodyAsStream(), _option);
+			return CapabilitiesDocument.Factory.parse(_get.getResponseBodyAsStream(), _option);
 		}
 		else{
 			throw new Exception("返回错误信息:" + _get.getResponseBodyAsString());
