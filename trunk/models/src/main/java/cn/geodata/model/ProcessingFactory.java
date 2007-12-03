@@ -30,7 +30,7 @@ public abstract class ProcessingFactory implements Factory {
 			this.metadata = ProcessDescriptionsDocument.Factory.parse(this.getMetadataStream()).getProcessDescriptions().getProcessDescriptionArray(0);
 		}
 		catch (Exception e) {
-			Log.error("解析元数据失败", e);
+			Log.error("Failed to parse the metadata", e);
 		}
 	}
 	
