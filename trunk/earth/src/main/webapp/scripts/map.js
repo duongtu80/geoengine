@@ -1,4 +1,6 @@
 var vlayer=null;
+var mlayer=null;
+var marker=null;
 
 function initMap() {
     var _resolutions = [
@@ -49,39 +51,43 @@ function initMap() {
 //    var layer = new OpenLayers.Layer.Google( "Google Satellite", {type: G_HYBRID_MAP, 'minZoomLevel':4,'maxZoomLevel':7} );
 	var layer = new OpenLayers.Layer.WMS( "OpenLayers WMS", 
 	        "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'});
+	        
 	vlayer = new OpenLayers.Layer.Vector("Cities");
+	vlayer.events.register('click', vlayer, mousedown);
+	
+	mlayer = new OpenLayers.Layer.Markers("Popup");
 
 //	map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
 	
 	map.addLayer(layer);
 	map.addLayer(vlayer);
+	map.addLayer(mlayer);
 
 	map.setCenter(new OpenLayers.LonLat(-100, 40), 0);
 }
 
 function search(){
 	var _processTip = dojo.byId('processTip');
-	_processTip.innerHTML = 'Loading...';
-	_processTip.style.visibility = 'visible';
+	_processTip.innerHTML = 'loading...';
+//	_processTip.style.visibility = 'visible';
 	
-	dojo.xhrGet({ //
-        // The following URL must match that used to test the server.
-        url: "http://127.0.0.1:8080/earth/search.do", 
+	dojo.xhrGet({
+        url: "search.do", 
         handleAs: "xml",
         content: {
-        	'url': dojo.byId('serviceUrl').value,
+        	'url': dojo.byId('modelUrl').value,
         	'seaLevel': dojo.byId('seaLevel').value
         },
-        timeout: 20000, // Time in milliseconds
-        // The LOAD function will be called on a successful response.
+        timeout: 20000,
         load: function(response, ioArgs) { //
         	var _gml = new OpenLayers.Format.GML();
         	var _fs = _gml.read(response);
         	
         	vlayer.eraseFeatures(vlayer.features);
         	vlayer.addFeatures(_fs);
-
-			_processTip.style.visibility = 'hidden';
+        	
+        	_processTip.innerHTML = 'finished';
+//			_processTip.style.visibility = 'hidden';
         },
 
         // The ERROR function will be called in an error case.
@@ -91,4 +97,51 @@ function search(){
 			_processTip.style.innerHTML = 'error';
 		}
 	});
+}
+
+function mousedown(evt) {
+	var _layer = evt.object;
+	var _f = _layer.getFeatureFromEvent(evt);
+	
+	if(marker != null){
+		mlayer.map.removePopup(marker);
+		marker.destroy();
+		marker = null;
+	}
+	
+	if(_f != null){
+		var _processTip = dojo.byId('processTip');
+		_processTip.innerHTML = 'loading...';
+
+		dojo.xhrGet({ //
+	        url: "detail.do", 
+	        handleAs: "text",
+	        content: {
+	        	'id': _f.fid,
+	        	'dataUrl': dojo.byId('dataUrl').value
+	        },
+	        
+	        timeout: 20000,
+	        load: function(response, ioArgs) {
+				var _popup = new OpenLayers.Popup("test1",
+					_layer.map.getLonLatFromPixel(evt.xy),
+					new OpenLayers.Size(200, 100),
+					'test popup', true);
+					 
+				_popup.setContentHTML(response);
+				_popup.setOpacity(0.7);
+				_popup.setBackgroundColor('#EEEEEE');
+				
+				marker = _popup;
+				mlayer.map.addPopup(marker);
+				
+	        	_processTip.innerHTML = 'finished';
+	        },
+	        error: function(response, ioArgs) { //
+				console.error("HTTP status code: ", ioArgs.xhr.status); //
+				_processTip.style.innerHTML = 'error';
+			}
+		});
+	}
+//	OpenLayers.Event.stop(evt);
 }

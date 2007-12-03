@@ -13,8 +13,32 @@ div.resultItem {
 }
 
 #processTip {
+	margin-left: 5px;
+	top: 450px;
 	line-height: 30px;
-	visibility: hidden;
+	visibility: visible;
 	background: transparent;
 	position: absolute;
+	z-index: 100000;
+	color: #FF9900;
+	font-family: Verdana;
+}
+
+div.itemArea {
+	border: 0px solid #AAAAAA;
+	margin: 3px;
+	padding: 2px;
+}
+
+div.itemBar {
+	
+}
+
+div.itemName {
+	font-weight: bolder;
+	display: inline;
+}
+
+div.itemValue {
+	display: inline;
 }

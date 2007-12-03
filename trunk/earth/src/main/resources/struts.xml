@@ -25,5 +25,8 @@
   				<param name="bufferSize">1024</param>
     		</result>
     	</action>
+    	<action name="detail" class="cityDetail">
+    		<result>/detail.jsp</result>
+    	</action>
     </package>
 </struts>
