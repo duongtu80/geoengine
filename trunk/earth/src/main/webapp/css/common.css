@@ -48,6 +48,10 @@ div.blockBody {
 	line-height: 30px;
 }
 
+div.viewItem{
+	line-height: 33px;
+}
+
 td.cellTitle {
 	font-weight: bold;;
 	background-color: #EEEEEE;

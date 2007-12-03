@@ -9,14 +9,21 @@
     <constant name="struts.action.extension" value="do" />
     
     <package name="process" extends="struts-default" namespace="/">
+<!-- 
     	<global-results>
     		<result name="Exception">/error.jsp</result>
     	</global-results>
     	<global-exception-mappings>
     		<exception-mapping result="Exception" exception="java.lang.Exception"></exception-mapping>
     	</global-exception-mappings>
+ -->
     	<action name="search" class="searchSwampCities">
-    		<result>/result.jsp</result>
+    		<result type="stream">
+    			<param name="contentType">text/xml</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="cities.xml"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
     	</action>
     </package>
 </struts>

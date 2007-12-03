@@ -11,3 +11,10 @@ div.resultItem {
 	line-height: 18px;
 	vertical-align: bottom;
 }
+
+#processTip {
+	line-height: 30px;
+	visibility: hidden;
+	background: transparent;
+	position: absolute;
+}
