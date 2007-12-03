@@ -31,6 +31,9 @@
 	<bean id="gml.featureCollectionDef" class="cn.geodata.gml.define.FeatureCollectionDef">
 	</bean>
 
+	<bean id="gml.rectifiedCoverageDef" class="cn.geodata.gml.define.RectifiedCoverageDef">
+	</bean>
+
 	<bean id="gml.featureDef" class="cn.geodata.gml.define.FeatureDef">
 	</bean>	
 </beans>
