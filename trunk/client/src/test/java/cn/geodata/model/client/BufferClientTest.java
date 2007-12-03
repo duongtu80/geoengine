@@ -12,7 +12,10 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 import net.opengeospatial.wps.ExecuteResponseDocument;
+import net.opengeospatial.wps.ProcessBriefType;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.xmlbeans.impl.common.IOUtil;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
@@ -42,8 +45,15 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class BufferClientTest extends TestCase {
 	private static Logger log = Logger.getAnonymousLogger();
+
+	public void testTest2() throws Exception {
+		WpsClient _client = new WpsClient(new URI("http://127.0.0.1:8080/web/wps"));
+		for(ProcessBriefType _process : _client.getCapibilities().getCapabilities().getProcessOfferings().getProcessArray()){
+			log.info(_process.getTitle());
+		}
+	}
 	
-	public void testSwampCities() throws Exception {
+	public void atestSwampCities() throws Exception {
 		WpsClient _client = new WpsClient(new URI("http://127.0.0.1:8080/web/wps"));
 		ModelValue[] _inputs = new ModelValue[1];
 		_inputs[0] = new LiteralValue("rise", "rise", "", 1000f);
@@ -145,7 +155,7 @@ public class BufferClientTest extends TestCase {
 		MultiPolygon _outputs = (MultiPolygon)_output.getValue();
 		System.out.println("Output count:" + _outputs.getNumGeometries());
 		for(int i=0;i<_outputs.getNumGeometries();i++){
-			_fs.add(_outFeatureType.create(new Object[] {_outputs.getGeometryN(i), "测试" + i}));
+			_fs.add(_outFeatureType.create(new Object[] {_outputs.getGeometryN(i), "Test" + i}));
 		}
 		
 		_outputStore.addFeatures(_fs);

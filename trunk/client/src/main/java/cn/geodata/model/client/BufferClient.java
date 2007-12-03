@@ -9,6 +9,5 @@ public class BufferClient {
 	 */
 	public static void main(String[] args) {
 		ShapefileDataStoreFactory _factory = new ShapefileDataStoreFactory();
-		
 	}
 }
