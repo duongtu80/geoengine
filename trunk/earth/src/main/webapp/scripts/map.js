@@ -121,7 +121,7 @@ function mousedown(evt) {
 	        	'dataUrl': dojo.byId('dataUrl').value
 	        },
 	        
-	        timeout: 20000,
+	        timeout: 60000,
 	        load: function(response, ioArgs) {
 				var _popup = new OpenLayers.Popup("test1",
 					_layer.map.getLonLatFromPixel(evt.xy),
@@ -144,4 +144,28 @@ function mousedown(evt) {
 		});
 	}
 //	OpenLayers.Event.stop(evt);
+}
+
+function listModel() {
+	dojo.xhrGet({ //
+        url: "listModel.do", 
+        handleAs: "json",
+        content: {
+        	'modelUrl': dojo.byId('modelUrl').value
+        },
+        
+        timeout: 60000,
+        load: function(response, ioArgs) {
+        	var _list = dojo.byId('modelList');
+        	for(var i=0;i<response.items.length;i++){
+        		var _option = new Option(response.items[i].label, response.items[i].value);
+        		_list.add(_option, null);
+        	}
+        }//,
+//        error: function(response, ioArgs) { //
+//			console.error("HTTP status code: ", ioArgs.xhr.status); //
+//			_processTip.style.innerHTML = 'error';
+//		}
+	});
+
 }

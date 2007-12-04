@@ -7,4 +7,6 @@
 	<bean id="cityDetail"
 		class="cn.geodata.models.earth.actions.CityDetail">
 	</bean>
+	<bean id="listModel"
+		class="cn.geodata.models.earth.actions.ListModel"></bean>
 </beans>

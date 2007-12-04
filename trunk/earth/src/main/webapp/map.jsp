@@ -21,15 +21,16 @@
    dojo.require("dijit.form.DateTextBox");
    dojo.require("dijit.form.NumberTextBox");
    dojo.require("dijit.form.Button");
+   dojo.require("dijit.form.ComboBox");
 </script>
 
 <style type="text/css">
 	@IMPORT url("controls/css/style.css");
 </style>
 <!-- 
-<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
- -->
 <script type="text/javascript" src="lib/OpenLayers.js"></script>
+ -->
+<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
 <script src='http://dev.virtualearth.net/mapcontrol/v3/mapcontrol.js'></script>
 <script type="text/javascript" src="controls/js/Navigation.js" ></script>
 <script type="text/javascript" src="controls/js/SearchFeature.js" ></script>
@@ -49,8 +50,16 @@
 				</td>
 				<td id="rightPanel">
 					<div style="border: 1px solid #AAAAAA; height: 100%;text-align: left;">
-						<div class="viewItem"><span style="width: 50px;padding: 1px;">Data URL:</span><input type="text" dojoType="dijit.form.TextBox" id="dataUrl" value="http://<%=request.getServerName() %>:18080/geoserver/wps" style="width: 190px;" /></div>
-						<div class="viewItem"><span style="width: 50px;padding: 1px;">Service URL:</span><input type="text" dojoType="dijit.form.TextBox" id="modelUrl" value="http://<%=request.getServerName() %>:<%=request.getServerPort() %>/web/wps" style="width: 190px;" /></div>
+						<div class="viewItem">
+							<span style="width: 50px;padding: 1px;">Service URL:</span>
+							<input type="text" dojoType="dijit.form.TextBox" id="modelUrl" value="http://<%=request.getServerName() %>:<%=request.getServerPort() %>/web/wps" style="width: 190px;" />
+							<button dojoType="dijit.form.Button" id="listModel" onclick="listModel();">List</button>
+						</div>
+						<div class="viewItem">
+							<select id="modelList">
+							</select>
+						</div>
+						<div class="viewItem"><span style="width: 50px;padding: 1px;">Data URL:</span><input type="text" dojoType="dijit.form.TextBox" id="dataUrl" value="http://<%=request.getServerName() %>:18080/geoserver/wfs" style="width: 190px;" /></div>
 						<div class="viewItem"><span style="width: 50px;margin: auto;padding: 1px;">Sea level:</span><input type="text" dojoType="dijit.form.NumberTextBox" id="seaLevel" value='0' style="width: 50px;" /> meters</div>
 						<div>
 							<button dojoType="dijit.form.Button" id="search" onclick="search();">Search</button>
