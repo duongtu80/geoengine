@@ -51,20 +51,20 @@
 				<td id="rightPanel">
 					<div style="border: 1px solid #AAAAAA; height: 100%;text-align: left;">
 						<div class="viewItem">
-							<span style="width: 50px;padding: 1px;">Service URL:</span>
-							<input type="text" dojoType="dijit.form.TextBox" id="modelUrl" value="http://<%=request.getServerName() %>:<%=request.getServerPort() %>/web/wps" style="width: 190px;" />
+							<span style="width: 50px;padding: 1px;">WPS:</span>
+							<input type="text" dojoType="dijit.form.TextBox" id="modelUrl" value="http://<%=request.getServerName() %>:<%=request.getServerPort() %>/web/wps" style="width: 160px;" />
 							<button dojoType="dijit.form.Button" id="listModel" onclick="listModel();">List</button>
 						</div>
 						<div class="viewItem">
-							<select id="modelList">
+							<span style="width: 50px;padding: 1px;">Model:</span><select id="modelList">
 							</select>
 						</div>
-						<div class="viewItem"><span style="width: 50px;padding: 1px;">Data URL:</span><input type="text" dojoType="dijit.form.TextBox" id="dataUrl" value="http://<%=request.getServerName() %>:18080/geoserver/wfs" style="width: 190px;" /></div>
-						<div class="viewItem"><span style="width: 50px;margin: auto;padding: 1px;">Sea level:</span><input type="text" dojoType="dijit.form.NumberTextBox" id="seaLevel" value='0' style="width: 50px;" /> meters</div>
+						<div class="viewItem"><span style="width: 50px;padding: 1px;">Cities:</span><input type="text" dojoType="dijit.form.TextBox" id="dataUrl" value="http://<%=request.getServerName() %>:18080/geoserver/wfs" style="width: 225px;" /></div>
+						<div class="viewItem"><span style="width: 50px;margin: auto;padding: 1px;">Sea level rise:</span><input type="text" dojoType="dijit.form.NumberTextBox" id="seaLevel" value='0' style="width: 50px;" /> meters</div>
 						<div>
-							<button dojoType="dijit.form.Button" id="search" onclick="search();">Search</button>
+							<button dojoType="dijit.form.Button" id="search" onclick="search();">Run</button>
 						</div>
-						<div style="height: 300px; border: 1px solid #AAAAAA; overflow: auto;">
+						<div style="height: 235px; border: 1px solid #AAAAAA; overflow: auto;">
 							<div id="resultPanel" style="visibility: visible;height: 10px;"></div>
 						</div>
 					</div>

@@ -49,9 +49,11 @@ function initMap() {
 	// create WMS layer
 
 //    var layer = new OpenLayers.Layer.Google( "Google Satellite", {type: G_HYBRID_MAP, 'minZoomLevel':4,'maxZoomLevel':7} );
-	var layer = new OpenLayers.Layer.WMS( "OpenLayers WMS", 
-	        "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'});
-	        
+//	var layer = new OpenLayers.Layer.WMS( "OpenLayers WMS", 
+//	        "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'});
+	var layer =	new OpenLayers.Layer.WMS( "Blue Marble", 
+                    ["http://labs.metacarta.com/wms-c/Basic.py?","http://t2.labs.metacarta.com/wms-c/Basic.py?", "http://t1.labs.metacarta.com/wms-c/Basic.py?"], {layers: 'satellite' } );
+                    
 	vlayer = new OpenLayers.Layer.Vector("Cities");
 	vlayer.events.register('click', vlayer, mousedown);
 	
@@ -147,6 +149,9 @@ function mousedown(evt) {
 }
 
 function listModel() {
+	var _processTip = dojo.byId('processTip');
+	_processTip.innerHTML = 'loading...';
+	
 	dojo.xhrGet({ //
         url: "listModel.do", 
         handleAs: "json",
@@ -161,11 +166,13 @@ function listModel() {
         		var _option = new Option(response.items[i].label, response.items[i].value);
         		_list.add(_option, null);
         	}
-        }//,
-//        error: function(response, ioArgs) { //
-//			console.error("HTTP status code: ", ioArgs.xhr.status); //
-//			_processTip.style.innerHTML = 'error';
-//		}
+        	
+	        _processTip.innerHTML = 'finished';
+        },
+        error: function(response, ioArgs) { //
+			console.error("HTTP status code: ", ioArgs.xhr.status); //
+			_processTip.style.innerHTML = 'error';
+		}
 	});
 
 }
