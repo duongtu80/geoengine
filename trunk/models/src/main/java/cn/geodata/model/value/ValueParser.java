@@ -10,6 +10,9 @@ public abstract class ValueParser {
 		else if(value.getComplexValue() != null){
 			return new ComplexValue(value);
 		}
+		else if(value.getComplexValueReference() != null){
+			return new ComplexValueReference(value);
+		}
 		else{
 			throw new Exception("Does not support the data type " + value.getTitle());
 		}
