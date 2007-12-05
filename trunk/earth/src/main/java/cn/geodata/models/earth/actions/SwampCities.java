@@ -9,11 +9,14 @@ import java.util.logging.Logger;
 import net.opengeospatial.wps.ExecuteResponseDocument;
 
 import org.apache.xmlbeans.XmlOptions;
+import org.geotools.catalog.wfs.WFSService;
+import org.geotools.data.wfs.WFSDataStore;
 import org.jdom.Element;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import cn.geodata.model.value.ComplexValueReference;
 import cn.geodata.model.value.LiteralValue;
 import cn.geodata.model.value.ModelValue;
 import cn.geodata.model.wps.WpsClient;
@@ -21,28 +24,29 @@ import cn.geodata.model.wps.WpsClient;
 public class SwampCities {
 	private Logger log = Logger.getAnonymousLogger();
 	
-	private float seaLevel;
+	private double seaLevel;
 	private InputStream stream;
-	private String url;
+	private String modelUrl;
+	private String dataUrl;
 	
 	public SwampCities() {
-		this.url = "http://127.0.0.1:8080/web/wps";
+		this.modelUrl = "http://127.0.0.1:8080/web/wps";
 		this.seaLevel = 1;
 	}
 	
-	public String getUrl() {
-		return url;
+	public String getModelUrl() {
+		return modelUrl;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setModelUrl(String modelUrl) {
+		this.modelUrl = modelUrl;
 	}
 
-	public float getSeaLevel() {
+	public double getSeaLevel() {
 		return seaLevel;
 	}
 
-	public void setSeaLevel(float seaLevel) {
+	public void setSeaLevel(double seaLevel) {
 		this.seaLevel = seaLevel;
 	}
 	
@@ -51,13 +55,20 @@ public class SwampCities {
 	}
 
 	public String execute() throws Exception {
-		log.info("Url:" + this.url);
-		WpsClient _client = new WpsClient(new URI(this.url));
+		log.info("Model Url:" + this.modelUrl);
+		WpsClient _client = new WpsClient(new URI(this.modelUrl));
 		
 		log.info("Sea level:" + this.seaLevel);
-		ModelValue[] _inputs = new ModelValue[1];
+		log.info("Data url:" + this.dataUrl);
+
+		org.apache.xml.utils.URI _citiesUrl = new org.apache.xml.utils.URI(this.dataUrl);
+		_citiesUrl.setQueryString("service=WFS&request=GetFeature&typename=unep:cities");
+
+		log.info("Cities url:" + _citiesUrl.toString());
+
+		ModelValue[] _inputs = new ModelValue[2];
 		_inputs[0] = new LiteralValue("rise", "rise", "", this.seaLevel);
-		
+		_inputs[1] = new ComplexValueReference("cities", "cities", "", _citiesUrl.toString(), "text/gml", "utf-8", null);
 		
 		ExecuteResponseDocument _execute = _client.execute("SwampCities", _inputs);
 		
@@ -76,5 +87,13 @@ public class SwampCities {
 		this.stream = new ByteArrayInputStream(_outStream.toByteArray());
 		
 		return "success";
+	}
+
+	public String getDataUrl() {
+		return dataUrl;
+	}
+
+	public void setDataUrl(String dataUrl) {
+		this.dataUrl = dataUrl;
 	}
 }

@@ -77,7 +77,8 @@ function search(){
         url: "search.do", 
         handleAs: "xml",
         content: {
-        	'url': dojo.byId('modelUrl').value,
+        	'modelUrl': dojo.byId('modelUrl').value,
+        	'dataUrl': dojo.byId('dataUrl').value,
         	'seaLevel': dojo.byId('seaLevel').value
         },
         timeout: 20000,
