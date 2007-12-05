@@ -14,6 +14,7 @@ public abstract class ModelValue implements Encodable  {
 	protected String identifier;
 	protected String title;
 	protected String describe;
+	protected Object type;
 	
 	public ModelValue(String identifier, String title, String describe){
 		this.identifier = identifier;
@@ -45,6 +46,8 @@ public abstract class ModelValue implements Encodable  {
 	public void setDescribe(String describe) {
 		this.describe = describe;
 	}
+	
+	public abstract Object getValue();
 	
 //	/**
 //	 * 对取值进行编码

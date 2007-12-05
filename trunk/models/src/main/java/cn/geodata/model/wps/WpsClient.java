@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import net.opengeospatial.ows.ExceptionReportDocument;
-import net.opengeospatial.ows.GetCapabilitiesDocument;
 import net.opengeospatial.wps.CapabilitiesDocument;
 import net.opengeospatial.wps.DataInputsType;
 import net.opengeospatial.wps.DescribeProcessDocument;
@@ -20,13 +19,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlOptions;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import cn.geodata.model.GeoNamespaceContext;
 import cn.geodata.model.WPS;
 import cn.geodata.model.exception.ExceptionParser;
-import cn.geodata.model.util.Utilities;
 import cn.geodata.model.value.ModelValue;
 
 public class WpsClient {
@@ -128,7 +123,7 @@ public class WpsClient {
 			return CapabilitiesDocument.Factory.parse(_get.getResponseBodyAsStream(), _option);
 		}
 		else{
-			throw new Exception("返回错误信息:" + _get.getResponseBodyAsString());
+			throw new Exception("Error:" + _get.getResponseBodyAsString());
 		}
 	}
 	
@@ -165,7 +160,7 @@ public class WpsClient {
 			return ProcessDescriptionsDocument.Factory.parse(_post.getResponseBodyAsStream(), _option);
 		}
 		else{
-			throw new Exception("返回错误信息:" + _post.getResponseBodyAsString());
+			throw new Exception("Error:" + _post.getResponseBodyAsString());
 		}
 	}
 	
@@ -203,7 +198,7 @@ public class WpsClient {
 			return ExecuteResponseDocument.Factory.parse(_post.getResponseBodyAsStream(), _option);
 		}
 		else{
-			throw new Exception("返回错误信息:" + _post.getResponseBodyAsString());
+			throw new Exception("Error:" + _post.getResponseBodyAsString());
 		}
 	}
 }

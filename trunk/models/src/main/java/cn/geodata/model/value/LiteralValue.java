@@ -19,6 +19,7 @@ public class LiteralValue extends ModelValue {
 		super(type);
 		
 		Object _value = null;
+
 		String _valueString = type.getLiteralValue().getStringValue();
 		if(_valueString != null){
 			String _type = type.getLiteralValue().getDataType();

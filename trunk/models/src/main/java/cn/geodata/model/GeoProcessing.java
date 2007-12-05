@@ -3,6 +3,8 @@ package cn.geodata.model;
 import java.util.List;
 import java.util.Map;
 
+import net.opengeospatial.wps.IOValueType;
+
 import org.apache.log4j.Logger;
 
 import cn.geodata.model.exception.NoApplicableCodeException;
@@ -21,12 +23,12 @@ import cn.geodata.model.value.ModelValue;
 public abstract class GeoProcessing implements Runnable {
 	private static Logger Log = Logger.getLogger(GeoProcessing.class);
 	
-	private Map<String, List<ModelValue>> inputs;
-	private Map<String, List<ModelValue>> output;
+	private Map<String, List<IOValueType>> inputs;
+	private Map<String, List<IOValueType>> output;
 	
 	private Status Status;
 	
-	public Map<String, List<ModelValue>> getInputs() {
+	public Map<String, List<IOValueType>> getInputs() {
 		return inputs;
 	}
 
@@ -34,7 +36,7 @@ public abstract class GeoProcessing implements Runnable {
 	 * 设置输入参数
 	 * @param inputs
 	 */
-	public void setInputs(Map<String, List<ModelValue>> inputs) {
+	public void setInputs(Map<String, List<IOValueType>> inputs) {
 		this.inputs = inputs;
 	}
 
@@ -42,7 +44,7 @@ public abstract class GeoProcessing implements Runnable {
 	 * 获取输出参数
 	 * @return
 	 */
-	public Map<String, List<ModelValue>> getOutput() {
+	public Map<String, List<IOValueType>> getOutput() {
 		return output;
 	}
 
@@ -50,7 +52,7 @@ public abstract class GeoProcessing implements Runnable {
 	 * 设置输出参数
 	 * @param output
 	 */
-	public void setOutputs(Map<String, List<ModelValue>> output) {
+	public void setOutputs(Map<String, List<IOValueType>> output) {
 		this.output = output;
 	}
 

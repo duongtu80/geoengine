@@ -9,20 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.opengeospatial.wps.ProcessDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionsDocument;
 
-import org.apache.log4j.Logger;
 import org.geotools.factory.Factory;
 
 /**
- * 进程工厂类，用于提供进程的信息和创建进程
+ * Process factory, provide metadata and create instance
  * @author Fengm
  *
  */
 public abstract class ProcessingFactory implements Factory {
-	private static Logger Log = Logger.getLogger(ProcessingFactory.class);
+	private static Logger log = Logger.getAnonymousLogger();
 	protected ProcessDescriptionType metadata;	
 
 	public ProcessingFactory() {
@@ -30,7 +31,7 @@ public abstract class ProcessingFactory implements Factory {
 			this.metadata = ProcessDescriptionsDocument.Factory.parse(this.getMetadataStream()).getProcessDescriptions().getProcessDescriptionArray(0);
 		}
 		catch (Exception e) {
-			Log.error("Failed to parse the metadata", e);
+			log.log(Level.SEVERE, "Failed to parse the metadata", e);
 		}
 	}
 	
@@ -46,22 +47,13 @@ public abstract class ProcessingFactory implements Factory {
 	public abstract GeoProcessing createProcessing(Map<String, String> params) throws Exception;
 
     /**
-     * 工厂类的参数类
+     * Param class
      */
     class Param {
-    	//是否必填参数
         final public boolean required;
-
-        //参数名称
         final public String key;
-
-        //参数类型
         final public Class type;
-
-        //参数描述
         final public String description;
-
-        //参数样例值
         final public Object sample;
 
         public Param(String key) {
@@ -91,7 +83,7 @@ public abstract class ProcessingFactory implements Factory {
         public Object lookUp(Map<String, Object> map) throws Exception {
             if (!map.containsKey(key)) {
                 if (required) {
-                    throw new IOException(key + "是必填参数:" + description);
+                    throw new IOException(key + "is required:" + description);
                 } else {
                     return null;
                 }
@@ -112,7 +104,7 @@ public abstract class ProcessingFactory implements Factory {
             }
 
             if (!type.isInstance(value)) {
-                throw new IOException(key + "的类型应该是" + type.getName() + "而不是" + value.getClass().getName());
+                throw new IOException(key + " is type of " + type.getName() + " not " + value.getClass().getName());
             }
 
             return value;
@@ -131,7 +123,7 @@ public abstract class ProcessingFactory implements Factory {
                 return null;
             }
 
-            // 解析数组
+            // Parse array
             if (type.isArray()) {
                 StringTokenizer tokenizer = new StringTokenizer(text, " ");
                 List result = new ArrayList();
@@ -149,8 +141,7 @@ public abstract class ProcessingFactory implements Factory {
                     } catch (IOException ioException) {
                         throw ioException;
                     } catch (Throwable throwable) {
-                        throw new Exception("从'" + text + "'创建'" + type.getName()
-                            + "'类型失败", throwable);
+                        throw new Exception("Failed to create '" + text + "' from '" + type.getName() , throwable);
                     }
 
                     result.add(element);
@@ -170,13 +161,12 @@ public abstract class ProcessingFactory implements Factory {
             } catch (IOException ioException) {
                 throw ioException;
             } catch (Throwable throwable) {
-            	throw new Exception("从'" + text + "'创建'" + type.getName()
-                        + "'类型失败", throwable);
+                throw new Exception("Failed to create '" + text + "' from '" + type.getName() , throwable);
             }
         }
 
         /**
-         * 从文本生成对象
+         * Parse text
          * @param text
          * @return
          * @throws Throwable
@@ -211,7 +201,7 @@ public abstract class ProcessingFactory implements Factory {
         }
 
         /* 
-         * 生成数组
+         * Create array
          * @see java.lang.Object#toString()
          */
         public String toString() {
