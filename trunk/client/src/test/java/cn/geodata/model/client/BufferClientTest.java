@@ -32,6 +32,7 @@ import org.geotools.feature.FeatureTypeFactory;
 import org.geotools.feature.SchemaException;
 
 import cn.geodata.model.value.ComplexValue;
+import cn.geodata.model.value.ComplexValueReference;
 import cn.geodata.model.value.LiteralValue;
 import cn.geodata.model.value.ModelValue;
 import cn.geodata.model.value.ValueParser;
@@ -46,17 +47,18 @@ import com.vividsolutions.jts.geom.Polygon;
 public class BufferClientTest extends TestCase {
 	private static Logger log = Logger.getAnonymousLogger();
 
-	public void testTest2() throws Exception {
+	public void stestTest2() throws Exception {
 		WpsClient _client = new WpsClient(new URI("http://127.0.0.1:8080/web/wps"));
 		for(ProcessBriefType _process : _client.getCapibilities().getCapabilities().getProcessOfferings().getProcessArray()){
 			log.info(_process.getTitle());
 		}
 	}
 	
-	public void atestSwampCities() throws Exception {
+	public void testSwampCities() throws Exception {
 		WpsClient _client = new WpsClient(new URI("http://127.0.0.1:8080/web/wps"));
-		ModelValue[] _inputs = new ModelValue[1];
-		_inputs[0] = new LiteralValue("rise", "rise", "", 1000f);
+		ModelValue[] _inputs = new ModelValue[2];
+		_inputs[0] = new LiteralValue("rise", "rise", "", 5.0);
+		_inputs[1] = new ComplexValueReference("cities", "cities", "", "http://152.61.40.52:18080/geoserver/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=unep:cities", "text/gml", "utf-8", null);
 		
 		ExecuteResponseDocument _execute = _client.execute("SwampCities", _inputs);
 		log.info(_execute.getExecuteResponse().xmlText());
