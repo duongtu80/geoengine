@@ -8,14 +8,25 @@
 				<ows:Identifier>rise</ows:Identifier>
 				<ows:Title>Sea level rise</ows:Title>
 				<wps:LiteralData>
-					<ows:DataType>xs:float</ows:DataType>
+					<ows:DataType>xs:double</ows:DataType>
 					<ows:AnyValue></ows:AnyValue>
 				</wps:LiteralData>
+			</wps:Input>
+			<wps:Input>
+				<ows:Identifier>cities</ows:Identifier>
+				<ows:Title>Cities</ows:Title>
+				<wps:ComplexData defaultSchema="http://schemas.opengis.net/gml/" defaultFormat="text/gml" defaultEncoding="UTF-8">
+					<wps:SupportedComplexData>
+						<wps:Format>text/gml</wps:Format>
+						<wps:Encoding>UTF-8</wps:Encoding>
+						<wps:Schema>http://schemas.opengis.net/gml/</wps:Schema>
+					</wps:SupportedComplexData>
+				</wps:ComplexData>
 			</wps:Input>
 		</wps:DataInputs>
 		<wps:ProcessOutputs>
 			<wps:Output>
-				<ows:Identifier>cities</ows:Identifier>
+				<ows:Identifier>swamp</ows:Identifier>
 				<ows:Title>Swampped cities</ows:Title>
 				<wps:ComplexOutput defaultSchema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#Point" defaultFormat="text/xml" defaultEncoding="UTF-8">
 					<wps:SupportedComplexData>
