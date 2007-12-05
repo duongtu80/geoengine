@@ -29,7 +29,7 @@ public class FeatureCollectionDef extends AbstractParser {
 
 	@Override
 	public boolean canParse(Element ele) {
-		if(ele.getNamespace().equals(this.config.getUriGML())
+		if((ele.getNamespace().equals(this.config.getUriGML()) || (ele.getNamespace().equals(this.config.getUriWFS()) ))
 				&& ele.getName().equals("FeatureCollection")
 				){
 			return true;

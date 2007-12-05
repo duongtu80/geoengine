@@ -55,7 +55,21 @@ public class PointDef extends AbstractParser {
 			throw new UnsupportedType("Element " + ele.getName());
 		}
 		
-		String[] _items = ele.getChild("pos", this.config.getUriGML()).getTextTrim().split("\\s+");
+		String[] _items = null;
+		Element _posNode = ele.getChild("pos", this.config.getUriGML());
+		if(_posNode != null){
+			_items = _posNode.getTextTrim().split("\\s+");
+		}
+		else{
+			Element _coor = ele.getChild("coordinates", this.config.getUriGML());
+			if(_coor != null){
+				String _splitor = _coor.getAttributeValue("cs");
+				if(_splitor == null){
+					_splitor = ",";
+				}
+				_items = _coor.getTextTrim().split(_splitor);
+			}
+		}
 		
 		double _x = Double.parseDouble(_items[0]);
 		double _y = Double.parseDouble(_items[1]);
