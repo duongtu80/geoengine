@@ -137,8 +137,7 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 			if (_obj instanceof DescribeProcessDocumentImpl) {
 				_outDoc = (new DescribeProcessOp()).execute(_obj);
 			}
-			
-			if(_obj instanceof ExecuteDocumentImpl){
+			else if(_obj instanceof ExecuteDocumentImpl){
 				_outDoc = (new ExecuteOp()).execute(_obj);
 			}
 			else{

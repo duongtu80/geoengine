@@ -1,9 +1,7 @@
 package cn.geodata.models.web.wps.operation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.opengeospatial.wps.ExecuteResponseDocument;
 import net.opengeospatial.wps.ExecuteResponseType;
@@ -20,8 +18,6 @@ import cn.geodata.model.ProcessingFactory;
 import cn.geodata.model.WPS;
 import cn.geodata.model.exception.OptionNotSupportedException;
 import cn.geodata.model.util.ProcessingLibray;
-import cn.geodata.model.value.ModelValue;
-import cn.geodata.model.value.ValueParser;
 
 public class ExecuteOp extends WpsOperation {
 
@@ -34,27 +30,19 @@ public class ExecuteOp extends WpsOperation {
 			throw new OptionNotSupportedException("store");
 		}
 
+		//Initialize input parameters
 		String _processId = _execute.getIdentifier().getStringValue();
 		ProcessingFactory _model = ProcessingLibray.createInstance().getModelFactories().get(_processId);
 		
-		Map<String, List<ModelValue>> _inputMap = new HashMap<String, List<ModelValue>>();
-		for(IOValueType _identifier : _execute.getDataInputs().getInputArray()){
-			String _key = _identifier.getIdentifier().getStringValue();
-			if(_inputMap.containsKey(_key) == false){
-				_inputMap.put(_key, new ArrayList<ModelValue>());
-			}
-			
-			_inputMap.get(_key).add(ValueParser.parse(_identifier));
+		GeoProcessing _processing = _model.createProcess(null);
+		for(IOValueType _inputParam : _execute.getDataInputs().getInputArray()){
+			_processing.getInputs().get(_inputParam.getIdentifier().getStringValue()).add(_inputParam);
 		}
 		
-		Map<String, List<ModelValue>> _outputMap = new HashMap<String, List<ModelValue>>();
-		
-		GeoProcessing _processing = _model.createProcessing(null);
-		_processing.setInputs(_inputMap);
-		_processing.setOutputs(_outputMap);
-		
+		//Run the model process
 		_processing.run();
-		
+
+		//Create the output doc
 		ExecuteResponseDocument _doc = ExecuteResponseDocument.Factory.newInstance();
 		ExecuteResponseType _executeResponse = _doc.addNewExecuteResponse();
 		
@@ -64,12 +52,14 @@ public class ExecuteOp extends WpsOperation {
 		StatusType _status = _executeResponse.addNewStatus();
 		_processing.getStatus().encode(_status);
 		
+		List<IOValueType> _outputParams = new ArrayList<IOValueType>();
 		ProcessOutputs _outputs = _executeResponse.addNewProcessOutputs();
-		for(String _outputKey : _processing.getOutput().keySet()){
-			for(ModelValue _outputValue : _processing.getOutput().get(_outputKey)){
-				_outputValue.encode(_outputs.addNewOutput());
+		for(String _outputKey : _processing.getOutputs().keySet()){
+			for(IOValueType _outputValue : _processing.getOutputs().get(_outputKey)){
+				_outputParams.add(_outputValue);
 			}
 		}
+		_executeResponse.getProcessOutputs().setOutputArray((IOValueType[])_outputParams.toArray(new IOValueType[0]));
 		
 		return _doc;
 	}
