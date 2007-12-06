@@ -1,10 +1,10 @@
 package cn.geodata.gml.define;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.jdom.Element;
 
-import cn.geodata.gml.GMLConfiguration;
 import cn.geodata.gml.UnsupportedType;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -33,7 +33,7 @@ public class PointDef extends AbstractParser {
 	}
 
 	@Override
-	public Element encode(Object obj) throws Exception {
+	public Element encode(Object obj) throws IOException {
 		if(this.canEncode(obj) == false){
 			throw new UnsupportedType(obj.toString());
 		}
@@ -50,7 +50,7 @@ public class PointDef extends AbstractParser {
 	}
 
 	@Override
-	public Object parse(Element ele) throws Exception {
+	public Object parse(Element ele) throws IOException {
 		if(this.canParse(ele) == false){
 			throw new UnsupportedType("Element " + ele.getName());
 		}

@@ -1,24 +1,27 @@
 package cn.geodata.gml.define;
 
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.FactoryRegistryException;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.AttributeType;
 import org.geotools.feature.AttributeTypeFactory;
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureType;
+import org.geotools.feature.IllegalAttributeException;
+import org.geotools.feature.SchemaException;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
 import cn.geodata.gml.FeatureParser;
-import cn.geodata.gml.ParserFinder;
-import cn.geodata.gml.ParserUtil;
 import cn.geodata.gml.UnsupportedType;
 
 import com.vividsolutions.jts.geom.LineString;
@@ -52,7 +55,7 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 	}
 
 	@Override
-	public Element encode(Object obj) throws Exception {
+	public Element encode(Object obj) throws IOException {
 		if(this.canEncode(obj) == false){
 			throw new UnsupportedType(obj.toString());
 		}
@@ -88,11 +91,11 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 	}
 
 	@Override
-	public Object parse(Element ele) throws Exception {
+	public Object parse(Element ele) throws IOException {
 		throw new UnsupportedOperationException("Feature does not support parse");
 	}
 	
-	public Feature parse(FeatureType featureType, Element ele) throws Exception {
+	public Feature parse(FeatureType featureType, Element ele) throws IOException {
 		Namespace _namespace = Namespace.getNamespace(featureType.getNamespace().toString());
 		
 		ArrayList<Object> _list = new ArrayList<Object>();
@@ -138,14 +141,18 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 				_list.add(this.getParserFinder().parse((Element)_child.getChildren().get(0)));
 			}
 			else{
-				throw new Exception("Unrecognized field:" + _attributeType.getLocalName() + " type:" + _attributeType.getBinding().getName());
+				throw new IOException("Unrecognized field:" + _attributeType.getLocalName() + " type:" + _attributeType.getBinding().getName());
 			}
 		}
 		
-		return featureType.create(_list.toArray(), ele.getAttributeValue("id"));
+		try {
+			return featureType.create(_list.toArray(), ele.getAttributeValue("fid"));
+		} catch (IllegalAttributeException e) {
+			throw new IOException(e);
+		}
 	}
 	
-	public FeatureType parseFeatureType(Element[] eles) throws Exception{
+	public FeatureType parseFeatureType(Element[] eles) throws IOException{
 		if(eles.length == 0){
 			throw new NullPointerException("No element inside");
 		}
@@ -162,14 +169,22 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 				_attributes.add(parseComplexElement(eles, _c.getName(), _c.getNamespace()));
 			}
 			else{
-				throw new Exception("Does not support complex field except GML");
+				throw new IOException("Does not support complex field except GML");
 			}
 		}
 		
-		return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType((AttributeType[])_attributes.toArray(new AttributeType[0]), _ele.getName(), new URI(_ele.getNamespace().getURI()));
+		try {
+			return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType((AttributeType[])_attributes.toArray(new AttributeType[0]), _ele.getName(), new URI(_ele.getNamespace().getURI()));
+		} catch (FactoryRegistryException e) {
+			throw new IOException(e);
+		} catch (SchemaException e) {
+			throw new IOException(e);
+		} catch (URISyntaxException e) {
+			throw new IOException(e);
+		}
 	}
 	
-	private AttributeType parseSimpleElement(Element[] eles, String eleName, Namespace namespace) throws Exception{
+	private AttributeType parseSimpleElement(Element[] eles, String eleName, Namespace namespace) throws IOException{
 		//int 0
 		//double 1
 		//string 2
@@ -196,7 +211,7 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 			case 2:
 				return AttributeTypeFactory.newAttributeType(eleName, String.class, true, _len);
 			default:
-				throw new Exception("Unknown type:" + _type);
+				throw new IOException("Unknown type:" + _type);
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package cn.geodata.gml.define;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -12,8 +13,6 @@ import org.geotools.feature.FeatureType;
 import org.jdom.Element;
 
 import cn.geodata.gml.FeatureParser;
-import cn.geodata.gml.ParserFinder;
-import cn.geodata.gml.ParserUtil;
 import cn.geodata.gml.UnsupportedType;
 
 public class FeatureCollectionDef extends AbstractParser {
@@ -38,7 +37,7 @@ public class FeatureCollectionDef extends AbstractParser {
 	}
 
 	@Override
-	public Element encode(Object obj) throws Exception {
+	public Element encode(Object obj) throws IOException {
 		if(this.canEncode(obj) == false){
 			throw new UnsupportedType(obj.toString());
 		}
@@ -63,7 +62,7 @@ public class FeatureCollectionDef extends AbstractParser {
 	}
 
 	@Override
-	public Object parse(Element ele) throws Exception {
+	public Object parse(Element ele) throws IOException {
 		if(this.canParse(ele) == false){
 			throw new UnsupportedType("Element " + ele.getName());
 		}

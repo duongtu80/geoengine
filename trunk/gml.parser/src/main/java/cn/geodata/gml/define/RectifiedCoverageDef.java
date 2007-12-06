@@ -3,6 +3,7 @@ package cn.geodata.gml.define;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -53,7 +54,7 @@ public class RectifiedCoverageDef extends AbstractParser {
 		return _txt.toString();
 	}
 	
-	protected Element encodeRectifiedGrid(GridCoverage2D coverage) throws Exception {
+	protected Element encodeRectifiedGrid(GridCoverage2D coverage) throws IOException {
 		GridGeometry _grid = coverage.getGridGeometry();
 		
 		Element _low = new Element("low", this.config.getUriGML());
@@ -96,7 +97,7 @@ public class RectifiedCoverageDef extends AbstractParser {
 		return _rectifiedGridDomain;
 	}
 	
-	protected Element encodeRangeSet(GridCoverage2D coverage) throws Exception {
+	protected Element encodeRangeSet(GridCoverage2D coverage) throws IOException {
 		RenderedImage _image = coverage.getRenderedImage();
 		SampleModel _sampleModel = _image.getSampleModel();
 //		log.info("Band number:" + _sampleModel.getNumBands());
@@ -148,7 +149,7 @@ public class RectifiedCoverageDef extends AbstractParser {
 	}
 
 	@Override
-	public Element encode(Object obj) throws Exception {
+	public Element encode(Object obj) throws IOException {
 		if(this.canEncode(obj) == false){
 			throw new UnsupportedType(obj.toString());
 		}
@@ -163,7 +164,7 @@ public class RectifiedCoverageDef extends AbstractParser {
 	}
 
 	@Override
-	public Object parse(Element ele) throws Exception {
+	public Object parse(Element ele) throws IOException {
 		if(this.canParse(ele) == false){
 			throw new UnsupportedType("Element " + ele.getName());
 		}

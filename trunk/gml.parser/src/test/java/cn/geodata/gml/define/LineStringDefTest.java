@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 
 public class LineStringDefTest extends TestCase {
-	private static Logger log = Logger.getAnonymousLogger();
+//	private static Logger log = Logger.getAnonymousLogger();
 
 	public void testParse() throws Exception {
 		GMLConfiguration _config = new GMLConfiguration();

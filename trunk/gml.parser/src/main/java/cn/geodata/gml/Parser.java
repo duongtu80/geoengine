@@ -1,6 +1,8 @@
 package cn.geodata.gml;
 
 
+import java.io.IOException;
+
 import org.jdom.Element;
 
 
@@ -10,8 +12,8 @@ public interface Parser {
 	boolean canParse(Element ele);
 	boolean canEncode(Object obj);
 	
-	Object parse(Element ele) throws Exception;
-	Element encode(Object obj) throws Exception;
+	Object parse(Element ele) throws IOException;
+	Element encode(Object obj) throws IOException;
 	GMLConfiguration getConfig();
 	void setConfig(GMLConfiguration config);
 	ParserFinder getParserFinder();

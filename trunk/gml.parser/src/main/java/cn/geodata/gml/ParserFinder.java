@@ -3,28 +3,14 @@ package cn.geodata.gml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.GeoTools;
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.AttributeTypeFactory;
-import org.geotools.feature.FeatureType;
 import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
-
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 import cn.geodata.gml.define.FeatureDef;
 
@@ -70,15 +56,15 @@ public class ParserFinder {
 		return persers;
 	}
 	
-	public Element encode(Object obj) throws Exception {
+	public Element encode(Object obj) throws IOException {
 		return this.findEncoder(obj).encode(obj);
 	}
 	
-	public Object parse(Element ele) throws Exception {
+	public Object parse(Element ele) throws IOException {
 		return this.findParser(ele).parse(ele);
 	}
 	
-	public Object parse(InputStream stream) throws Exception {
+	public Object parse(InputStream stream) throws IOException, JDOMException {
 		SAXBuilder _builder = new SAXBuilder();
 		return this.parse(_builder.build(stream).getRootElement());
 	}

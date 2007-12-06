@@ -1,5 +1,7 @@
 package cn.geodata.gml;
 
+import java.io.IOException;
+
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureType;
 import org.jdom.Element;
@@ -13,7 +15,7 @@ public interface FeatureParser {
 	 * @return Parsed feature
 	 * @throws Exception
 	 */
-	Feature parse(FeatureType featureType, Element ele) throws Exception;
+	Feature parse(FeatureType featureType, Element ele) throws IOException;
 	
 	/**
 	 * Try to create a FeatureType for the given elements
@@ -22,5 +24,5 @@ public interface FeatureParser {
 	 * @return
 	 * @throws Exception
 	 */
-	FeatureType parseFeatureType(Element[] eles) throws Exception;
+	FeatureType parseFeatureType(Element[] eles) throws IOException;
 }
