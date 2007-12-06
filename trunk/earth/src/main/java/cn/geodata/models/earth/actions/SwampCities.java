@@ -4,21 +4,24 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import net.opengeospatial.wps.ExecuteResponseDocument;
+import net.opengeospatial.wps.IOValueType;
+import net.opengeospatial.wps.InputDescriptionType;
+import net.opengeospatial.wps.ProcessDescriptionType;
 
-import org.apache.xmlbeans.XmlOptions;
-import org.geotools.catalog.wfs.WFSService;
-import org.geotools.data.wfs.WFSDataStore;
 import org.jdom.Element;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import cn.geodata.model.value.ComplexValueReference;
-import cn.geodata.model.value.LiteralValue;
-import cn.geodata.model.value.ModelValue;
+import cn.geodata.model.value.ModelValueParserFinder;
+import cn.geodata.model.value.ModelValueUtil;
 import cn.geodata.model.wps.WpsClient;
 
 public class SwampCities {
@@ -66,17 +69,34 @@ public class SwampCities {
 
 		log.info("Cities url:" + _citiesUrl.toString());
 
-		ModelValue[] _inputs = new ModelValue[2];
-		_inputs[0] = new LiteralValue("rise", "rise", "", this.seaLevel);
-		_inputs[1] = new ComplexValueReference("cities", "cities", "", _citiesUrl.toString(), "text/gml", "utf-8", null);
+		ProcessDescriptionType _processDesc = _client.describeProcess(new String[]{"swamp.cities"}).getProcessDescriptions().getProcessDescriptionArray(0);
 		
-		ExecuteResponseDocument _execute = _client.execute("SwampCities", _inputs);
+		Map<String, InputDescriptionType> _inputDefinitions = new HashMap<String, InputDescriptionType>();
+		for(InputDescriptionType _inputType : _processDesc.getDataInputs().getInputArray()){
+			_inputDefinitions.put(_inputType.getIdentifier().getStringValue(), _inputType);
+		}
+
+		ModelValueParserFinder _finder = ModelValueUtil.createParserFinder();
 		
-		XmlOptions _options = new XmlOptions();
+		List<IOValueType> _inputs = new ArrayList<IOValueType>();
+		
+		IOValueType _paramRise = ModelValueUtil.createInputValue(_inputDefinitions.get("rise"));
+		_paramRise.setLiteralValue(_finder.getDefaultLiteralEncoder().encodeLiteral(this.seaLevel));
+		_inputs.add(_paramRise);
+		
+		IOValueType _paramCities = ModelValueUtil.createInputValue(_inputDefinitions.get("cities"));
+		_paramCities.setComplexValueReference(_finder.getDefaultComplexReferenceEncoder().encodeGMLUrl(_citiesUrl.toString(), "utf-8"));
+		_inputs.add(_paramCities);
+		
+		ExecuteResponseDocument _execute = _client.execute(_processDesc.getIdentifier().getStringValue(), _inputs.toArray(new IOValueType[0]));
+		
+		
+//		XmlOptions _options = new XmlOptions();
 //		_options.setSaveUseOpenFrag();
-		_options.setSaveOuter();
+//		_options.setSaveOuter();
 		
 //		this.stream = _execute.getExecuteResponse().getProcessOutputs().getOutputArray(0).getComplexValue().newInputStream(_options);
+
 		Element _ele = (new DOMBuilder()).build((org.w3c.dom.Element)_execute.getExecuteResponse().getProcessOutputs().getOutputArray(0).getComplexValue().getDomNode());
 		
 		ByteArrayOutputStream _outStream = new ByteArrayOutputStream();
