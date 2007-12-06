@@ -3,8 +3,9 @@ package cn.geodata.models.sealevel.cities;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.logging.Logger;
+
+import net.opengeospatial.wps.IOValueType;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -19,13 +20,10 @@ import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.FeatureType;
 import org.geotools.feature.FeatureTypeFactory;
 import org.geotools.feature.SchemaException;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory2;
 
 import cn.geodata.model.GeoProcessing;
-import cn.geodata.model.value.ComplexValue;
-import cn.geodata.model.value.LiteralValue;
-import cn.geodata.model.value.ModelValue;
+import cn.geodata.model.value.ModelValueParserFinder;
+import cn.geodata.model.value.ModelValueUtil;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -35,9 +33,10 @@ public class SwampCities extends GeoProcessing {
 	protected FeatureType createFeatureType() throws FactoryRegistryException, SchemaException, URISyntaxException {
 		FeatureTypeFactory _factory = CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints());
 		
-		AttributeType[] _attrs = new AttributeType[2];
+		AttributeType[] _attrs = new AttributeType[3];
 		_attrs[0] = AttributeTypeFactory.newAttributeType("geom", Point.class);
 		_attrs[1] = AttributeTypeFactory.newAttributeType("rank", Integer.class);
+		_attrs[2] = AttributeTypeFactory.newAttributeType("name", String.class, true, 255);
 		
 		return _factory.newFeatureType(_attrs, "cities", new URI("http://www.unep.org"));
 	}
@@ -46,8 +45,9 @@ public class SwampCities extends GeoProcessing {
 	protected void execute() throws Exception {
 		log.info("Start model");
 		
-		double _rise = ((Double)((LiteralValue)this.getInputs().get("rise").get(0)).getValue()).floatValue();
-		FeatureCollection _cities = (FeatureCollection) this.getInputs().get("cities").get(0).getValue();
+		ModelValueParserFinder _finder = ModelValueUtil.createParserFinder();
+		double _rise = _finder.getDefaultLiteralParser().parseLiteralDouble(this.getInputs().get("rise").get(0).getLiteralValue());
+		FeatureCollection _cities = _finder.getDefaultComplexReferenceParser().parseFeatureCollection(this.getInputs().get("cities").get(0).getComplexValueReference());
 		
 		FeatureType _ft = this.createFeatureType();
 		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
@@ -56,7 +56,8 @@ public class SwampCities extends GeoProcessing {
 			while(_it.hasNext()){
 				Feature _f = _it.next();
 				if(((Double)_f.getAttribute("altitude")).doubleValue() < _rise){
-					_fs.add(_ft.create(new Object[] {_f.getDefaultGeometry(), 1}));
+					log.info("Feature Id:" + _f.getID());
+					_fs.add(_ft.create(new Object[] {_f.getDefaultGeometry(), 1, _f.getAttribute("CITY_NAME")}, _f.getID()));
 				}
 			}
 		}
@@ -70,10 +71,11 @@ public class SwampCities extends GeoProcessing {
 //		FeatureCollection _fs = this.getCities().getFeatures(_filter);
 		
 		log.info("Cities number:" + _fs.size());
-		ArrayList<ModelValue> _output = new ArrayList<ModelValue>();
-		_output.add(new ComplexValue("swamp", "", "", _fs));
 		
-		this.getOutput().put("swamp", _output);
+		IOValueType _output = ModelValueUtil.createOutputValue(this.getOutputDefinitions().get("swamp"));
+		_output.setComplexValue(_finder.getDefaultComplexEncoder().encodeFeatureCollection(_fs));
+		
+		this.getOutputs().get("swamp").add(_output);
 	}
 	
 	public FeatureSource getCities() throws IOException {

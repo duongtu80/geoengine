@@ -1,39 +1,39 @@
 package cn.geodata.models.sealevel.cities;
 
-import java.io.InputStream;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import net.opengeospatial.wps.ProcessDescriptionType;
+import net.opengeospatial.wps.ProcessDescriptionsDocument;
 import cn.geodata.model.GeoProcessing;
 import cn.geodata.model.ProcessingFactory;
 
 public class SwampCitiesFactory extends ProcessingFactory {
-
-	@Override
-	public String getDescription() {
-		return "Swamp cities";
+	private static Logger log = Logger.getAnonymousLogger();
+	private ProcessDescriptionType metadata;
+	
+	public SwampCitiesFactory() {
+		try {
+			this.metadata = ProcessDescriptionsDocument.Factory.parse(this.getClass().getResourceAsStream("/META-INF/metadata/swampCities.xml")).getProcessDescriptions().getProcessDescriptionArray(0);
+		}
+		catch (Exception e) {
+			log.log(Level.SEVERE, "Failed to parse the metadata", e);
+		}
 	}
-
-	@Override
-	public String getTitle() {
-		return "Swamp cities";
-	}
-
+	
 	@Override
 	public Map getImplementationHints() {
 		return null;
 	}
 
 	@Override
-	public String getIdentifier() {
-		return "SwampCities";
+	public ProcessDescriptionType getMetadata() {
+		return this.metadata;
 	}
 
 	@Override
-	public InputStream getMetadataStream() throws Exception {
-		return SwampCitiesFactory.class.getResourceAsStream("/META-INF/metadata/swampCities.xml");
-	}
-	@Override
-	public GeoProcessing createProcessing(Map<String, String> params)
+	public GeoProcessing createProcessInstance(Map<String, String> params)
 			throws Exception {
 		return new SwampCities();
 	}

@@ -41,6 +41,10 @@ import com.vividsolutions.jts.geom.Point;
 public class TestInitCities extends TestCase {
 	private static Logger log = Logger.getAnonymousLogger();
 	
+	public void testTest1() throws Exception {
+		
+	}
+	
 	public void atestCreateNewCitiesDataset() throws Exception {
 		FeatureSource _inputSource = this.getOriginalCities();
 		FeatureType _inputFeatureType = _inputSource.getSchema();

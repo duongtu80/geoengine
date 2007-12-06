@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wps:ProcessDescriptions xmlns:ows="http://www.opengeospatial.net/ows" xmlns:wps="http://www.opengeospatial.net/wps">
 	<wps:ProcessDescription>
-		<ows:Identifier>SwampCities</ows:Identifier>
-		<ows:Title>Swamp cities</ows:Title>
+		<ows:Identifier>swamp.cities</ows:Identifier>
+		<ows:Title>Swamp Cities</ows:Title>
 		<wps:DataInputs>
 			<wps:Input>
 				<ows:Identifier>rise</ows:Identifier>
