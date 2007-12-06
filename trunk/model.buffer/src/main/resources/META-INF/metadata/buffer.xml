@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wps:ProcessDescriptions xmlns:ows="http://www.opengeospatial.net/ows" xmlns:wps="http://www.opengeospatial.net/wps">
 	<wps:ProcessDescription>
-		<ows:Identifier>Buffer</ows:Identifier>
+		<ows:Identifier>buffer</ows:Identifier>
 		<ows:Title>Buffer</ows:Title>
 		<wps:DataInputs>
 			<wps:Input>
-				<ows:Identifier>Geometry</ows:Identifier>
+				<ows:Identifier>geometry</ows:Identifier>
 				<ows:Title>Geometry</ows:Title>
 				<wps:ComplexData defaultSchema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#Polygon" defaultFormat="text/xml" defaultEncoding="UTF-8">
 					<wps:SupportedComplexData>
@@ -22,7 +22,7 @@
 				<wps:MinimumOccurs>0</wps:MinimumOccurs>
 			</wps:Input>
 			<wps:Input>
-				<ows:Identifier>Distance</ows:Identifier>
+				<ows:Identifier>distance</ows:Identifier>
 				<ows:Title>Distance</ows:Title>
 				<wps:LiteralData>
 					<ows:DataType>xs:float</ows:DataType>
@@ -33,7 +33,7 @@
 		</wps:DataInputs>
 		<wps:ProcessOutputs>
 			<wps:Output>
-				<ows:Identifier>BufferedGeometry</ows:Identifier>
+				<ows:Identifier>result</ows:Identifier>
 				<ows:Title>BufferedGeometry</ows:Title>
 				<wps:ComplexOutput defaultSchema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd#Polygon" defaultFormat="text/xml" defaultEncoding="UTF-8">
 					<wps:SupportedComplexData>

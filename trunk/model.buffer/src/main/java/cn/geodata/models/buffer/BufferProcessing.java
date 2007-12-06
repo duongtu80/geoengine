@@ -2,12 +2,11 @@ package cn.geodata.models.buffer;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
+import net.opengeospatial.wps.IOValueType;
 import cn.geodata.model.GeoProcessing;
-import cn.geodata.model.value.ComplexValue;
-import cn.geodata.model.value.LiteralValue;
-import cn.geodata.model.value.ModelValue;
+import cn.geodata.model.value.ModelValueParserFinder;
+import cn.geodata.model.value.ModelValueUtil;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -18,13 +17,11 @@ public class BufferProcessing extends GeoProcessing {
 
 	@Override
 	protected void execute() throws Exception {
-//		Parser _parser = new Parser(new GMLConfiguration());
-//		GmlReference _ref = new GmlReference(new URI("http://www.geodata.cn"));
-//
-		Float _distance = (Float)((LiteralValue)this.getInputs().get("Distance").get(0)).getValue();
-//		MultiPolygon _polygon = (MultiPolygon)((ComplexValue)this.getInputs().get("Geometry")).getValue();
+		ModelValueParserFinder _finder = ModelValueUtil.createParserFinder();
 		
-		Geometry _geometry = (Geometry)((ComplexValue)this.getInputs().get("Geometry").get(0)).getValue();
+		double _distance = _finder.getDefaultLiteralParser().parseLiteralDouble(this.getInputs().get("distance").get(0).getLiteralValue());
+		Geometry _geometry = _finder.getDefaultComplexParser().parseGeometry(this.getInputs().get("geometry").get(0).getComplexValue());
+
 		if (_geometry instanceof MultiPolygon) {
 			MultiPolygon _polygons = (MultiPolygon) _geometry;
 			Collection<Polygon> _col = new ArrayList<Polygon>();
@@ -36,21 +33,16 @@ public class BufferProcessing extends GeoProcessing {
 			GeometryFactory _geometryFactory = new GeometryFactory();
 			MultiPolygon _result = _geometryFactory.createMultiPolygon((Polygon[])_col.toArray(new Polygon[0]));
 			
-			ArrayList<ModelValue> _output = new ArrayList<ModelValue>();
-			_output.add(new ComplexValue("BufferedGeometry", "BufferedGeometry", null ,_result));
+			IOValueType _output = ModelValueUtil.createOutputValue(this.getOutputDefinitions().get("result"));
+			_output.setComplexValue(_finder.getDefaultComplexEncoder().encodeGeometry(_result));
 			
-			this.getOutput().put("BufferedGeometry", _output);
+			this.getOutputs().get("result").add(_output);
 		}
 		else if(_geometry instanceof Polygon) {
 			Polygon _polygon = (Polygon) _geometry;
-			
-			ArrayList<ModelValue> _output = new ArrayList<ModelValue>();
-			_output.add(new ComplexValue("BufferedGeometry", "BufferedGeometry", null ,_polygon.buffer(_distance.floatValue())));
-			
-			this.getOutput().put("BufferedGeometry", _output);
+
+			IOValueType _output = ModelValueUtil.createOutputValue(this.getOutputDefinitions().get("result"));
+			_output.setComplexValue(_finder.getDefaultComplexEncoder().encodeGeometry(_polygon.buffer(_distance)));
 		}
-		
-//		this.getOutput().put("BufferedGeometry", new ComplexValue("BufferedGeometry", "BufferedGeometry", null ,_polygon.buffer(_distance.floatValue())));
-//		this.getOutput().put("BufferedGeometry", _ref);
 	}
 }
