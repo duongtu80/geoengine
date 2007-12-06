@@ -6,12 +6,16 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.opengeospatial.wps.IOValueType;
+import net.opengeospatial.wps.InputDescriptionType;
+import net.opengeospatial.wps.OutputDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionsDocument;
 
@@ -24,27 +28,52 @@ import org.geotools.factory.Factory;
  */
 public abstract class ProcessingFactory implements Factory {
 	private static Logger log = Logger.getAnonymousLogger();
-	protected ProcessDescriptionType metadata;	
 
-	public ProcessingFactory() {
-		try {
-			this.metadata = ProcessDescriptionsDocument.Factory.parse(this.getMetadataStream()).getProcessDescriptions().getProcessDescriptionArray(0);
+	public String getDescription() {
+		return this.getMetadata().getAbstract();
+	}
+
+	public String getTitle() {
+		return this.getMetadata().getTitle();
+	}
+
+	public String getIdentifier() {
+		return this.getMetadata().getIdentifier().getStringValue();
+	}
+
+	public abstract ProcessDescriptionType getMetadata();
+	
+	public GeoProcessing createProcess(Map<String, String> params) throws Exception {
+		GeoProcessing _process = this.createProcessInstance(params);
+		
+		//Set metadata
+		_process.setMetadata(this.getMetadata());
+		
+		//Initialize the output data types and datasets
+		Map<String, OutputDescriptionType> _outputDefinitions = new HashMap<String, OutputDescriptionType>();
+		Map<String, List<IOValueType>> _outputs = new HashMap<String, List<IOValueType>>();
+		for(OutputDescriptionType _outputType : this.getMetadata().getProcessOutputs().getOutputArray()){
+			_outputs.put(_outputType.getIdentifier().getStringValue(), new ArrayList<IOValueType>());
+			_outputDefinitions.put(_outputType.getIdentifier().getStringValue(), _outputType);
 		}
-		catch (Exception e) {
-			log.log(Level.SEVERE, "Failed to parse the metadata", e);
+		
+		_process.setOutputDefinitions(_outputDefinitions);
+		_process.setOutputs(_outputs);
+		
+		//Initialize the input data types and datasets
+		Map<String, InputDescriptionType> _inputDefinitions = new HashMap<String, InputDescriptionType>();
+		Map<String, List<IOValueType>> _inputs = new HashMap<String, List<IOValueType>>();
+		for(InputDescriptionType _inputType : this.getMetadata().getDataInputs().getInputArray()){
+			_inputs.put(_inputType.getIdentifier().getStringValue(), new ArrayList<IOValueType>());
+			_inputDefinitions.put(_inputType.getIdentifier().getStringValue(), _inputType);
 		}
+		_process.setInputDefinitions(_inputDefinitions);
+		_process.setInputs(_inputs);
+		
+		return _process;
 	}
 	
-	public abstract String getIdentifier();
-	public abstract String getTitle();
-	public abstract String getDescription();
-	public abstract InputStream getMetadataStream() throws Exception;
-
-	public ProcessDescriptionType getMetadata(){
-		return this.metadata;
-	}
-	
-	public abstract GeoProcessing createProcessing(Map<String, String> params) throws Exception;
+	protected abstract GeoProcessing createProcessInstance(Map<String, String> params) throws Exception;
 
     /**
      * Param class

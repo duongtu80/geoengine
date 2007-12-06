@@ -2,7 +2,6 @@ package cn.geodata.model.wps;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,15 +11,8 @@ import net.opengeospatial.ows.ExceptionReportDocument;
 import net.opengeospatial.ows.ExceptionType;
 import net.opengeospatial.ows.ExceptionReportDocument.ExceptionReport;
 import net.opengeospatial.wps.DescribeProcessDocument;
-import net.opengeospatial.wps.ExecuteResponseDocument;
-import net.opengeospatial.wps.IOValueType;
 import net.opengeospatial.wps.InputDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionType;
-
-import cn.geodata.model.value.ComplexValue;
-import cn.geodata.model.value.LiteralValue;
-import cn.geodata.model.value.ModelValue;
-import cn.geodata.model.value.ValueParser;
 
 public class WpsClientTest extends TestCase {
 	public void atestTest1() throws Exception {

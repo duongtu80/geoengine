@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="modelValue.paserFinder" class="cn.geodata.model.value.ModelValueParserFinder">
+		<property name="defaultLiteralEncoder" ref="literal.normal" />
+		<property name="defaultLiteralParser" ref="literal.normal" />
+		<property name="defaultComplexEncoder" ref="complex.gml" />
+		<property name="defaultComplexParser" ref="complex.gml" />
+		<property name="defaultComplexReferenceEncoder" ref="complexReference.gml" />
+		<property name="defaultComplexReferenceParser" ref="complexReference.gml" />
+	</bean>
+	
+	<bean id="literal.normal" class="cn.geodata.model.value.literal.LiteralValueParser">
+	</bean>
+	
+	<bean id="complex.gml" class="cn.geodata.model.value.gml.GMLComplexValueParser">
+	</bean>
+	
+	<bean id="complexReference.gml" class="cn.geodata.model.value.gml.GMLComplexReferenceParser">
+	</bean>
+</beans>

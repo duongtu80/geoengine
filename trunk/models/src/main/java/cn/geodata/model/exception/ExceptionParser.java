@@ -6,14 +6,14 @@ import net.opengeospatial.ows.ExceptionReportDocument.ExceptionReport;
 public class ExceptionParser {
 	
 	/**
-	 * 从DOM解析为可抛出的异常对象
+	 * Parse exeception report
 	 * @param report
 	 * @return
 	 * @throws Exception
 	 */
 	public static ProcessingException parse(ExceptionReport report) throws Exception{
 		if(report.getExceptionArray().length != 1){
-			throw new Exception("平台现在只支持单异常报告");
+			throw new Exception("Only support single exception report");
 		}
 		
 		ExceptionType _exception = report.getExceptionArray(0);
@@ -38,7 +38,7 @@ public class ExceptionParser {
 			return new VersionNegotiationFailedException(_exception);
 		}
 		else{
-			throw new Exception("不支持的WPS异常类型:" + _code);
+			throw new Exception("Unsupported exception:" + _code);
 		}
 	}
 }

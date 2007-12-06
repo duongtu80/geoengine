@@ -10,6 +10,7 @@ import net.opengeospatial.wps.DataInputsType;
 import net.opengeospatial.wps.DescribeProcessDocument;
 import net.opengeospatial.wps.ExecuteDocument;
 import net.opengeospatial.wps.ExecuteResponseDocument;
+import net.opengeospatial.wps.IOValueType;
 import net.opengeospatial.wps.ProcessDescriptionsDocument;
 import net.opengeospatial.wps.DescribeProcessDocument.DescribeProcess;
 import net.opengeospatial.wps.ExecuteDocument.Execute;
@@ -22,7 +23,6 @@ import org.apache.xmlbeans.XmlOptions;
 
 import cn.geodata.model.WPS;
 import cn.geodata.model.exception.ExceptionParser;
-import cn.geodata.model.value.ModelValue;
 
 public class WpsClient {
 	private static Logger Log = Logger.getLogger(WpsClient.class);
@@ -164,7 +164,7 @@ public class WpsClient {
 		}
 	}
 	
-	public ExecuteResponseDocument execute(String identifier, ModelValue[] inputParams) throws Exception {
+	public ExecuteResponseDocument execute(String identifier, IOValueType[] inputParams) throws Exception {
 		ExecuteDocument _requestDoc = ExecuteDocument.Factory.newInstance();
 		
 		Execute _execute = _requestDoc.addNewExecute();
@@ -173,9 +173,7 @@ public class WpsClient {
 		_execute.addNewIdentifier().setStringValue(identifier);
 		
 		DataInputsType _inputsType = _execute.addNewDataInputs();
-		for(ModelValue _input : inputParams){
-			_input.encode(_inputsType.addNewInput());
-		}
+		_inputsType.setInputArray(inputParams);
 		
 		Log.info("Request" + _requestDoc.toString());
 		
