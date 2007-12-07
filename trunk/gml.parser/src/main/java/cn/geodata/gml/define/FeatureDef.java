@@ -22,6 +22,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 
 import cn.geodata.gml.FeatureParser;
+import cn.geodata.gml.ParserUtil;
 import cn.geodata.gml.UnsupportedType;
 
 import com.vividsolutions.jts.geom.LineString;
@@ -34,7 +35,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 
 public class FeatureDef extends AbstractParser implements FeatureParser {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = ParserUtil.getLogger();
 
 	@Override
 	public boolean canEncode(Object obj) {

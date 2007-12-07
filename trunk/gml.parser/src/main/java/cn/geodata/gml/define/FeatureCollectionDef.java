@@ -13,10 +13,11 @@ import org.geotools.feature.FeatureType;
 import org.jdom.Element;
 
 import cn.geodata.gml.FeatureParser;
+import cn.geodata.gml.ParserUtil;
 import cn.geodata.gml.UnsupportedType;
 
 public class FeatureCollectionDef extends AbstractParser {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = ParserUtil.getLogger();
 
 	@Override
 	public boolean canEncode(Object obj) {

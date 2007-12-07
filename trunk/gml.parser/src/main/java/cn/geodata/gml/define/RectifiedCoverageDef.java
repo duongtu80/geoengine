@@ -11,6 +11,7 @@ import org.geotools.geometry.Envelope2D;
 import org.jdom.Element;
 import org.opengis.coverage.grid.GridGeometry;
 
+import cn.geodata.gml.ParserUtil;
 import cn.geodata.gml.UnsupportedType;
 
 
@@ -22,7 +23,7 @@ import cn.geodata.gml.UnsupportedType;
  *
  */
 public class RectifiedCoverageDef extends AbstractParser {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = ParserUtil.getLogger();
 	
 	@Override
 	public boolean canEncode(Object obj) {

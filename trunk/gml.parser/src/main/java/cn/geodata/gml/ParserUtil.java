@@ -1,6 +1,8 @@
 package cn.geodata.gml;
 
 
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 
@@ -20,5 +22,9 @@ public class ParserUtil {
 	 */
 	public static ParserFinder createParserFinder() {
 		return (ParserFinder) createBeanFactory().getBean("gml.parserFinder");
+	}
+	
+	public static Logger getLogger() {
+		return Logger.getLogger("cn.geodata.models.parser.gml");
 	}
 }

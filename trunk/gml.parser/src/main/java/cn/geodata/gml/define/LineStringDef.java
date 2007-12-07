@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.jdom.Element;
 
+import cn.geodata.gml.ParserUtil;
 import cn.geodata.gml.UnsupportedType;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -13,7 +14,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 
 public class LineStringDef extends AbstractParser {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = ParserUtil.getLogger();
 
 	@Override
 	public boolean canEncode(Object obj) {
