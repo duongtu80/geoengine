@@ -21,14 +21,14 @@ import org.geotools.feature.FeatureType;
 import org.geotools.feature.FeatureTypeFactory;
 import org.geotools.feature.SchemaException;
 
-import cn.geodata.model.GeoProcessing;
-import cn.geodata.model.value.ModelValueParserFinder;
-import cn.geodata.model.value.ModelValueUtil;
+import cn.geodata.models.AbstractProcessing;
+import cn.geodata.models.value.ModelValueParserFinder;
+import cn.geodata.models.value.ModelValueUtil;
 
 import com.vividsolutions.jts.geom.Point;
 
-public class SwampCities extends GeoProcessing {
-	private static Logger log = Logger.getAnonymousLogger();
+public class SwampCities extends AbstractProcessing {
+	private static Logger log = Logger.getLogger("cn.geodata.models.sealevel");
 
 	protected FeatureType createFeatureType() throws FactoryRegistryException, SchemaException, URISyntaxException {
 		FeatureTypeFactory _factory = CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints());
@@ -42,7 +42,7 @@ public class SwampCities extends GeoProcessing {
 	}
 	
 	@Override
-	protected void execute() throws Exception {
+	public void execute() throws Exception {
 		log.info("Start model");
 		
 		ModelValueParserFinder _finder = ModelValueUtil.createParserFinder();
@@ -72,7 +72,7 @@ public class SwampCities extends GeoProcessing {
 		
 		log.info("Cities number:" + _fs.size());
 		
-		IOValueType _output = ModelValueUtil.createOutputValue(this.getOutputDefinitions().get("swamp"));
+		IOValueType _output = ModelValueUtil.createOutputValue(this.outputDefinitions.get("swamp"));
 		_output.setComplexValue(_finder.getDefaultComplexEncoder().encodeFeatureCollection(_fs));
 		
 		this.getOutputs().get("swamp").add(_output);

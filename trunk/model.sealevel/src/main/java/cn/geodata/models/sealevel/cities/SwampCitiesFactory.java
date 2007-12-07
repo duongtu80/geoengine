@@ -6,10 +6,10 @@ import java.util.logging.Logger;
 
 import net.opengeospatial.wps.ProcessDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionsDocument;
-import cn.geodata.model.GeoProcessing;
-import cn.geodata.model.ProcessingFactory;
+import cn.geodata.models.AbstractProcessingFactory;
+import cn.geodata.models.Processing;
 
-public class SwampCitiesFactory extends ProcessingFactory {
+public class SwampCitiesFactory extends AbstractProcessingFactory {
 	private static Logger log = Logger.getAnonymousLogger();
 	private ProcessDescriptionType metadata;
 	
@@ -23,17 +23,17 @@ public class SwampCitiesFactory extends ProcessingFactory {
 	}
 	
 	@Override
-	public Map getImplementationHints() {
-		return null;
-	}
-
-	@Override
 	public ProcessDescriptionType getMetadata() {
 		return this.metadata;
 	}
 
 	@Override
-	public GeoProcessing createProcessInstance(Map<String, String> params)
+	public Map getImplementationHints() {
+		return null;
+	}
+
+	@Override
+	public Processing createProcessing(Map<String, String> params)
 			throws Exception {
 		return new SwampCities();
 	}
