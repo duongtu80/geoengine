@@ -13,11 +13,12 @@ import net.opengeospatial.wps.impl.ExecuteDocumentImpl;
 
 import org.apache.xmlbeans.XmlObject;
 
-import cn.geodata.model.GeoProcessing;
-import cn.geodata.model.ProcessingFactory;
-import cn.geodata.model.WPS;
-import cn.geodata.model.exception.OptionNotSupportedException;
-import cn.geodata.model.util.ProcessingLibray;
+import cn.geodata.models.ProcessingFactory;
+import cn.geodata.models.ProcessingFactoryWarp;
+import cn.geodata.models.ProcessingWrap;
+import cn.geodata.models.WPS;
+import cn.geodata.models.exception.OptionNotSupportedException;
+import cn.geodata.models.util.ProcessingLibray;
 
 public class ExecuteOp extends WpsOperation {
 
@@ -32,34 +33,35 @@ public class ExecuteOp extends WpsOperation {
 
 		//Initialize input parameters
 		String _processId = _execute.getIdentifier().getStringValue();
+		
 		ProcessingFactory _model = ProcessingLibray.createInstance().getModelFactories().get(_processId);
 		
-		GeoProcessing _processing = _model.createProcess(null);
+		ProcessingWrap _processWrap = (new ProcessingFactoryWarp()).createProcess(_model, null);
 		for(IOValueType _inputParam : _execute.getDataInputs().getInputArray()){
-			_processing.getInputs().get(_inputParam.getIdentifier().getStringValue()).add(_inputParam);
+			_processWrap.getProcess().getInputs().get(_inputParam.getIdentifier().getStringValue()).add(_inputParam);
 		}
 		
 		//Run the model process
-		_processing.run();
+		_processWrap.run();
 
 		//Create the output doc
 		ExecuteResponseDocument _doc = ExecuteResponseDocument.Factory.newInstance();
-		ExecuteResponseType _executeResponse = _doc.addNewExecuteResponse();
+		ExecuteResponseType _response = _doc.addNewExecuteResponse();
 		
-		_executeResponse.setVersion(WPS.WPS_VERSION);
-		_executeResponse.setIdentifier(_execute.getIdentifier());
+		_response.setVersion(WPS.WPS_VERSION);
+		_response.setIdentifier(_execute.getIdentifier());
 		
-		StatusType _status = _executeResponse.addNewStatus();
-		_processing.getStatus().encode(_status);
+		StatusType _status = _response.addNewStatus();
+		_processWrap.getStatus().encode(_status);
 		
+		ProcessOutputs _outputs = _response.addNewProcessOutputs();
 		List<IOValueType> _outputParams = new ArrayList<IOValueType>();
-		ProcessOutputs _outputs = _executeResponse.addNewProcessOutputs();
-		for(String _outputKey : _processing.getOutputs().keySet()){
-			for(IOValueType _outputValue : _processing.getOutputs().get(_outputKey)){
+		for(String _outputKey : _processWrap.getProcess().getOutputs().keySet()){
+			for(IOValueType _outputValue : _processWrap.getProcess().getOutputs().get(_outputKey)){
 				_outputParams.add(_outputValue);
 			}
 		}
-		_executeResponse.getProcessOutputs().setOutputArray((IOValueType[])_outputParams.toArray(new IOValueType[0]));
+		_outputs.setOutputArray((IOValueType[])_outputParams.toArray(new IOValueType[0]));
 		
 		return _doc;
 	}

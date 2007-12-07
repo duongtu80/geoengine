@@ -8,7 +8,7 @@ import net.opengeospatial.wps.ProcessBriefType;
 import net.opengeospatial.wps.ProcessDescriptionType;
 import net.opengeospatial.wps.CapabilitiesDocument.Capabilities;
 import net.opengeospatial.wps.ProcessOfferingsDocument.ProcessOfferings;
-import cn.geodata.model.util.ProcessingLibray;
+import cn.geodata.models.util.ProcessingLibray;
 
 public class GetCapabilities {
 	private static Logger log = Logger.getAnonymousLogger();

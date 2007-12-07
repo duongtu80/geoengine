@@ -10,8 +10,8 @@ import net.opengeospatial.wps.impl.DescribeProcessDocumentImpl;
 
 import org.apache.xmlbeans.XmlObject;
 
-import cn.geodata.model.ProcessingFactory;
-import cn.geodata.model.util.ProcessingLibray;
+import cn.geodata.models.ProcessingFactory;
+import cn.geodata.models.util.ProcessingLibray;
 
 public class DescribeProcessOp extends WpsOperation {
 

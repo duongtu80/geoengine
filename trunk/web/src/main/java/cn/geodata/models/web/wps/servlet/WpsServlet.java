@@ -2,6 +2,8 @@ package cn.geodata.models.web.wps.servlet;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
@@ -16,15 +18,14 @@ import net.opengeospatial.wps.impl.DescribeProcessDocumentImpl;
 import net.opengeospatial.wps.impl.ExecuteDocumentImpl;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlObject;
 
-import cn.geodata.model.WPS;
-import cn.geodata.model.exception.InvalidParameterValueException;
-import cn.geodata.model.exception.MissingParameterValueException;
-import cn.geodata.model.exception.NoApplicableCodeException;
-import cn.geodata.model.exception.ProcessingException;
-import cn.geodata.model.exception.VersionNegotiationFailedException;
+import cn.geodata.models.WPS;
+import cn.geodata.models.exception.InvalidParameterValueException;
+import cn.geodata.models.exception.MissingParameterValueException;
+import cn.geodata.models.exception.NoApplicableCodeException;
+import cn.geodata.models.exception.ProcessingException;
+import cn.geodata.models.exception.VersionNegotiationFailedException;
 import cn.geodata.models.web.wps.operation.DescribeProcessOp;
 import cn.geodata.models.web.wps.operation.ExecuteOp;
 import cn.geodata.models.web.wps.operation.GetCapabilitiesOp;
@@ -36,7 +37,7 @@ import cn.geodata.models.web.wps.operation.GetCapabilitiesOp;
 public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.servlet.Servlet {
 	static final long serialVersionUID = 1L;
 	
-	private static Logger log = Logger.getLogger(WpsServlet.class);
+	private static Logger log = Logger.getAnonymousLogger();
 
 	/* (non-Java-doc)
 	 * @see javax.servlet.http.HttpServlet#HttpServlet()
@@ -74,12 +75,12 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 			
 			XmlObject _doc = null;
 			if(_request.equalsIgnoreCase("GetCapabilities")){
-				log.debug("GetCapabilities...");
+				log.info("GetCapabilities...");
 				
 				_doc = (new GetCapabilitiesOp()).execute(null);
 			}
 			else if(_request.equalsIgnoreCase("DescribeProcess")){
-				log.debug("DescribeProcess...");
+				log.info("DescribeProcess...");
 				
 				if(request.getParameter("Identifier") == null){
 					throw new MissingParameterValueException("Identifier");
@@ -109,14 +110,14 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 			this.outputDocument(_doc, response, false);
 		}
 		catch(ProcessingException err){
-			log.error("Failed to call the operation", err);
+			log.log(Level.SEVERE, "Failed to call the operation", err);
 			ExceptionReportDocument _errDoc = ExceptionReportDocument.Factory.newInstance();
 			err.encode(_errDoc.addNewExceptionReport().addNewException());
 			
 			this.outputDocument(_errDoc, response, true);
 		}
 		catch(Exception err){
-			log.error("Unknown error", err);
+			log.log(Level.SEVERE, "Unknown error", err);
 			ExceptionReportDocument _errDoc = ExceptionReportDocument.Factory.newInstance();
 			new NoApplicableCodeException(err.getMessage()).encode(_errDoc.addNewExceptionReport().addNewException());
 			
@@ -147,14 +148,14 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 			this.outputDocument(_outDoc, response, false);
 		}
 		catch(ProcessingException err){
-			log.error("Failed to call the operation", err);
+			log.log(Level.SEVERE, "Failed to call the operation", err);
 			ExceptionReportDocument _errDoc = ExceptionReportDocument.Factory.newInstance();
 			err.encode(_errDoc.addNewExceptionReport().addNewException());
 			
 			this.outputDocument(_errDoc, response, true);
 		}
 		catch(Exception err){
-			log.error("Unknown error", err);
+			log.log(Level.SEVERE, "Unknown error", err);
 			ExceptionReportDocument _errDoc = ExceptionReportDocument.Factory.newInstance();
 			new NoApplicableCodeException(err.getMessage()).encode(_errDoc.addNewExceptionReport().addNewException());
 			
@@ -185,7 +186,7 @@ public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.
 		try {
 			element.save(response.getOutputStream());
 		} catch (IOException e) {
-			log.warn("Failed to output", e);
+			log.log(Level.WARNING, "Failed to output", e);
 		}
 	}
 }

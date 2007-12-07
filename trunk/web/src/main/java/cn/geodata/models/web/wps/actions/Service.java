@@ -4,9 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
 
-import cn.geodata.model.exception.InvalidParameterValueException;
-import cn.geodata.model.exception.MissingParameterValueException;
-import cn.geodata.model.exception.VersionNegotiationFailedException;
+import cn.geodata.models.exception.InvalidParameterValueException;
+import cn.geodata.models.exception.MissingParameterValueException;
+import cn.geodata.models.exception.VersionNegotiationFailedException;
 
 public class Service implements ServletRequestAware {
 	

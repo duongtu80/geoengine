@@ -25,7 +25,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.xmlbeans.XmlObject;
 
-import cn.geodata.model.util.ProcessingLibray;
+import cn.geodata.models.util.ProcessingLibray;
 import cn.geodata.models.web.util.Util;
 
 public class GetCapabilitiesOp extends WpsOperation {
