@@ -2,6 +2,7 @@ package cn.geodata.models.web.wps.operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import net.opengeospatial.wps.ExecuteResponseDocument;
 import net.opengeospatial.wps.ExecuteResponseType;
@@ -21,6 +22,7 @@ import cn.geodata.models.exception.OptionNotSupportedException;
 import cn.geodata.models.util.ProcessingLibray;
 
 public class ExecuteOp extends WpsOperation {
+	private static Logger log = Logger.getLogger("cn.geodata.models.web");
 
 	@Override
 	public XmlObject execute(XmlObject input) throws Exception {

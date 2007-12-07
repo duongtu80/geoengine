@@ -1,6 +1,7 @@
 package cn.geodata.models.web.wps.operation;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import net.opengeospatial.ows.CodeType;
 import net.opengeospatial.wps.ProcessDescriptionType;
@@ -14,6 +15,7 @@ import cn.geodata.models.ProcessingFactory;
 import cn.geodata.models.util.ProcessingLibray;
 
 public class DescribeProcessOp extends WpsOperation {
+	private static Logger log = Logger.getLogger("cn.geodata.models.web");
 
 	@Override
 	public XmlObject execute(XmlObject input) throws Exception {

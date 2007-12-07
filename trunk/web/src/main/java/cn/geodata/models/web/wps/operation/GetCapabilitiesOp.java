@@ -29,7 +29,7 @@ import cn.geodata.models.util.ProcessingLibray;
 import cn.geodata.models.web.util.Util;
 
 public class GetCapabilitiesOp extends WpsOperation {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = Logger.getLogger("cn.geodata.models.web");
 
 	@Override
 	public XmlObject execute(XmlObject input) throws Exception {

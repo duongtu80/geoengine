@@ -37,7 +37,7 @@ import cn.geodata.models.web.wps.operation.GetCapabilitiesOp;
 public class WpsServlet extends javax.servlet.http.HttpServlet implements javax.servlet.Servlet {
 	static final long serialVersionUID = 1L;
 	
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = Logger.getLogger("cn.geodata.models.web");
 
 	/* (non-Java-doc)
 	 * @see javax.servlet.http.HttpServlet#HttpServlet()
