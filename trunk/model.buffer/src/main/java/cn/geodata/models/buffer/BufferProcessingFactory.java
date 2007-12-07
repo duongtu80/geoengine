@@ -6,10 +6,10 @@ import java.util.logging.Logger;
 
 import net.opengeospatial.wps.ProcessDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionsDocument;
-import cn.geodata.model.GeoProcessing;
-import cn.geodata.model.ProcessingFactory;
+import cn.geodata.models.AbstractProcessingFactory;
+import cn.geodata.models.Processing;
 
-public class BufferProcessingFactory extends ProcessingFactory {
+public class BufferProcessingFactory extends AbstractProcessingFactory {
 	private static Logger log = Logger.getAnonymousLogger();
 	
 	private ProcessDescriptionType metadata;
@@ -34,7 +34,7 @@ public class BufferProcessingFactory extends ProcessingFactory {
 	}
 
 	@Override
-	protected GeoProcessing createProcessInstance(Map<String, String> params)
+	public Processing createProcessing(Map<String, String> params)
 			throws Exception {
 		return new BufferProcessing();
 	}

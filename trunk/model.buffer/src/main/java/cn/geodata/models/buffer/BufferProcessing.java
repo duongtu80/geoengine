@@ -2,21 +2,23 @@ package cn.geodata.models.buffer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import net.opengeospatial.wps.IOValueType;
-import cn.geodata.model.GeoProcessing;
-import cn.geodata.model.value.ModelValueParserFinder;
-import cn.geodata.model.value.ModelValueUtil;
+import cn.geodata.models.AbstractProcessing;
+import cn.geodata.models.value.ModelValueParserFinder;
+import cn.geodata.models.value.ModelValueUtil;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
-public class BufferProcessing extends GeoProcessing {
-
+public class BufferProcessing extends AbstractProcessing {
+	private static Logger log = Logger.getLogger("cn.geodata.models.buffer");
+	
 	@Override
-	protected void execute() throws Exception {
+	public void execute() throws Exception {
 		ModelValueParserFinder _finder = ModelValueUtil.createParserFinder();
 		
 		double _distance = _finder.getDefaultLiteralParser().parseLiteralDouble(this.getInputs().get("distance").get(0).getLiteralValue());
@@ -33,7 +35,7 @@ public class BufferProcessing extends GeoProcessing {
 			GeometryFactory _geometryFactory = new GeometryFactory();
 			MultiPolygon _result = _geometryFactory.createMultiPolygon((Polygon[])_col.toArray(new Polygon[0]));
 			
-			IOValueType _output = ModelValueUtil.createOutputValue(this.getOutputDefinitions().get("result"));
+			IOValueType _output = ModelValueUtil.createOutputValue(this.outputDefinitions.get("result"));
 			_output.setComplexValue(_finder.getDefaultComplexEncoder().encodeGeometry(_result));
 			
 			this.getOutputs().get("result").add(_output);
@@ -41,7 +43,7 @@ public class BufferProcessing extends GeoProcessing {
 		else if(_geometry instanceof Polygon) {
 			Polygon _polygon = (Polygon) _geometry;
 
-			IOValueType _output = ModelValueUtil.createOutputValue(this.getOutputDefinitions().get("result"));
+			IOValueType _output = ModelValueUtil.createOutputValue(this.outputDefinitions.get("result"));
 			_output.setComplexValue(_finder.getDefaultComplexEncoder().encodeGeometry(_polygon.buffer(_distance)));
 		}
 	}
