@@ -30,9 +30,9 @@ import org.geotools.feature.FeatureType;
 import org.geotools.feature.FeatureTypeFactory;
 import org.geotools.feature.SchemaException;
 
-import cn.geodata.model.value.ModelValueParserFinder;
-import cn.geodata.model.value.ModelValueUtil;
-import cn.geodata.model.wps.WpsClient;
+import cn.geodata.models.value.ModelValueParserFinder;
+import cn.geodata.models.value.ModelValueUtil;
+import cn.geodata.models.wps.WpsClient;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
