@@ -6,7 +6,7 @@ import java.net.URI;
 
 import net.opengeospatial.wps.ProcessBriefType;
 
-import cn.geodata.model.wps.WpsClient;
+import cn.geodata.models.wps.WpsClient;
 
 public class ListModel {
 	private InputStream stream;

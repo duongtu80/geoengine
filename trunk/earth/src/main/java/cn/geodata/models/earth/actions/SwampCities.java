@@ -20,9 +20,9 @@ import org.jdom.input.DOMBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import cn.geodata.model.value.ModelValueParserFinder;
-import cn.geodata.model.value.ModelValueUtil;
-import cn.geodata.model.wps.WpsClient;
+import cn.geodata.models.value.ModelValueParserFinder;
+import cn.geodata.models.value.ModelValueUtil;
+import cn.geodata.models.wps.WpsClient;
 
 public class SwampCities {
 	private Logger log = Logger.getAnonymousLogger();
