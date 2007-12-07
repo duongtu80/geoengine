@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
+import net.opengeospatial.wps.ComplexValueType;
 import net.opengeospatial.wps.IOValueType;
 
 import org.geotools.data.FeatureSource;
@@ -46,8 +47,8 @@ public class SwampCities extends AbstractProcessing {
 		log.info("Start model");
 		
 		ModelValueParserFinder _finder = ModelValueUtil.createParserFinder();
-		double _rise = _finder.getDefaultLiteralParser().parseLiteralDouble(this.getInputs().get("rise").get(0).getLiteralValue());
-		FeatureCollection _cities = _finder.getDefaultComplexReferenceParser().parseFeatureCollection(this.getInputs().get("cities").get(0).getComplexValueReference());
+		double _rise = (Double)_finder.parse(this.getInputs().get("rise").get(0).getLiteralValue());
+		FeatureCollection _cities = (FeatureCollection) _finder.parse(this.getInputs().get("cities").get(0).getComplexValueReference());
 		
 		FeatureType _ft = this.createFeatureType();
 		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
@@ -73,7 +74,7 @@ public class SwampCities extends AbstractProcessing {
 		log.info("Cities number:" + _fs.size());
 		
 		IOValueType _output = ModelValueUtil.createOutputValue(this.outputDefinitions.get("swamp"));
-		_output.setComplexValue(_finder.getDefaultComplexEncoder().encodeFeatureCollection(_fs));
+		_output.setComplexValue((ComplexValueType) _finder.encode(_fs));
 		
 		this.getOutputs().get("swamp").add(_output);
 	}
