@@ -4,6 +4,6 @@ import java.io.IOException;
 
 import net.opengeospatial.wps.IOValueType;
 
-public interface ComplexReferenceEncoder {
-	IOValueType.ComplexValueReference encodeGMLUrl(String url, String encoding) throws IOException;
+public interface ComplexReferenceEncoder extends Encoder {
+	IOValueType.ComplexValueReference encodeGMLUrl(String url, String format, String encoding, String namespace) throws IOException;
 }

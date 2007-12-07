@@ -8,7 +8,7 @@ import org.geotools.feature.FeatureCollection;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public interface ComplexEncoder {
+public interface ComplexEncoder extends Encoder {
 	ComplexValueType encodeFeatureCollection(FeatureCollection fs) throws IOException;
 	ComplexValueType encodeGeometry(Geometry geom) throws IOException;
 }

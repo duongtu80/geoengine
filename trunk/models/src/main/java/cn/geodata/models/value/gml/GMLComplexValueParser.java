@@ -18,49 +18,15 @@ import cn.geodata.gml.ParserFinder;
 import cn.geodata.gml.ParserUtil;
 import cn.geodata.models.value.ComplexEncoder;
 import cn.geodata.models.value.ComplexParser;
-import cn.geodata.models.value.Encoder;
-import cn.geodata.models.value.Parser;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class GMLComplexValueParser implements Parser, ComplexParser, Encoder,
-		ComplexEncoder {
-
-	@Override
-	public Object parse(XmlObject type) throws IOException {
-		ComplexValueType _type = (ComplexValueType) type;
-		if(_type.getFormat().equalsIgnoreCase("text/xml") || _type.getFormat().equalsIgnoreCase("text/gml")){
-
-			NodeList _nodeList = _type.getDomNode().getChildNodes();
-			Element _element = null;
-			for(int i=0;i<_nodeList.getLength();i++){
-				if(_nodeList.item(i).getNodeType() == Node.ELEMENT_NODE){
-					_element = (Element)_nodeList.item(i);
-					break;
-				}
-			}
-			if(_element == null){
-				throw new NullPointerException("No data found");
-			}
-			else{
-				return ParserUtil.createParserFinder().parse((new DOMBuilder()).build(_element));
-			}
-		}
-		else{
-			throw new IOException("Unsupported complex data format:" + _type.getFormat());
-		}
-	}
+public class GMLComplexValueParser implements ComplexParser, ComplexEncoder {
 
 	@Override
 	public FeatureCollection parseFeatureCollection(ComplexValueType type)
 			throws IOException {
-		Object _o = this.parse(type);
-		if (_o instanceof FeatureCollection) {
-			return (FeatureCollection) _o;
-		}
-		else{
-			throw new IOException("Can't be convert to FeatureCollection");
-		}
+		return (FeatureCollection) this.parse(type);
 	}
 
 	@Override
@@ -71,18 +37,32 @@ public class GMLComplexValueParser implements Parser, ComplexParser, Encoder,
 
 	@Override
 	public Geometry parseGeometry(ComplexValueType type) throws IOException {
-		Object _o = this.parse(type);
-		if (_o instanceof Geometry) {
-			return (Geometry) _o;
-		}
-		else{
-			throw new IOException("Can't be convert to Geometry");
-		}
+		return (Geometry) this.parse(type);
 	}
 
 	@Override
 	public ComplexValueType encodeGeometry(Geometry geom) throws IOException {
 		return (ComplexValueType) this.encode(geom);
+	}
+
+	@Override
+	public Object parse(XmlObject type) throws IOException {
+		ComplexValueType _type = (ComplexValueType) type;
+
+		NodeList _nodeList = _type.getDomNode().getChildNodes();
+		Element _element = null;
+		for(int i=0;i<_nodeList.getLength();i++){
+			if(_nodeList.item(i).getNodeType() == Node.ELEMENT_NODE){
+				_element = (Element)_nodeList.item(i);
+				break;
+			}
+		}
+		if(_element == null){
+			throw new NullPointerException("No data found");
+		}
+		else{
+			return ParserUtil.createParserFinder().parse((new DOMBuilder()).build(_element));
+		}
 	}
 
 	@Override
@@ -107,5 +87,21 @@ public class GMLComplexValueParser implements Parser, ComplexParser, Encoder,
 		_type.getDomNode().appendChild(_node.getOwnerDocument().importNode(_outputDoc.getDocumentElement(), true));
 		
 		return _type;
+	}
+
+	@Override
+	public boolean canParse(XmlObject type) {
+		if (type instanceof ComplexValueType) {
+			ComplexValueType _type = (ComplexValueType) type;
+			if(_type.getFormat().equalsIgnoreCase("text/gml")){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean canEncode(Object obj) {
+		return false;
 	}
 }

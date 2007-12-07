@@ -1,145 +1,132 @@
 package cn.geodata.models.value;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.xml.XmlBeanFactory;
+import org.apache.xmlbeans.XmlObject;
 
 public class ModelValueParserFinder {
-	private Map<String, LiteralEncoder> literalEncoders;
-	private Map<String, LiteralParser> literalParsers;
-	private Map<String, ComplexEncoder> complexEncoders;
-	private Map<String, ComplexParser> complexParsers;
-	private Map<String, ComplexReferenceEncoder> complexReferenceEncoders;
-	private Map<String, ComplexReferenceParser> complexReferenceParsers;
+	Map<String, Encoder> encoders;
+	Map<String, Parser> parsers;
 	
-	private LiteralEncoder defaultLiteralEncoder;
-	private LiteralParser defaultLiteralParser;
-	private ComplexEncoder defaultComplexEncoder;
-	private ComplexParser defaultComplexParser;
-	private ComplexReferenceEncoder defaultComplexReferenceEncoder;
-	private ComplexReferenceParser defaultComplexReferenceParser;
+	private String defaultLiteralEncoder;
+	private String defaultLiteralParser;
+	private String defaultComplexEncoder;
+	private String defaultComplexParser;
+	private String defaultComplexReferenceEncoder;
+	private String defaultComplexReferenceParser;
 	
-	public ModelValueParserFinder() {
-		XmlBeanFactory _beanFactory = ModelValueUtil.createBeanFactory();
-		
-		this.literalEncoders = new HashMap<String, LiteralEncoder>();
-		for(String _line: _beanFactory.getBeanNamesForType(LiteralEncoder.class)){
-			if(_line.length() > 0){
-				this.literalEncoders.put(_line, (LiteralEncoder)_beanFactory.getBean(_line));
-			}
-		}
-
-		this.literalParsers= new HashMap<String, LiteralParser>();
-		for(String _line: _beanFactory.getBeanNamesForType(LiteralParser.class)){
-			if(_line.length() > 0){
-				this.literalParsers.put(_line, (LiteralParser)_beanFactory.getBean(_line));
-			}
-		}
-
-		this.complexEncoders = new HashMap<String, ComplexEncoder>();
-		for(String _line: _beanFactory.getBeanNamesForType(ComplexEncoder.class)){
-			if(_line.length() > 0){
-				this.complexEncoders.put(_line, (ComplexEncoder)_beanFactory.getBean(_line));
-			}
-		}
-
-		this.complexParsers= new HashMap<String, ComplexParser>();
-		for(String _line: _beanFactory.getBeanNamesForType(ComplexParser.class)){
-			if(_line.length() > 0){
-				this.complexParsers.put(_line, (ComplexParser)_beanFactory.getBean(_line));
-			}
-		}
-
-		this.complexReferenceEncoders= new HashMap<String, ComplexReferenceEncoder>();
-		for(String _line: _beanFactory.getBeanNamesForType(ComplexReferenceEncoder.class)){
-			if(_line.length() > 0){
-				this.complexReferenceEncoders.put(_line, (ComplexReferenceEncoder)_beanFactory.getBean(_line));
-			}
-		}
-
-		this.complexReferenceParsers= new HashMap<String, ComplexReferenceParser>();
-		for(String _line: _beanFactory.getBeanNamesForType(ComplexReferenceParser.class)){
-			if(_line.length() > 0){
-				this.complexReferenceParsers.put(_line, (ComplexReferenceParser)_beanFactory.getBean(_line));
-			}
-		}
-	}
-	
-	public Map<String, LiteralEncoder> getLiteralEncoders() {
-		return literalEncoders;
-	}
-	public void setLiteralEncoders(Map<String, LiteralEncoder> literalEncoders) {
-		this.literalEncoders = literalEncoders;
-	}
-	public Map<String, LiteralParser> getLiteralParsers() {
-		return literalParsers;
-	}
-	public void setLiteralParsers(Map<String, LiteralParser> literalParsers) {
-		this.literalParsers = literalParsers;
-	}
-	public Map<String, ComplexEncoder> getComplexEncoders() {
-		return complexEncoders;
-	}
-	public void setComplexEncoders(Map<String, ComplexEncoder> complexEncoders) {
-		this.complexEncoders = complexEncoders;
-	}
-	public Map<String, ComplexParser> getComplexParsers() {
-		return complexParsers;
-	}
-	public void setComplexParsers(Map<String, ComplexParser> complexParsers) {
-		this.complexParsers = complexParsers;
-	}
-	public Map<String, ComplexReferenceEncoder> getComplexReferenceEncoders() {
-		return complexReferenceEncoders;
-	}
-	public void setComplexReferenceEncoders(
-			Map<String, ComplexReferenceEncoder> complexReferenceEncoders) {
-		this.complexReferenceEncoders = complexReferenceEncoders;
-	}
-	public Map<String, ComplexReferenceParser> getComplexReferenceParsers() {
-		return complexReferenceParsers;
-	}
-	public void setComplexReferenceParsers(
-			Map<String, ComplexReferenceParser> complexReferenceParsers) {
-		this.complexReferenceParsers = complexReferenceParsers;
-	}
-	public LiteralEncoder getDefaultLiteralEncoder() {
+	public String getDefaultLiteralEncoder() {
 		return defaultLiteralEncoder;
 	}
-	public void setDefaultLiteralEncoder(LiteralEncoder defaultLiteralEncoder) {
+	
+	public void setDefaultLiteralEncoder(String defaultLiteralEncoder) {
 		this.defaultLiteralEncoder = defaultLiteralEncoder;
 	}
-	public LiteralParser getDefaultLiteralParser() {
-		return defaultLiteralParser;
+
+	public String getDefaultLiteralParser() {
+		return this.defaultLiteralParser;
 	}
-	public void setDefaultLiteralParser(LiteralParser defaultLiteralParser) {
+	
+	public void setDefaultLiteralParser(String defaultLiteralParser) {
 		this.defaultLiteralParser = defaultLiteralParser;
 	}
-	public ComplexEncoder getDefaultComplexEncoder() {
+	
+	public String getDefaultComplexEncoder() {
 		return defaultComplexEncoder;
 	}
-	public void setDefaultComplexEncoder(ComplexEncoder defaultComplexEncoder) {
+	
+	public void setDefaultComplexEncoder(String defaultComplexEncoder) {
 		this.defaultComplexEncoder = defaultComplexEncoder;
 	}
-	public ComplexParser getDefaultComplexParser() {
+	
+	public String getDefaultComplexParser() {
 		return defaultComplexParser;
 	}
-	public void setDefaultComplexParser(ComplexParser defaultComplexParser) {
+	
+	public void setDefaultComplexParser(String defaultComplexParser) {
 		this.defaultComplexParser = defaultComplexParser;
 	}
-	public ComplexReferenceEncoder getDefaultComplexReferenceEncoder() {
+	
+	public String getDefaultComplexReferenceEncoder() {
 		return defaultComplexReferenceEncoder;
 	}
-	public void setDefaultComplexReferenceEncoder(
-			ComplexReferenceEncoder defaultComplexReferenceEncoder) {
+	
+	public void setDefaultComplexReferenceEncoder(String defaultComplexReferenceEncoder) {
 		this.defaultComplexReferenceEncoder = defaultComplexReferenceEncoder;
 	}
-	public ComplexReferenceParser getDefaultComplexReferenceParser() {
+	
+	public String getDefaultComplexReferenceParser() {
 		return defaultComplexReferenceParser;
 	}
-	public void setDefaultComplexReferenceParser(
-			ComplexReferenceParser defaultComplexReferenceParser) {
+	
+	public void setDefaultComplexReferenceParser(String defaultComplexReferenceParser) {
 		this.defaultComplexReferenceParser = defaultComplexReferenceParser;
+	}
+
+	public Map<String, Encoder> getEncoders() {
+		return encoders;
+	}
+
+	public void setEncoders(Map<String, Encoder> encoders) {
+		this.encoders = encoders;
+	}
+
+	public Map<String, Parser> getParsers() {
+		return parsers;
+	}
+
+	public void setParsers(Map<String, Parser> parsers) {
+		this.parsers = parsers;
+	}
+	
+	public Object parse(XmlObject type) throws IOException {
+		List<String> _list = new ArrayList<String>();
+		
+		_list.add(this.defaultLiteralParser);
+		_list.add(this.defaultComplexParser);
+		_list.add(this.defaultComplexReferenceParser);
+		
+		for(String _k : _list){
+			if(this.parsers.get(_k).canParse(type)){
+				return this.parsers.get(_k).parse(type);
+			}
+		}
+		
+		for(String _k : this.parsers.keySet()){
+			if(_list.contains(_k) == false){
+				if(this.parsers.get(_k).canParse(type)){
+					this.parsers.get(_k).parse(type);
+				}
+			}
+		}
+		
+		throw new UnsupportedOperationException();		
+	}
+	
+	public XmlObject encode(Object obj) throws IOException {
+		List<String> _list = new ArrayList<String>();
+		
+		_list.add(this.defaultLiteralEncoder);
+		_list.add(this.defaultComplexEncoder);
+		_list.add(this.defaultComplexReferenceEncoder);
+		
+		for(String _k : _list){
+			if(this.encoders.get(_k).canEncode(obj)){
+				return this.encoders.get(_k).encode(obj);
+			}
+		}
+		
+		for(String _k : this.encoders.keySet()){
+			if(_list.contains(_k) == false){
+				if(this.encoders.get(_k).canEncode(obj)){
+					this.encoders.get(_k).encode(obj);
+				}
+			}
+		}
+		
+		throw new UnsupportedOperationException();		
 	}
 }
