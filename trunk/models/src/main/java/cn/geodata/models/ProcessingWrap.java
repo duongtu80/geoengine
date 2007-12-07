@@ -9,9 +9,10 @@ import cn.geodata.models.status.ProcessAccepted;
 import cn.geodata.models.status.ProcessFailed;
 import cn.geodata.models.status.ProcessSucceeded;
 import cn.geodata.models.status.Status;
+import cn.geodata.models.util.Utilities;
 
 public class ProcessingWrap implements Runnable {
-	private static Logger log = Logger.getLogger("cn.geodata.models");
+	private static Logger log = Utilities.getLogger();
 	
 	private Processing process;
 	private Status status; 

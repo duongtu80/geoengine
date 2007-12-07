@@ -3,6 +3,8 @@ package cn.geodata.models.wps;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.opengeospatial.ows.ExceptionReportDocument;
 import net.opengeospatial.wps.CapabilitiesDocument;
@@ -18,14 +20,14 @@ import net.opengeospatial.wps.ExecuteDocument.Execute;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlOptions;
 
 import cn.geodata.models.WPS;
 import cn.geodata.models.exception.ExceptionParser;
+import cn.geodata.models.util.Utilities;
 
 public class WpsClient {
-	private static Logger Log = Logger.getLogger(WpsClient.class);
+	private static Logger log = Utilities.getLogger();
 	
 	protected String service;
 	protected String version;
@@ -100,16 +102,16 @@ public class WpsClient {
 	
 	public CapabilitiesDocument getCapibilities() throws Exception {
 		URI _query = this.getCapibilitiesUri();
-		Log.debug("GetCapibilities uri:" + _query.toString());
+		log.info("GetCapibilities uri:" + _query.toString());
 
 		HttpClient _http = new HttpClient();
 		GetMethod _get = new GetMethod(_query.toString());
-		Log.debug("GetCapibilitites:" + _http.executeMethod(_get));
+		log.info("GetCapibilitites:" + _http.executeMethod(_get));
 		
-		Log.debug("Response:" + _get.getResponseBodyAsString());
+		log.info("Response:" + _get.getResponseBodyAsString());
 
 		int _status = _http.executeMethod(_get);
-		Log.debug("GetCapabilities:" + _status);
+		log.info("GetCapabilities:" + _status);
 
 		if(_status == 200 && _get.getResponseHeader("Content-Type").getValue().startsWith("text/xml")){
 			String[] _contentParts = _get.getResponseHeader("Content-Type").getValue().split(";");
@@ -138,7 +140,7 @@ public class WpsClient {
 			_describeProcess.addNewIdentifier().setStringValue(_identifier);
 		}
 		
-		Log.debug("Request:" + _requestDoc.toString());
+		log.fine("Request:" + _requestDoc.toString());
 		
 		HttpClient _http = new HttpClient();
 		PostMethod _post = new PostMethod(this.getDescribeUri().toString());
@@ -146,7 +148,7 @@ public class WpsClient {
 		_post.setRequestBody(_requestDoc.newInputStream());
 
 		int _status = _http.executeMethod(_post);
-		Log.debug("DescribeProcess:" + _status);
+		log.fine("DescribeProcess:" + _status);
 		
 		if(_status == 200 && _post.getResponseHeader("Content-Type").getValue().startsWith("text/xml")){
 			String[] _contentParts = _post.getResponseHeader("Content-Type").getValue().split(";");
@@ -175,14 +177,14 @@ public class WpsClient {
 		DataInputsType _inputsType = _execute.addNewDataInputs();
 		_inputsType.setInputArray(inputParams);
 		
-		Log.info("Request" + _requestDoc.toString());
+		log.info("Request" + _requestDoc.toString());
 		
 		HttpClient _http = new HttpClient();
 		PostMethod _post = new PostMethod(this.getDescribeUri().toString());
 		_post.setRequestBody(_requestDoc.newInputStream());
 
 		int _status = _http.executeMethod(_post);
-		Log.debug("Execute:" + _status);
+		log.info("Execute:" + _status);
 
 		if(_status == 200 && _post.getResponseHeader("Content-Type").getValue().startsWith("text/xml")){
 			String[] _contentParts = _post.getResponseHeader("Content-Type").getValue().split(";");
