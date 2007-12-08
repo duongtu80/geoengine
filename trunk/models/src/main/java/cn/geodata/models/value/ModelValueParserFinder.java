@@ -82,6 +82,12 @@ public class ModelValueParserFinder {
 		this.parsers = parsers;
 	}
 	
+	/**
+	 * Try all parser engines to parse this type
+	 * @param type
+	 * @return
+	 * @throws IOException
+	 */
 	public Object parse(XmlObject type) throws IOException {
 		List<String> _list = new ArrayList<String>();
 		
@@ -106,27 +112,69 @@ public class ModelValueParserFinder {
 		throw new UnsupportedOperationException();		
 	}
 	
-	public XmlObject encode(Object obj) throws IOException {
-		List<String> _list = new ArrayList<String>();
-		
-		_list.add(this.defaultLiteralEncoder);
-		_list.add(this.defaultComplexEncoder);
-		_list.add(this.defaultComplexReferenceEncoder);
-		
-		for(String _k : _list){
-			if(this.encoders.get(_k).canEncode(obj)){
-				return this.encoders.get(_k).encode(obj);
-			}
-		}
-		
-		for(String _k : this.encoders.keySet()){
-			if(_list.contains(_k) == false){
-				if(this.encoders.get(_k).canEncode(obj)){
-					this.encoders.get(_k).encode(obj);
-				}
-			}
-		}
-		
-		throw new UnsupportedOperationException();		
+//	public XmlObject encode(Object obj) throws IOException {
+//		List<String> _list = new ArrayList<String>();
+//		
+//		_list.add(this.defaultLiteralEncoder);
+//		_list.add(this.defaultComplexEncoder);
+//		_list.add(this.defaultComplexReferenceEncoder);
+//		
+//		for(String _k : _list){
+//			if(this.encoders.get(_k).canEncode(obj)){
+//				return this.encoders.get(_k).encode(obj);
+//			}
+//		}
+//		
+//		for(String _k : this.encoders.keySet()){
+//			if(_list.contains(_k) == false){
+//				if(this.encoders.get(_k).canEncode(obj)){
+//					this.encoders.get(_k).encode(obj);
+//				}
+//			}
+//		}
+//		
+//		throw new UnsupportedOperationException();		
+//	}
+	
+	/**
+	 * @return default literal value encoder
+	 */
+	public LiteralEncoder getLiteralEncoder() {
+		return (LiteralEncoder) this.encoders.get(this.defaultLiteralEncoder);
+	}
+	
+	/**
+	 * @return default literal value parser
+	 */
+	public LiteralParser getLiteralParser(){
+		return (LiteralParser) this.parsers.get(this.defaultLiteralParser);
+	}
+	
+	/**
+	 * return default complex value encoder
+	 */
+	public ComplexEncoder getComplexEncoder(){
+		return (ComplexEncoder) this.encoders.get(this.defaultComplexEncoder);
+	}
+	
+	/**
+	 * @return default complex value parser
+	 */
+	public ComplexParser getComplexParser(){
+		return (ComplexParser) this.parsers.get(this.defaultComplexParser);
+	}
+	
+	/**
+	 * @return default complex reference value encoder
+	 */
+	public ComplexReferenceEncoder getComplexReferenceEncoder() {
+		return (ComplexReferenceEncoder) this.encoders.get(this.defaultComplexReferenceEncoder);
+	}
+	
+	/**
+	 * @return default complex reference value parser
+	 */
+	public ComplexReferenceParser getComplexReferenceParser(){
+		return (ComplexReferenceParser) this.parsers.get(this.defaultComplexReferenceParser);
 	}
 }

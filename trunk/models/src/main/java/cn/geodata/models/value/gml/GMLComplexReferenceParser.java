@@ -59,13 +59,19 @@ public class GMLComplexReferenceParser implements ComplexReferenceParser, Comple
 	}
 
 	@Override
-	public ComplexValueReference encodeGMLUrl(String url, String format, String encoding, String namespace) throws IOException {
+	public ComplexValueReference encodeUrl(String url, String format, String encoding, String schema) throws IOException {
 		IOValueType.ComplexValueReference _type = IOValueType.ComplexValueReference.Factory.newInstance();
 		
 		_type.setReference(url.toString());
-		_type.setFormat(format);
-		_type.setEncoding(encoding);
-		_type.setSchema(GeoNamespaceContext.URI_GML);
+		if(format != null){
+			_type.setFormat(format);
+		}
+		if(encoding != null){
+			_type.setEncoding(encoding);
+		}
+		if(schema != null){
+			_type.setSchema(schema);
+		}
 
 		return _type;
 }
