@@ -74,7 +74,7 @@ public class SwampCities extends AbstractProcessing {
 		log.info("Cities number:" + _fs.size());
 		
 		IOValueType _output = ModelValueUtil.createOutputValue(this.outputDefinitions.get("swamp"));
-		_output.setComplexValue((ComplexValueType) _finder.encode(_fs));
+		_output.setComplexValue(_finder.getComplexEncoder().encodeFeatureCollection(_fs));
 		
 		this.getOutputs().get("swamp").add(_output);
 	}
