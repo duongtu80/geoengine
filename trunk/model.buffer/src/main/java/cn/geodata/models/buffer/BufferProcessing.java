@@ -21,8 +21,8 @@ public class BufferProcessing extends AbstractProcessing {
 	public void execute() throws Exception {
 		ModelValueParserFinder _finder = ModelValueUtil.createParserFinder();
 		
-		double _distance = _finder.getDefaultLiteralParser().parseLiteralDouble(this.getInputs().get("distance").get(0).getLiteralValue());
-		Geometry _geometry = _finder.getDefaultComplexParser().parseGeometry(this.getInputs().get("geometry").get(0).getComplexValue());
+		double _distance = _finder.getLiteralParser().parseLiteralDouble(this.getInputs().get("distance").get(0).getLiteralValue());
+		Geometry _geometry = _finder.getComplexParser().parseGeometry(this.getInputs().get("geometry").get(0).getComplexValue());
 
 		if (_geometry instanceof MultiPolygon) {
 			MultiPolygon _polygons = (MultiPolygon) _geometry;
@@ -36,7 +36,7 @@ public class BufferProcessing extends AbstractProcessing {
 			MultiPolygon _result = _geometryFactory.createMultiPolygon((Polygon[])_col.toArray(new Polygon[0]));
 			
 			IOValueType _output = ModelValueUtil.createOutputValue(this.outputDefinitions.get("result"));
-			_output.setComplexValue(_finder.getDefaultComplexEncoder().encodeGeometry(_result));
+			_output.setComplexValue(_finder.getComplexEncoder().encodeGeometry(_result));
 			
 			this.getOutputs().get("result").add(_output);
 		}
@@ -44,7 +44,7 @@ public class BufferProcessing extends AbstractProcessing {
 			Polygon _polygon = (Polygon) _geometry;
 
 			IOValueType _output = ModelValueUtil.createOutputValue(this.outputDefinitions.get("result"));
-			_output.setComplexValue(_finder.getDefaultComplexEncoder().encodeGeometry(_polygon.buffer(_distance)));
+			_output.setComplexValue(_finder.getComplexEncoder().encodeGeometry(_polygon.buffer(_distance)));
 		}
 	}
 }
