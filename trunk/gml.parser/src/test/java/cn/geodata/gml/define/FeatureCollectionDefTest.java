@@ -20,7 +20,7 @@ public class FeatureCollectionDefTest extends TestCase {
 	private static Logger log = Logger.getAnonymousLogger();
 
 	public void atestParse() throws Exception {
-		FeatureCollection _fs = new ShapefileDataStore(MultiPolygonDefTest.class.getResource("/data/polygon.test.shp")).getFeatureSource().getFeatures();
+		FeatureCollection _fs = new ShapefileDataStore(FeatureCollectionDefTest.class.getResource("/data/polygon.test.shp")).getFeatureSource().getFeatures();
 		ParserFinder _finder = ParserUtil.createParserFinder();
 		
 		Element _ele = _finder.encode(_fs);
@@ -34,9 +34,9 @@ public class FeatureCollectionDefTest extends TestCase {
 	}
 
 	public void testWFS() throws Exception {
-		SAXBuilder _builder = new SAXBuilder();
-		Document _doc = _builder.build(new URL("http://152.61.40.52:18080/geoserver/wfs?service=WFS&request=GetFeature&typename=unep:cities"));
-		
-		log.info(ParserUtil.createParserFinder().parse(_doc.getRootElement()).toString());
+//		SAXBuilder _builder = new SAXBuilder();
+//		Document _doc = _builder.build(new URL("http://127.0.0.1:18080/geoserver/wfs?service=WFS&request=GetFeature&typename=unep:cities"));
+//		
+//		log.info(ParserUtil.createParserFinder().parse(_doc.getRootElement()).toString());
 	}
 }
