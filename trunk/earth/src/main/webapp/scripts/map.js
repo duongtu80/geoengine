@@ -97,7 +97,7 @@ function search(){
         error: function(response, ioArgs) { //
 			console.error("HTTP status code: ", ioArgs.xhr.status); //
 //			alert('error:' + "HTTP status code: " + ioArgs.xhr.status);
-			_processTip.style.innerHTML = 'error';
+			_processTip.innerHTML = 'error';
 		}
 	});
 }
@@ -142,7 +142,7 @@ function mousedown(evt) {
 	        },
 	        error: function(response, ioArgs) { //
 				console.error("HTTP status code: ", ioArgs.xhr.status); //
-				_processTip.style.innerHTML = 'error';
+				_processTip.innerHTML = 'error';
 			}
 		});
 	}
@@ -163,16 +163,21 @@ function listModel() {
         timeout: 60000,
         load: function(response, ioArgs) {
         	var _list = dojo.byId('modelList');
-        	for(var i=0;i<response.items.length;i++){
-        		var _option = new Option(response.items[i].label, response.items[i].value);
-        		_list.add(_option, null);
+        	if(response.identifier == 'models'){
+	        	for(var i=0;i<response.items.length;i++){
+	        		var _option = new Option(response.items[i].label, response.items[i].value);
+	        		_list.add(_option, null);
+	        	}
+        	}
+        	else{
+        		alert(response.text);
         	}
         	
 	        _processTip.innerHTML = 'finished';
         },
         error: function(response, ioArgs) { //
 			console.error("HTTP status code: ", ioArgs.xhr.status); //
-			_processTip.style.innerHTML = 'error';
+			_processTip.innerHTML = 'error';
 		}
 	});
 
