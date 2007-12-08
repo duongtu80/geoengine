@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import net.opengeospatial.wps.ExecuteResponseDocument;
 import net.opengeospatial.wps.IOValueType;
 import net.opengeospatial.wps.InputDescriptionType;
+import net.opengeospatial.wps.LiteralValueType;
 import net.opengeospatial.wps.ProcessDescriptionType;
 
 import org.jdom.Element;
@@ -81,11 +82,11 @@ public class SwampCities {
 		List<IOValueType> _inputs = new ArrayList<IOValueType>();
 		
 		IOValueType _paramRise = ModelValueUtil.createInputValue(_inputDefinitions.get("rise"));
-		_paramRise.setLiteralValue(_finder.getDefaultLiteralEncoder().encodeLiteral(this.seaLevel));
+		_paramRise.setLiteralValue(_finder.getLiteralEncoder().encodeLiteral(this.seaLevel));
 		_inputs.add(_paramRise);
 		
 		IOValueType _paramCities = ModelValueUtil.createInputValue(_inputDefinitions.get("cities"));
-		_paramCities.setComplexValueReference(_finder.getDefaultComplexReferenceEncoder().encodeGMLUrl(_citiesUrl.toString(), "utf-8"));
+		_paramCities.setComplexValueReference(_finder.getComplexReferenceEncoder().encodeUrl(_citiesUrl.toString(), "text/gml", "utf-8", null));
 		_inputs.add(_paramCities);
 		
 		ExecuteResponseDocument _execute = _client.execute(_processDesc.getIdentifier().getStringValue(), _inputs.toArray(new IOValueType[0]));
