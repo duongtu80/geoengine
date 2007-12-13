@@ -44,6 +44,11 @@
       <artifactId>gml.parser</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
+    <dependency>
+	  <groupId>cn.geodata.models</groupId>
+	  <artifactId>geojson.parser</artifactId>
+	  <version>1.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>
 
