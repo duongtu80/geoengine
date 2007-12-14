@@ -1,6 +1,7 @@
 package cn.geodata.models.geojson;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -11,8 +12,14 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONFunction;
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONString;
+import net.sf.json.util.JSONUtils;
 
+import org.apache.commons.io.IOUtils;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.FactoryRegistryException;
 import org.geotools.factory.GeoTools;
@@ -55,7 +62,7 @@ public class GeoJSON {
 	 * @throws IllegalAttributeException
 	 */
 	public Object parse(String json) throws IOException, IllegalAttributeException{
-		JSONObject _obj = JSONObject.fromString(json);
+		JSONObject _obj = JSONObject.fromObject(json);
 		if(_obj.has("type") == false){
 			throw new UnsupportedOperationException("no type attribute");
 		}
@@ -401,7 +408,7 @@ public class GeoJSON {
 	
 	protected JSONArray encodeCoordiniate(Coordinate c){
 		double[] _pts = new double[] {c.x, c.y};
-		return new JSONArray(_pts);
+		return JSONArray.fromObject(_pts);
 	}
 	
 	public JSONArray encodeCoordinates(Coordinate[] cs){
@@ -410,7 +417,7 @@ public class GeoJSON {
 			_list[i] = this.encodeCoordiniate(cs[i]);
 		}
 		
-		return new JSONArray(_list);
+		return JSONArray.fromObject(_list);
 	}
 	
 	public JSONObject encodePoint(Point pt){
@@ -440,7 +447,7 @@ public class GeoJSON {
 		
 		JSONObject _obj = new JSONObject();
 		_obj.put("type", "Polygon");		
-		_obj.put("coordinates", new JSONArray(_lines));
+		_obj.put("coordinates", JSONArray.fromObject(_lines));
 		
 		return _obj;
 	}
@@ -462,31 +469,30 @@ public class GeoJSON {
 		JSONObject _obj = new JSONObject();
 		
 		_obj.put("type", "MultiLineString");
-		_obj.put("coordinates", JSONArray.fromArray(_list.toArray()));
+		_obj.put("coordinates", JSONArray.fromObject(_list.toArray()));
 		
 		return _obj;
 	}
 	
 	public JSONObject encodeMultiPolygon(MultiPolygon polygons){
-		List<JSONArray> _polygons = new ArrayList<JSONArray>();
+		JSONArray[] _polygons = new JSONArray[polygons.getNumGeometries()];
 		for(int i=0;i<polygons.getNumGeometries();i++){
 			Polygon _polygon = (Polygon) polygons.getGeometryN(i);
 			
-			List<JSONArray> _lines = new ArrayList<JSONArray>();
-			_lines.add(this.encodeCoordinates(_polygon.getExteriorRing().getCoordinates()));
+			JSONArray[] _lines = new JSONArray[_polygon.getNumInteriorRing() + 1];
+			_lines[0] = this.encodeCoordinates(_polygon.getExteriorRing().getCoordinates());
 			
 			for(int j=0;j<_polygon.getNumInteriorRing();j++){
-				_lines.add(this.encodeCoordinates(_polygon.getInteriorRingN(j).getCoordinates()));
+				_lines[j+1] = this.encodeCoordinates(_polygon.getInteriorRingN(j).getCoordinates());
 			}
 			
-			_polygons.add(new JSONArray(_lines));
-			
+			_polygons[i] = JSONArray.fromObject(_lines);
 		}
 		
 		JSONObject _obj = new JSONObject();
 		
 		_obj.put("type", "MultiPolygon");
-		_obj.put("coordinates", JSONArray.fromArray(_polygons.toArray()));
+		_obj.put("coordinates", JSONArray.fromObject(_polygons));
 		
 		return _obj;
 	}
@@ -546,8 +552,8 @@ public class GeoJSON {
 		}
 		
 		JSONObject _type = new JSONObject();
-		_type.put("type", "FeatureType");
-		_type.put("members", JSONArray.fromArray(_f.toArray()));
+		_type.put("type", "FeatureCollection");
+		_type.put("members", JSONArray.fromObject(_f.toArray()));
 		
 		return _type;
 	}
@@ -555,7 +561,7 @@ public class GeoJSON {
 	public JSONObject encodeBox(Envelope env){
 		JSONObject _type = new JSONObject();
 		_type.put("type", "Box");
-		_type.put("members", this.encodeCoordinates(
+		_type.put("coordinates", this.encodeCoordinates(
 				new Coordinate[]{
 					new Coordinate(env.getMinX(), env.getMinY()),
 					new Coordinate(env.getMaxX(), env.getMaxY())
@@ -591,4 +597,18 @@ public class GeoJSON {
 		
 		throw new UnsupportedGeoJSONType(obj.toString());
 	}
+	
+	public void outputFeatureCollection(JSONObject fs, OutputStream stream){
+//		StringBuffer _data = new StringBuffer();
+//		_data.append("{");
+//		_data.append("\"type\":" + "\"" + fs.getString("type") + "\",\"members\":[");
+//		
+//		JSONArray _members = fs.getJSONArray("members");
+//		for(int i=0; i<_members.length();i++){
+//		}
+//		
+//		IOUtils.write(_data, stream);
+//		IOUtils.write("]}", stream);
+	}
+
 }
