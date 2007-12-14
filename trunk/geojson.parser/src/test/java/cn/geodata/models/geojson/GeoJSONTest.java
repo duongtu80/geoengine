@@ -1,6 +1,9 @@
 package cn.geodata.models.geojson;
 
+import java.io.ByteArrayOutputStream;
 import java.util.logging.Logger;
+
+import net.sf.json.JSONObject;
 
 import org.geotools.feature.FeatureCollection;
 
@@ -23,7 +26,10 @@ public class GeoJSONTest extends TestCase {
 		
 		Object _obj = _json.parse(_txt);
 		log.info(_obj.toString());
-		log.info(_json.encodePoint((Point)_obj).toString());
+		_txt = _json.encode(_obj).toString();
+		log.info(_txt);
+		_obj = _json.parse(_txt);
+		log.info(_obj.toString());
 	}
 
 	public void testLine() throws Exception {
@@ -32,7 +38,10 @@ public class GeoJSONTest extends TestCase {
 		
 		Object _obj = _json.parse(_txt);
 		log.info(_obj.toString());
-		log.info(_json.encodeLineString((LineString)_obj).toString());
+		_txt = _json.encode(_obj).toString();
+		log.info(_txt);
+		_obj = _json.parse(_txt);
+		log.info(_obj.toString());
 	}
 
 	public void testPolygon() throws Exception {
@@ -41,7 +50,10 @@ public class GeoJSONTest extends TestCase {
 		
 		Object _obj = _json.parse(_txt);
 		log.info(_obj.toString());
-		log.info(_json.encodePolygon((Polygon)_obj).toString());
+		_txt = _json.encode(_obj).toString();
+		log.info(_txt);
+		_obj = _json.parse(_txt);
+		log.info(_obj.toString());
 	}
 
 	public void testMultiPoint() throws Exception {
@@ -50,7 +62,10 @@ public class GeoJSONTest extends TestCase {
 		
 		Object _obj = _json.parse(_txt);
 		log.info(_obj.toString());
-		log.info(_json.encodeMultiPoint((MultiPoint)_obj).toString());
+		_txt = _json.encode(_obj).toString();
+		log.info(_txt);
+		_obj = _json.parse(_txt);
+		log.info(_obj.toString());
 	}
 
 	public void testMultiLineString() throws Exception {
@@ -59,7 +74,10 @@ public class GeoJSONTest extends TestCase {
 		
 		Object _obj = _json.parse(_txt);
 		log.info(_obj.toString());
-		log.info(_json.encodeMultiLineString((MultiLineString)_obj).toString());
+		_txt = _json.encode(_obj).toString();
+		log.info(_txt);
+		_obj = _json.parse(_txt);
+		log.info(_obj.toString());
 	}
 
 	public void testMultiPolygon() throws Exception {
@@ -68,7 +86,10 @@ public class GeoJSONTest extends TestCase {
 		
 		Object _obj = _json.parse(_txt);
 		log.info(_obj.toString());
-		log.info(_json.encodeMultiPolygon((MultiPolygon)_obj).toString());
+		_txt = _json.encode(_obj).toString();
+		log.info(_txt);
+		_obj = _json.parse(_txt);
+		log.info(_obj.toString());
 	}
 	
 	public void testBox() throws Exception {
@@ -77,7 +98,10 @@ public class GeoJSONTest extends TestCase {
 		
 		Object _obj = _json.parse(_txt);
 		log.info(_obj.toString());
-		log.info(_json.encodeBox((Envelope)_obj).toString());
+		_txt = _json.encode(_obj).toString();
+		log.info(_txt);
+		_obj = _json.parse(_txt);
+		log.info(_obj.toString());
 	}
 	
 	public void testFeatureCollection() throws Exception {
@@ -86,6 +110,22 @@ public class GeoJSONTest extends TestCase {
 		
 		Object _obj = _json.parse(_txt);
 		log.info(_obj.toString());
-		log.info(_json.encodeFeatureCollection((FeatureCollection)_obj).toString());
+		
+		JSONObject _ooo = _json.encodeFeatureCollection((FeatureCollection)_obj);
+		
+		ByteArrayOutputStream _stream = new ByteArrayOutputStream();
+		
+		GeoJSONUtil _util = new GeoJSONUtil();
+		_util.writeObject(_ooo, _stream);
+		String _output = _stream.toString();
+		log.info("Stream:" + _output);
+		
+		_txt = _ooo.toString();
+		log.info(_txt);
+		
+		assertEquals(_txt, _output);
+		
+		_obj = _json.parse(_txt);
+		log.info(_obj.toString());
 	}
 }
