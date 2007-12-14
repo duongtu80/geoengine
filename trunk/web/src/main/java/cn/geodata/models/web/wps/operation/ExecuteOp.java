@@ -28,21 +28,10 @@ public class ExecuteOp extends WpsOperation {
 	public XmlObject execute(XmlObject input) throws Exception {
 		ExecuteDocumentImpl _input = (ExecuteDocumentImpl) input;
 		Execute _execute = _input.getExecute();
-		
-		if(_execute.getStore()){
-			throw new OptionNotSupportedException("store");
-		}
 
-		//Initialize input parameters
-		String _processId = _execute.getIdentifier().getStringValue();
-		
-		ProcessingFactory _model = ProcessingLibray.createInstance().getModelFactories().get(_processId);
-		
-		ProcessingWrap _processWrap = (new ProcessingFactoryWarp()).createProcess(_model, null);
-		for(IOValueType _inputParam : _execute.getDataInputs().getInputArray()){
-			_processWrap.getProcess().getInputs().get(_inputParam.getIdentifier().getStringValue()).add(_inputParam);
-		}
-		
+		//Create process
+		ProcessingWrap _processWrap = (new ProcessingFactoryWarp()).createProcess(_execute, null);
+
 		//Run the model process
 		_processWrap.run();
 
