@@ -5,17 +5,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.geodata.models.exception.OptionNotSupportedException;
+import cn.geodata.models.util.ProcessingLibray;
+
 import net.opengeospatial.wps.IOValueType;
 import net.opengeospatial.wps.InputDescriptionType;
 import net.opengeospatial.wps.OutputDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionType;
+import net.opengeospatial.wps.ExecuteDocument.Execute;
 
 public class ProcessingFactoryWarp {
 	
-	public ProcessingWrap createProcess(ProcessingFactory factory, Map<String, String> params) throws Exception {
-		ProcessDescriptionType _metadata = factory.getMetadata();
-		Processing _process = factory.createProcessing(params);
+	public ProcessingWrap createProcess(Execute execute, Map<String, String> params) throws Exception {
+		Execute _execute = execute;
 		
+		if(_execute.getStore()){
+			throw new OptionNotSupportedException("store");
+		}
+
+		//Initialize input parameters
+		String _processId = _execute.getIdentifier().getStringValue();
+		
+		ProcessingFactory _model = ProcessingLibray.createInstance().getModelFactories().get(_processId);
+		
+		ProcessDescriptionType _metadata = _model.getMetadata();
+		Processing _process = _model.createProcessing(params);
+
 		if (_process instanceof MetadataAware) {
 			MetadataAware _metadataAware = (MetadataAware) _process;
 			_metadataAware.setMetadata(_metadata);
@@ -49,6 +64,11 @@ public class ProcessingFactoryWarp {
 		
 		ProcessingWrap _wrap = new ProcessingWrap();
 		_wrap.setProcess(_process);
+		
+		//Initialize the input data
+		for(IOValueType _inputParam : _execute.getDataInputs().getInputArray()){
+			_wrap.getProcess().getInputs().get(_inputParam.getIdentifier().getStringValue()).add(_inputParam);
+		}
 		
 		return _wrap;
 	}
