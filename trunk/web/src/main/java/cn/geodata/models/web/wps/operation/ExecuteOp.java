@@ -36,25 +36,7 @@ public class ExecuteOp extends WpsOperation {
 		_processWrap.run();
 
 		//Create the output doc
-		ExecuteResponseDocument _doc = ExecuteResponseDocument.Factory.newInstance();
-		ExecuteResponseType _response = _doc.addNewExecuteResponse();
-		
-		_response.setVersion(WPS.WPS_VERSION);
-		_response.setIdentifier(_execute.getIdentifier());
-		
-		StatusType _status = _response.addNewStatus();
-		_processWrap.getStatus().encode(_status);
-		
-		ProcessOutputs _outputs = _response.addNewProcessOutputs();
-		List<IOValueType> _outputParams = new ArrayList<IOValueType>();
-		for(String _outputKey : _processWrap.getProcess().getOutputs().keySet()){
-			for(IOValueType _outputValue : _processWrap.getProcess().getOutputs().get(_outputKey)){
-				_outputParams.add(_outputValue);
-			}
-		}
-		_outputs.setOutputArray((IOValueType[])_outputParams.toArray(new IOValueType[0]));
-		
-		return _doc;
+		return _processWrap.createReponse();
 	}
 
 	@Override
