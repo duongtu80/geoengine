@@ -9,7 +9,7 @@ import org.geotools.feature.FeatureCollection;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public interface ComplexReferenceParser extends Parser {
+public interface ReferenceParser extends Parser {
 	FeatureCollection parseFeatureCollection(IOValueType.ComplexValueReference type) throws IOException;
 	Geometry parseGeometry(ComplexValueType type) throws IOException;
 }

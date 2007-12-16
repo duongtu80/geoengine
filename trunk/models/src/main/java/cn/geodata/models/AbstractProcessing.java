@@ -7,7 +7,6 @@ import net.opengeospatial.wps.IOValueType;
 import net.opengeospatial.wps.InputDescriptionType;
 import net.opengeospatial.wps.OutputDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionType;
-import net.opengeospatial.wps.ExecuteDocument.Execute;
 
 /**
  * 
@@ -16,13 +15,7 @@ import net.opengeospatial.wps.ExecuteDocument.Execute;
  */
 public abstract class AbstractProcessing implements Processing, MetadataAware, ParameterDefinitionAware, StatusAware {
 	protected ProcessDescriptionType metadata;
-	protected Execute request;
 	
-	@Override
-	public Execute getRequest() {
-		return request;
-	}
-
 	protected Map<String, OutputDescriptionType> outputDefinitions;
 	protected Map<String, InputDescriptionType> inputDefinitions;
 	

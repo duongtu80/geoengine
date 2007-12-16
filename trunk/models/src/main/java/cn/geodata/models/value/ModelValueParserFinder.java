@@ -167,14 +167,14 @@ public class ModelValueParserFinder {
 	/**
 	 * @return default complex reference value encoder
 	 */
-	public ComplexReferenceEncoder getComplexReferenceEncoder() {
-		return (ComplexReferenceEncoder) this.encoders.get(this.defaultComplexReferenceEncoder);
+	public ReferenceEncoder getComplexReferenceEncoder() {
+		return (ReferenceEncoder) this.encoders.get(this.defaultComplexReferenceEncoder);
 	}
 	
 	/**
 	 * @return default complex reference value parser
 	 */
-	public ComplexReferenceParser getComplexReferenceParser(){
-		return (ComplexReferenceParser) this.parsers.get(this.defaultComplexReferenceParser);
+	public ReferenceParser getComplexReferenceParser(){
+		return (ReferenceParser) this.parsers.get(this.defaultComplexReferenceParser);
 	}
 }

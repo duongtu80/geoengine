@@ -14,16 +14,6 @@ public interface Processing {
 	Map<String, List<IOValueType>> getOutputs();
 
 	/**
-	 * @return The request of the processing
-	 */
-	Execute getRequest();
-	
-	/**
-	 * @param req 
-	 */
-	void setRequest(Execute req);
-	
-	/**
 	 * Execute the processing
 	 * @throws Exception
 	 */

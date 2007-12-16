@@ -15,12 +15,12 @@ import org.jdom.input.SAXBuilder;
 
 import cn.geodata.gml.ParserUtil;
 import cn.geodata.models.GeoNamespaceContext;
-import cn.geodata.models.value.ComplexReferenceEncoder;
-import cn.geodata.models.value.ComplexReferenceParser;
+import cn.geodata.models.value.ReferenceEncoder;
+import cn.geodata.models.value.ReferenceParser;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class GMLComplexReferenceParser implements ComplexReferenceParser, ComplexReferenceEncoder {
+public class GMLReferenceParser implements ReferenceParser, ReferenceEncoder {
 
 	@Override
 	public FeatureCollection parseFeatureCollection(IOValueType.ComplexValueReference type)
