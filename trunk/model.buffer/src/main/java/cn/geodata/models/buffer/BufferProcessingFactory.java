@@ -1,22 +1,24 @@
 package cn.geodata.models.buffer;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.opengeospatial.wps.ProcessDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionsDocument;
+import net.opengeospatial.wps.ProcessDescriptionsDocument.ProcessDescriptions;
 import cn.geodata.models.AbstractProcessingFactory;
 import cn.geodata.models.Processing;
 
 public class BufferProcessingFactory extends AbstractProcessingFactory {
 	private static Logger log = Logger.getAnonymousLogger();
 	
-	private ProcessDescriptionType metadata;
+	private ProcessDescriptions metadata;
 	
 	public BufferProcessingFactory() {
 		try {
-			this.metadata = ProcessDescriptionsDocument.Factory.parse(this.getClass().getResourceAsStream("/META-INF/metadata/buffer.xml")).getProcessDescriptions().getProcessDescriptionArray(0);
+			this.metadata = ProcessDescriptionsDocument.Factory.parse(this.getClass().getResourceAsStream("/META-INF/metadata/buffer.xml")).getProcessDescriptions();
 		}
 		catch (Exception e) {
 			log.log(Level.SEVERE, "Failed to parse the metadata", e);
@@ -29,13 +31,13 @@ public class BufferProcessingFactory extends AbstractProcessingFactory {
 	}
 
 	@Override
-	public ProcessDescriptionType getMetadata() {
+	public ProcessDescriptions getMetadata() {
 		return this.metadata;
 	}
 
 	@Override
-	public Processing createProcessing(Map<String, String> params)
-			throws Exception {
+	public Processing createProcessing(String identifier, Map<String, String> params)
+			throws IOException {
 		return new BufferProcessing();
 	}
 }
