@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+   targetNamespace="http://www.opengis.net/ogc"
+   xmlns:ogc="http://www.opengis.net/ogc"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   elementFormDefault="qualified">
+
+   <xsd:element name="ServiceExceptionReport">
+      <xsd:annotation>
+         <xsd:documentation>
+            The ServiceExceptionReport element contains one
+            or more ServiceException elements that describe
+            a service exception.
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element name="ServiceException"
+                         type="ogc:ServiceExceptionType"
+                         minOccurs="0" maxOccurs="unbounded">
+               <xsd:annotation>
+                  <xsd:documentation>
+                     The Service exception element is used to describe 
+                     a service exception.
+                  </xsd:documentation>
+               </xsd:annotation>
+            </xsd:element>
+         </xsd:sequence>
+         <xsd:attribute name="version" type="xsd:string" fixed="1.2.0"/>
+      </xsd:complexType>
+   </xsd:element>
+
+   <xsd:complexType name="ServiceExceptionType">
+      <xsd:annotation>
+         <xsd:documentation>
+            The ServiceExceptionType type defines the ServiceException
+            element.  The content of the element is an exception message
+            that the service wished to convey to the client application.
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:string">
+            <xsd:attribute name="code" type="xsd:string">
+               <xsd:annotation>
+                
