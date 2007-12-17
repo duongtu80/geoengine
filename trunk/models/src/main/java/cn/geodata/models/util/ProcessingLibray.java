@@ -4,6 +4,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import net.opengeospatial.wps.ProcessDescriptionType;
+
 import cn.geodata.models.ProcessingFactory;
 
 /**
@@ -21,7 +23,9 @@ public class ProcessingLibray {
 		
 		List<ProcessingFactory> _list = ProcessingFactoryFinder.newInstance().loadModelFactories(params);
 		for(ProcessingFactory _m : _list){
-			models.put(_m.getMetadata().getIdentifier().getStringValue(), _m);
+			for(ProcessDescriptionType _p : _m.getMetadata().getProcessDescriptionArray()){
+				models.put(_p.getIdentifier().getStringValue(), _m);
+			}
 		}
 	}
 	
