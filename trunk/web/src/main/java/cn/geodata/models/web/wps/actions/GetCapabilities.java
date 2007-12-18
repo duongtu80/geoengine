@@ -8,6 +8,8 @@ import net.opengeospatial.wps.ProcessBriefType;
 import net.opengeospatial.wps.ProcessDescriptionType;
 import net.opengeospatial.wps.CapabilitiesDocument.Capabilities;
 import net.opengeospatial.wps.ProcessOfferingsDocument.ProcessOfferings;
+import cn.geodata.models.geoprocessing.ProcessType;
+import cn.geodata.models.geoprocessing.ProcessesType;
 import cn.geodata.models.util.ProcessingLibray;
 
 public class GetCapabilities {
@@ -30,13 +32,15 @@ public class GetCapabilities {
 		for(String _title : _lib.getModelFactories().keySet()){
 			log.info("Add processing:" + _title);
 			
-			ProcessBriefType _processBrief = _processOfferings.addNewProcess();
-			ProcessDescriptionType _metadata = _lib.getModelFactories().get(_title).getMetadata();
-
-			_processBrief.setIdentifier(_metadata.getIdentifier());
-			_processBrief.setTitle(_metadata.getTitle());
-			_processBrief.setAbstract(_metadata.getAbstract());
-			_processBrief.setMetadataArray(_metadata.getMetadataArray());
+			ProcessesType _model = _lib.getModelFactories().get(_title).getMetadata();
+			for(ProcessType _proc : _model.getProcessArray()){
+				ProcessBriefType _processBrief = _processOfferings.addNewProcess();
+				_processBrief.addNewIdentifier().setStringValue(_proc.getId());
+				
+				_processBrief.setTitle(_proc.getTitle());
+				_processBrief.setAbstract(_proc.getDescribe());
+//				_processBrief.setMetadataArray(_proc.getMetadataArray());
+			}
 		}
 		
 		this.result = _doc.newInputStream();
