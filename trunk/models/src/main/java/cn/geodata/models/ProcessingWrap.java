@@ -1,5 +1,6 @@
 package cn.geodata.models;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,18 +8,25 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.activation.MimeTypeParseException;
+import javax.xml.parsers.ParserConfigurationException;
+
 import net.opengeospatial.wps.ExecuteResponseDocument;
 import net.opengeospatial.wps.ExecuteResponseType;
 import net.opengeospatial.wps.IOValueType;
-import net.opengeospatial.wps.InputDescriptionType;
-import net.opengeospatial.wps.OutputDescriptionType;
-import net.opengeospatial.wps.ProcessDescriptionType;
+import net.opengeospatial.wps.OutputDefinitionType;
 import net.opengeospatial.wps.StatusType;
 import net.opengeospatial.wps.ExecuteDocument.Execute;
 import net.opengeospatial.wps.ExecuteResponseType.ProcessOutputs;
+
+import org.xml.sax.SAXException;
+
+import cn.geodata.models.data.DataParser;
 import cn.geodata.models.exception.NoApplicableCodeException;
 import cn.geodata.models.exception.OptionNotSupportedException;
 import cn.geodata.models.exception.ProcessingException;
+import cn.geodata.models.geoprocessing.ProcessType;
+import cn.geodata.models.geoprocessing.ValueType;
 import cn.geodata.models.status.ProcessAccepted;
 import cn.geodata.models.status.ProcessFailed;
 import cn.geodata.models.status.ProcessSucceeded;
@@ -28,19 +36,22 @@ import cn.geodata.models.util.Utilities;
 public class ProcessingWrap implements Runnable {
 	private static Logger log = Utilities.getLogger();
 	
-	private ProcessDescriptionType metadata;
+	private ProcessType metadata;
 	private Processing process;
 	private Status status; 
 	private Execute request;
+	
+	private Map<String, ValueType> outputDefinitions;
+	private Map<String, ValueType> inputDefinitions;
+	
+	private boolean store;
 	
 	public Execute getRequest() {
 		return request;
 	}
 
-	public ProcessingWrap(Processing process, ProcessDescriptionType metadata, Execute request) throws OptionNotSupportedException {
-		if(request.getStore()){
-			throw new OptionNotSupportedException("store");
-		}
+	public ProcessingWrap(Processing process, ProcessType metadata, Execute request) throws OptionNotSupportedException, IOException {
+		this.store = request.getStore();
 
 		//Initialize input parameters
 		String _processId = request.getIdentifier().getStringValue();
@@ -51,34 +62,57 @@ public class ProcessingWrap implements Runnable {
 		}
 		
 		//Initialize the output data types and datasets
-		Map<String, OutputDescriptionType> _outputDefinitions = new HashMap<String, OutputDescriptionType>();
-		Map<String, List<IOValueType>> _outputs = new HashMap<String, List<IOValueType>>();
-		for(OutputDescriptionType _outputType : metadata.getProcessOutputs().getOutputArray()){
-			_outputs.put(_outputType.getIdentifier().getStringValue(), new ArrayList<IOValueType>());
-			_outputDefinitions.put(_outputType.getIdentifier().getStringValue(), _outputType);
+		outputDefinitions = new HashMap<String, ValueType>();
+		Map<String, List<IOValueType>> _rawOutputs = new HashMap<String, List<IOValueType>>();
+		for(ValueType _outputType : metadata.getOutputs().getOutputArray()){
+			_rawOutputs.put(_outputType.getId(), new ArrayList<IOValueType>());
+			outputDefinitions.put(_outputType.getId(), _outputType);
 		}
 		
 		//Initialize the input data types and datasets
-		Map<String, InputDescriptionType> _inputDefinitions = new HashMap<String, InputDescriptionType>();
-		Map<String, List<IOValueType>> _inputs = new HashMap<String, List<IOValueType>>();
-		for(InputDescriptionType _inputType : metadata.getDataInputs().getInputArray()){
-			_inputs.put(_inputType.getIdentifier().getStringValue(), new ArrayList<IOValueType>());
-			_inputDefinitions.put(_inputType.getIdentifier().getStringValue(), _inputType);
-		}
+		inputDefinitions = new HashMap<String, ValueType>();
+		Map<String, List<IOValueType>> _rawInputs = new HashMap<String, List<IOValueType>>();
 		
-		process.setInputs(_inputs);
-		process.setOutputs(_outputs);
+		for(ValueType _inputType : metadata.getInputs().getInputArray()){
+			_rawInputs.put(_inputType.getId(), new ArrayList<IOValueType>());
+			inputDefinitions.put(_inputType.getId(), _inputType);
+		}
 		
 		if (process instanceof ParameterDefinitionAware) {
 			ParameterDefinitionAware _parameterDefAware = (ParameterDefinitionAware) process;
 			
-			_parameterDefAware.setInputDefinitions(_inputDefinitions);
-			_parameterDefAware.setOutputDefinitions(_outputDefinitions);
+			_parameterDefAware.setInputDefinitions(inputDefinitions);
+			_parameterDefAware.setOutputDefinitions(outputDefinitions);
 		}
 		
-		//Initialize the input data
-		for(IOValueType _inputParam : request.getDataInputs().getInputArray()){
-			process.getInputs().get(_inputParam.getIdentifier().getStringValue()).add(_inputParam);
+		if (process instanceof RawParameterAware) {
+			RawParameterAware _rawParameterAware = (RawParameterAware) process;
+
+			//Initialize the raw input data
+			for(IOValueType _inputParam : request.getDataInputs().getInputArray()){
+				_rawInputs.get(_inputParam.getIdentifier().getStringValue()).add(_inputParam);
+			}
+
+			_rawParameterAware.setRawInputs(_rawInputs);
+			_rawParameterAware.setRawOutputs(_rawOutputs);
+		}
+		
+		if (process instanceof ParameterAware) {
+			Map<String, Object> _inputs = new HashMap<String, Object>();
+			Map<String, Object> _outputs = new HashMap<String, Object>();			
+			
+			DataParser _dataParser = DataParser.getInstance();
+			
+			//Initialize the input data
+			for(IOValueType _inputParam : request.getDataInputs().getInputArray()){
+				String _id = _inputParam.getIdentifier().getStringValue(); 
+				_inputs.put(_id, _dataParser.parse(inputDefinitions.get(_id), _inputParam));
+			}
+			
+			ParameterAware _parameterAware = (ParameterAware) process;
+			
+			_parameterAware.setInputs(_inputs);
+			_parameterAware.setOutputs(_outputs);
 		}
 		
 		this.process = process;
@@ -122,7 +156,7 @@ public class ProcessingWrap implements Runnable {
 	/**
 	 * @return Metadata of the process
 	 */
-	public ProcessDescriptionType getMetadata() {
+	public ProcessType getMetadata() {
 		return metadata;
 	}
 	
@@ -131,26 +165,53 @@ public class ProcessingWrap implements Runnable {
 	 * Create and return a ExecuteResponseDocument object, which identifies the current process status
 	 * 
 	 * @return 
+	 * @throws ParserConfigurationException 
+	 * @throws SAXException 
+	 * @throws MimeTypeParseException 
+	 * @throws IOException 
 	 */
-	public ExecuteResponseDocument createReponse() {
+	public ExecuteResponseDocument createReponse() throws IOException {
 		ExecuteResponseDocument _doc = ExecuteResponseDocument.Factory.newInstance();
 		ExecuteResponseType _response = _doc.addNewExecuteResponse();
 		
 		_response.setVersion(WPS.WPS_VERSION);
-		_response.setIdentifier(this.metadata.getIdentifier());
+		_response.addNewIdentifier().setStringValue(this.metadata.getId());
 		
 		StatusType _status = _response.addNewStatus();
 		this.getStatus().encode(_status);
 		
-		ProcessOutputs _outputs = _response.addNewProcessOutputs();
 		List<IOValueType> _outputParams = new ArrayList<IOValueType>();
-		for(String _outputKey : this.getProcess().getOutputs().keySet()){
-			for(IOValueType _outputValue : this.getProcess().getOutputs().get(_outputKey)){
-				_outputParams.add(_outputValue);
+		if (this.process instanceof RawParameterAware) {
+			//Raw parameters
+			RawParameterAware _rawParameterAware = (RawParameterAware) this.process;
+			
+			for(String _outputKey : _rawParameterAware.getRawOutputs().keySet()){
+				for(IOValueType _outputValue : _rawParameterAware.getRawOutputs().get(_outputKey)){
+					_outputParams.add(_outputValue);
+				}
 			}
 		}
-		_outputs.setOutputArray((IOValueType[])_outputParams.toArray(new IOValueType[0]));
+		else if(this.process instanceof ParameterAware){
+			ParameterAware _parameterAware = (ParameterAware) this.process;
+			Map<String, Object> _outputs = _parameterAware.getOutputs();
+			
+			DataParser _dataParser = DataParser.getInstance();
+			for(String _key : _outputs.keySet()){
+				_outputParams.add(_dataParser.encode(this.outputDefinitions.get(_key), findOutputRequest(_key), _outputs.get(_key), this.store));
+			}
+		}
+		ProcessOutputs _outputs = _response.addNewProcessOutputs();
+		_outputs.setOutputArray((IOValueType[])_outputParams.toArray(new IOValueType[0]));			
 		
 		return _doc;
+	}
+	
+	protected OutputDefinitionType findOutputRequest(String id){
+		for(OutputDefinitionType _type : this.request.getOutputDefinitions().getOutputArray()){
+			if(_type.getIdentifier().getStringValue().equalsIgnoreCase(id)){
+				return _type;
+			}
+		}
+		return null;
 	}
 }

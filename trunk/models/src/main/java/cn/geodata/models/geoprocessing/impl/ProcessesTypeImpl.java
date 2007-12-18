@@ -24,43 +24,97 @@ public class ProcessesTypeImpl extends org.apache.xmlbeans.impl.values.XmlComple
     
     
     /**
-     * Gets the "process" element
+     * Gets array of all "process" elements
      */
-    public cn.geodata.models.geoprocessing.ProcessType getProcess()
+    public cn.geodata.models.geoprocessing.ProcessType[] getProcessArray()
+    {
+        synchronized (monitor())
+        {
+            check_orphaned();
+            java.util.List targetList = new java.util.ArrayList();
+            get_store().find_all_element_users(PROCESS$0, targetList);
+            cn.geodata.models.geoprocessing.ProcessType[] result = new cn.geodata.models.geoprocessing.ProcessType[targetList.size()];
+            targetList.toArray(result);
+            return result;
+        }
+    }
+    
+    /**
+     * Gets ith "process" element
+     */
+    public cn.geodata.models.geoprocessing.ProcessType getProcessArray(int i)
     {
         synchronized (monitor())
         {
             check_orphaned();
             cn.geodata.models.geoprocessing.ProcessType target = null;
-            target = (cn.geodata.models.geoprocessing.ProcessType)get_store().find_element_user(PROCESS$0, 0);
+            target = (cn.geodata.models.geoprocessing.ProcessType)get_store().find_element_user(PROCESS$0, i);
             if (target == null)
             {
-                return null;
+                throw new IndexOutOfBoundsException();
             }
             return target;
         }
     }
     
     /**
-     * Sets the "process" element
+     * Returns number of "process" element
      */
-    public void setProcess(cn.geodata.models.geoprocessing.ProcessType process)
+    public int sizeOfProcessArray()
+    {
+        synchronized (monitor())
+        {
+            check_orphaned();
+            return get_store().count_elements(PROCESS$0);
+        }
+    }
+    
+    /**
+     * Sets array of all "process" element
+     */
+    public void setProcessArray(cn.geodata.models.geoprocessing.ProcessType[] processArray)
+    {
+        synchronized (monitor())
+        {
+            check_orphaned();
+            arraySetterHelper(processArray, PROCESS$0);
+        }
+    }
+    
+    /**
+     * Sets ith "process" element
+     */
+    public void setProcessArray(int i, cn.geodata.models.geoprocessing.ProcessType process)
     {
         synchronized (monitor())
         {
             check_orphaned();
             cn.geodata.models.geoprocessing.ProcessType target = null;
-            target = (cn.geodata.models.geoprocessing.ProcessType)get_store().find_element_user(PROCESS$0, 0);
+            target = (cn.geodata.models.geoprocessing.ProcessType)get_store().find_element_user(PROCESS$0, i);
             if (target == null)
             {
-                target = (cn.geodata.models.geoprocessing.ProcessType)get_store().add_element_user(PROCESS$0);
+                throw new IndexOutOfBoundsException();
             }
             target.set(process);
         }
     }
     
     /**
-     * Appends and returns a new empty "process" element
+     * Inserts and returns a new empty value (as xml) as the ith "process" element
+     */
+    public cn.geodata.models.geoprocessing.ProcessType insertNewProcess(int i)
+    {
+        synchronized (monitor())
+        {
+            check_orphaned();
+            cn.geodata.models.geoprocessing.ProcessType target = null;
+            target = (cn.geodata.models.geoprocessing.ProcessType)get_store().insert_element_user(PROCESS$0, i);
+            return target;
+        }
+    }
+    
+    /**
+     * Appends and returns a new empty value (as xml) as the last "process" element
      */
     public cn.geodata.models.geoprocessing.ProcessType addNewProcess()
     {
@@ -70,6 +124,18 @@ public class ProcessesTypeImpl extends org.apache.xmlbeans.impl.values.XmlComple
             cn.geodata.models.geoprocessing.ProcessType target = null;
             target = (cn.geodata.models.geoprocessing.ProcessType)get_store().add_element_user(PROCESS$0);
             return target;
+        }
+    }
+    
+    /**
+     * Removes the ith "process" element
+     */
+    public void removeProcess(int i)
+    {
+        synchronized (monitor())
+        {
+            check_orphaned();
+            get_store().remove_element(PROCESS$0, i);
         }
     }
 }

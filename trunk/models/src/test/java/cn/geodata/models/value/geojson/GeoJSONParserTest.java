@@ -23,7 +23,11 @@ import cn.geodata.models.geojson.GeoJSONUtil;
 public class GeoJSONParserTest extends TestCase {
 	private Logger log = Logger.getAnonymousLogger();
 	
-	public void testCompare() throws Exception {
+	public void testTest1() throws Exception {
+		
+	}
+	
+	public void atestCompare() throws Exception {
 		File[] _files = new File[] {
 			new java.io.File("d:\\mfeng\\data\\global\\cities.shp"),
 			new java.io.File("d:\\mfeng\\data\\global\\rivers.shp"),

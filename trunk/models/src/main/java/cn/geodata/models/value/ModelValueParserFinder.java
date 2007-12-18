@@ -15,8 +15,8 @@ public class ModelValueParserFinder {
 	private String defaultLiteralParser;
 	private String defaultComplexEncoder;
 	private String defaultComplexParser;
-	private String defaultComplexReferenceEncoder;
-	private String defaultComplexReferenceParser;
+	private String defaultReferenceEncoder;
+	private String defaultReferenceParser;
 	
 	public String getDefaultLiteralEncoder() {
 		return defaultLiteralEncoder;
@@ -50,20 +50,20 @@ public class ModelValueParserFinder {
 		this.defaultComplexParser = defaultComplexParser;
 	}
 	
-	public String getDefaultComplexReferenceEncoder() {
-		return defaultComplexReferenceEncoder;
+	public String getDefaultReferenceEncoder() {
+		return defaultReferenceEncoder;
 	}
 	
-	public void setDefaultComplexReferenceEncoder(String defaultComplexReferenceEncoder) {
-		this.defaultComplexReferenceEncoder = defaultComplexReferenceEncoder;
+	public void setDefaultReferenceEncoder(String defaultReferenceEncoder) {
+		this.defaultReferenceEncoder = defaultReferenceEncoder;
 	}
 	
-	public String getDefaultComplexReferenceParser() {
-		return defaultComplexReferenceParser;
+	public String getDefaultReferenceParser() {
+		return defaultReferenceParser;
 	}
 	
-	public void setDefaultComplexReferenceParser(String defaultComplexReferenceParser) {
-		this.defaultComplexReferenceParser = defaultComplexReferenceParser;
+	public void setDefaultReferenceParser(String defaultReferenceParser) {
+		this.defaultReferenceParser = defaultReferenceParser;
 	}
 
 	public Map<String, Encoder> getEncoders() {
@@ -93,7 +93,7 @@ public class ModelValueParserFinder {
 		
 		_list.add(this.defaultLiteralParser);
 		_list.add(this.defaultComplexParser);
-		_list.add(this.defaultComplexReferenceParser);
+		_list.add(this.defaultReferenceParser);
 		
 		for(String _k : _list){
 			if(this.parsers.get(_k).canParse(type)){
@@ -117,7 +117,7 @@ public class ModelValueParserFinder {
 //		
 //		_list.add(this.defaultLiteralEncoder);
 //		_list.add(this.defaultComplexEncoder);
-//		_list.add(this.defaultComplexReferenceEncoder);
+//		_list.add(this.defaultReferenceEncoder);
 //		
 //		for(String _k : _list){
 //			if(this.encoders.get(_k).canEncode(obj)){
@@ -167,14 +167,14 @@ public class ModelValueParserFinder {
 	/**
 	 * @return default complex reference value encoder
 	 */
-	public ReferenceEncoder getComplexReferenceEncoder() {
-		return (ReferenceEncoder) this.encoders.get(this.defaultComplexReferenceEncoder);
+	public ReferenceEncoder getReferenceEncoder() {
+		return (ReferenceEncoder) this.encoders.get(this.defaultReferenceEncoder);
 	}
 	
 	/**
 	 * @return default complex reference value parser
 	 */
-	public ReferenceParser getComplexReferenceParser(){
-		return (ReferenceParser) this.parsers.get(this.defaultComplexReferenceParser);
+	public ReferenceParser getReferenceParser(){
+		return (ReferenceParser) this.parsers.get(this.defaultReferenceParser);
 	}
 }

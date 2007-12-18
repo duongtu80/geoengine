@@ -1,7 +1,9 @@
 package cn.geodata.models.data.parsers;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.jdom.Element;
@@ -29,11 +31,5 @@ public class GmlComplexParserTest extends TestCase {
 	
 	public void testGetCategories() throws Exception {
 		log.info(this.parser.getCategories().toString());
-	}
-	
-	public void testTest1() throws Exception {
-		ProcessesType _processes = ProcessesDocument.Factory.parse(new File("d:\\mfeng\\save\\java\\wps\\src\\geoengine\\test1\\src\\main\\test1.xml")).getProcesses();
-		
-		log.info(_processes.getProcess().getId());
 	}
 }

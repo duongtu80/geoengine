@@ -65,6 +65,10 @@ public class DataCategory {
 	public void setChildren(List<DataCategory> children) {
 		this.children = children;
 	}
+	
+	public boolean isLiteral() {
+		return this.javaClass.isPrimitive();
+	}
 
 	@Override
 	public boolean equals(Object obj) {

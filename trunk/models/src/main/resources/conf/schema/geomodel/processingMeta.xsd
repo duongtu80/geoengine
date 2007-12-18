@@ -5,7 +5,7 @@
     
     <complexType name="processesType">
     	<sequence>
-    		<element ref="geo:process"></element>
+    		<element ref="geo:process" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     </complexType>
 

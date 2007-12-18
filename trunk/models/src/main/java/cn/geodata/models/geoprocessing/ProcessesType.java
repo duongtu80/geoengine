@@ -16,22 +16,47 @@ package cn.geodata.models.geoprocessing;
 public interface ProcessesType extends org.apache.xmlbeans.XmlObject
 {
     public static final org.apache.xmlbeans.SchemaType type = (org.apache.xmlbeans.SchemaType)
-        org.apache.xmlbeans.XmlBeans.typeSystemForClassLoader(ProcessesType.class.getClassLoader(), "schemaorg_apache_xmlbeans.system.sD2C1AFB524157171088CF014117DE1E9").resolveHandle("processestype0a59type");
+        org.apache.xmlbeans.XmlBeans.typeSystemForClassLoader(ProcessesType.class.getClassLoader(), "schemaorg_apache_xmlbeans.system.s60DBFAE60CD8585308AA97515DDF1108").resolveHandle("processestype0a59type");
     
     /**
-     * Gets the "process" element
+     * Gets array of all "process" elements
      */
-    cn.geodata.models.geoprocessing.ProcessType getProcess();
+    cn.geodata.models.geoprocessing.ProcessType[] getProcessArray();
     
     /**
-     * Sets the "process" element
+     * Gets ith "process" element
      */
-    void setProcess(cn.geodata.models.geoprocessing.ProcessType process);
+    cn.geodata.models.geoprocessing.ProcessType getProcessArray(int i);
     
     /**
-     * Appends and returns a new empty "process" element
+     * Returns number of "process" element
+     */
+    int sizeOfProcessArray();
+    
+    /**
+     * Sets array of all "process" element
+     */
+    void setProcessArray(cn.geodata.models.geoprocessing.ProcessType[] processArray);
+    
+    /**
+     * Sets ith "process" element
+     */
+    void setProcessArray(int i, cn.geodata.models.geoprocessing.ProcessType process);
+    
+    /**
+     * Inserts and returns a new empty value (as xml) as the ith "process" element
+     */
+    cn.geodata.models.geoprocessing.ProcessType insertNewProcess(int i);
+    
+    /**
+     * Appends and returns a new empty value (as xml) as the last "process" element
      */
     cn.geodata.models.geoprocessing.ProcessType addNewProcess();
+    
+    /**
+     * Removes the ith "process" element
+     */
+    void removeProcess(int i);
     
     /**
      * A factory class with static methods for creating instances

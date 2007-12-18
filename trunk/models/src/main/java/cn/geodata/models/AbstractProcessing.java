@@ -1,61 +1,80 @@
 package cn.geodata.models;
 
-import java.util.List;
 import java.util.Map;
 
-import net.opengeospatial.wps.IOValueType;
-import net.opengeospatial.wps.InputDescriptionType;
-import net.opengeospatial.wps.OutputDescriptionType;
-import net.opengeospatial.wps.ProcessDescriptionType;
+import cn.geodata.models.geoprocessing.ProcessType;
+import cn.geodata.models.geoprocessing.ValueType;
 
 /**
  * 
  * @author Fengm
- *
+ * 
  */
-public abstract class AbstractProcessing implements Processing, MetadataAware, ParameterDefinitionAware, StatusAware {
-	protected ProcessDescriptionType metadata;
-	
-	protected Map<String, OutputDescriptionType> outputDefinitions;
-	protected Map<String, InputDescriptionType> inputDefinitions;
-	
-	protected Map<String, List<IOValueType>> inputs;
-	protected Map<String, List<IOValueType>> outputs;
-	
+public abstract class AbstractProcessing implements Processing, ParameterAware,
+		MetadataAware, ParameterDefinitionAware, StatusAware {
+	protected ProcessType metadata;
+
+	protected Map<String, ValueType> outputDefinitions;
+	protected Map<String, ValueType> inputDefinitions;
+
+//	protected Map<String, List<IOValueType>> rawInputs;
+//	protected Map<String, List<IOValueType>> rawOutputs;
+//
+	protected Map<String, Object> inputs;
+	protected Map<String, Object> outputs;
+
 	@Override
-	public Map<String, List<IOValueType>> getInputs() {
-		return inputs;
+	public Map<String, Object> getInputs() {
+		return this.inputs;
 	}
 
 	@Override
-	public Map<String, List<IOValueType>> getOutputs() {
-		return outputs;
+	public Map<String, Object> getOutputs() {
+		return this.outputs;
 	}
 
 	@Override
-	public void setInputs(Map<String, List<IOValueType>> inputs) {
-		this.inputs = inputs;		
+	public void setInputs(Map<String, Object> inputs) {
+		this.inputs = inputs;
 	}
 
 	@Override
-	public void setOutputs(Map<String, List<IOValueType>> outputs) {
-		this.outputs = outputs;		
+	public void setOutputs(Map<String, Object> outputs) {
+		this.outputs = outputs;
+	}
+
+//	@Override
+//	public Map<String, List<IOValueType>> getRawInputs() {
+//		return rawInputs;
+//	}
+//
+//	@Override
+//	public Map<String, List<IOValueType>> getRawOutputs() {
+//		return rawOutputs;
+//	}
+//
+//	@Override
+//	public void setRawInputs(Map<String, List<IOValueType>> rawInputs) {
+//		this.rawInputs = rawInputs;
+//	}
+//
+//	@Override
+//	public void setRawOutputs(Map<String, List<IOValueType>> rawOutputs) {
+//		this.rawOutputs = rawOutputs;
+//	}
+//
+	@Override
+	public void setMetadata(ProcessType metadata) {
+		this.metadata = metadata;
 	}
 
 	@Override
-	public void setMetadata(ProcessDescriptionType metadata) {
-		this.metadata = metadata;		
+	public void setInputDefinitions(Map<String, ValueType> inputDefinitions) {
+		this.inputDefinitions = inputDefinitions;
 	}
 
 	@Override
-	public void setInputDefinitions(
-			Map<String, InputDescriptionType> inputDefinitions) {
-		this.inputDefinitions = inputDefinitions;		
-	}
-
-	@Override
-	public void setOutputDefinitions(
-			Map<String, OutputDescriptionType> outputDefinitions) {
-		this.outputDefinitions = outputDefinitions;		
+	public void setOutputDefinitions(Map<String, ValueType> outputDefinitions) {
+		this.outputDefinitions = outputDefinitions;
 	}
 }

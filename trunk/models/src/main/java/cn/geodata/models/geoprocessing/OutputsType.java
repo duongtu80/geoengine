@@ -16,7 +16,7 @@ package cn.geodata.models.geoprocessing;
 public interface OutputsType extends org.apache.xmlbeans.XmlObject
 {
     public static final org.apache.xmlbeans.SchemaType type = (org.apache.xmlbeans.SchemaType)
-        org.apache.xmlbeans.XmlBeans.typeSystemForClassLoader(OutputsType.class.getClassLoader(), "schemaorg_apache_xmlbeans.system.sD2C1AFB524157171088CF014117DE1E9").resolveHandle("outputstype17c4type");
+        org.apache.xmlbeans.XmlBeans.typeSystemForClassLoader(OutputsType.class.getClassLoader(), "schemaorg_apache_xmlbeans.system.s60DBFAE60CD8585308AA97515DDF1108").resolveHandle("outputstype17c4type");
     
     /**
      * Gets array of all "output" elements

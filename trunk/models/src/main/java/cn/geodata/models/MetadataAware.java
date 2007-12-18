@@ -1,7 +1,7 @@
 package cn.geodata.models;
 
-import net.opengeospatial.wps.ProcessDescriptionType;
+import cn.geodata.models.geoprocessing.ProcessType;
 
 public interface MetadataAware {
-	void setMetadata(ProcessDescriptionType metadata);
+	void setMetadata(ProcessType metadata);
 }

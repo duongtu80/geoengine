@@ -6,6 +6,8 @@ import java.util.Map;
 import net.opengeospatial.wps.ProcessDescriptionType;
 import net.opengeospatial.wps.ExecuteDocument.Execute;
 import net.opengeospatial.wps.ProcessDescriptionsDocument.ProcessDescriptions;
+import cn.geodata.models.geoprocessing.ProcessType;
+import cn.geodata.models.geoprocessing.ProcessesType;
 import cn.geodata.models.util.ProcessingLibray;
 
 public class ProcessingFactoryWarp {
@@ -24,15 +26,15 @@ public class ProcessingFactoryWarp {
 		
 		ProcessingFactory _model = ProcessingLibray.createInstance().getModelFactories().get(_processId);
 		
-		ProcessDescriptionType _metadata = this.getProcessMetadata(_processId, _model.getMetadata());
+		ProcessType _metadata = this.getProcessMetadata(_processId, _model.getMetadata());
 		Processing _process = _model.createProcessing(_processId, params);
 		
 		return new ProcessingWrap(_process, _metadata, request);
 	}
 	
-	public ProcessDescriptionType getProcessMetadata(String identify, ProcessDescriptions metadata) throws IOException{
-		for(ProcessDescriptionType _p : metadata.getProcessDescriptionArray()){
-			if(_p.getIdentifier().getStringValue().equals(identify)){
+	public ProcessType getProcessMetadata(String identify, ProcessesType metadata) throws IOException{
+		for(ProcessType _p : metadata.getProcessArray()){
+			if(_p.getId().equals(identify)){
 				return _p;
 			}
 		}

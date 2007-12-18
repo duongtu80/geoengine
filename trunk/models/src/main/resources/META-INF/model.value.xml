@@ -10,7 +10,7 @@
 				</entry>
 				<entry key="complex.gml"><ref bean="complex.gml" />
 				</entry>
-				<entry key="complexReference.gml"><ref bean="complexReference.gml" />
+				<entry key="reference.gml"><ref bean="reference.gml" />
 				</entry>
 			</map>
 		</property>
@@ -21,7 +21,7 @@
 				</entry>
 				<entry key="complex.gml"><ref bean="complex.gml" />
 				</entry>
-				<entry key="complexReference.gml"><ref bean="complexReference.gml" />
+				<entry key="reference.gml"><ref bean="reference.gml" />
 				</entry>
 			</map>
 		</property>
@@ -30,8 +30,8 @@
 		<property name="defaultLiteralParser"><value>literal.normal</value></property>
 		<property name="defaultComplexEncoder"><value>complex.gml</value></property>
 		<property name="defaultComplexParser"><value>complex.gml</value></property>
-		<property name="defaultComplexReferenceEncoder"><value>complexReference.gml</value></property>
-		<property name="defaultComplexReferenceParser"><value>complexReference.gml</value></property>
+		<property name="defaultReferenceEncoder"><value>reference.gml</value></property>
+		<property name="defaultReferenceParser"><value>reference.gml</value></property>
 	</bean>
 	
 	<bean id="literal.normal" class="cn.geodata.models.value.literal.LiteralValueParser">
@@ -69,7 +69,7 @@
 	<bean id="complex.gml" class="cn.geodata.models.value.gml.GMLComplexValueParser">
 	</bean>
 	
-	<bean id="complexReference.gml" class="cn.geodata.models.value.gml.GMLComplexReferenceParser">
+	<bean id="reference.gml" class="cn.geodata.models.value.gml.GMLReferenceParser">
 	</bean>
 	
 	<bean id="literal.string" class="cn.geodata.models.value.literal.StringParser">
