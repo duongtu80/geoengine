@@ -46,9 +46,8 @@ public class SwampCities extends AbstractProcessing {
 	public void execute() throws Exception {
 		log.info("Start model");
 		
-		ModelValueParserFinder _finder = ModelValueUtil.createParserFinder();
-		double _rise = (Double)_finder.parse(this.getInputs().get("rise").get(0).getLiteralValue());
-		FeatureCollection _cities = (FeatureCollection) _finder.parse(this.getInputs().get("cities").get(0).getComplexValueReference());
+		double _rise = (Double)this.getInputs().get("rise");
+		FeatureCollection _cities = (FeatureCollection) this.getInputs().get("cities");
 		
 		FeatureType _ft = this.createFeatureType();
 		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
@@ -73,10 +72,10 @@ public class SwampCities extends AbstractProcessing {
 		
 		log.info("Cities number:" + _fs.size());
 		
-		IOValueType _output = ModelValueUtil.createOutputValue(this.outputDefinitions.get("swamp"));
-		_output.setComplexValue(_finder.getComplexEncoder().encodeFeatureCollection(_fs));
-		
-		this.getOutputs().get("swamp").add(_output);
+//		IOValueType _output = ModelValueUtil.createOutputValue(this.outputDefinitions.get("swamp"));
+//		_output.setComplexValue(_finder.getComplexEncoder().encodeFeatureCollection(_fs));
+//		
+		this.getOutputs().put("swamp", _fs);
 	}
 	
 	public FeatureSource getCities() throws IOException {
