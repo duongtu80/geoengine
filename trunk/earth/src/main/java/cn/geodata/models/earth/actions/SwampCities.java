@@ -86,7 +86,7 @@ public class SwampCities {
 		_inputs.add(_paramRise);
 		
 		IOValueType _paramCities = ModelValueUtil.createInputValue(_inputDefinitions.get("cities"));
-		_paramCities.setComplexValueReference(_finder.getComplexReferenceEncoder().encodeUrl(_citiesUrl.toString(), "text/gml", "utf-8", null));
+		_paramCities.setComplexValueReference(_finder.getReferenceEncoder().encodeUrl(_citiesUrl.toString(), "text/gml", "utf-8", null));
 		_inputs.add(_paramCities);
 		
 		ExecuteResponseDocument _execute = _client.execute(_processDesc.getIdentifier().getStringValue(), _inputs.toArray(new IOValueType[0]));
