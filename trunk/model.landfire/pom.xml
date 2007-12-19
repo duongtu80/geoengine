@@ -28,6 +28,11 @@
       <artifactId>gt2-geotiff</artifactId>
       <version>2.4-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>1.4</version>
+    </dependency>
   </dependencies>
 </project>
 
