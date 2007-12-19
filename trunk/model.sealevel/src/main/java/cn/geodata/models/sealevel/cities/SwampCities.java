@@ -16,7 +16,6 @@ import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.FeatureType;
-import org.geotools.feature.FeatureTypeFactory;
 import org.geotools.feature.SchemaException;
 
 import cn.geodata.models.AbstractProcessing;
@@ -27,20 +26,18 @@ public class SwampCities extends AbstractProcessing {
 	private static Logger log = Logger.getLogger("cn.geodata.models.sealevel");
 
 	protected FeatureType createFeatureType() throws FactoryRegistryException, SchemaException, URISyntaxException {
-		FeatureTypeFactory _factory = CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints());
-		
 		AttributeType[] _attrs = new AttributeType[3];
 		_attrs[0] = AttributeTypeFactory.newAttributeType("geom", Point.class);
 		_attrs[1] = AttributeTypeFactory.newAttributeType("rank", Integer.class);
 		_attrs[2] = AttributeTypeFactory.newAttributeType("name", String.class, true, 255);
 		
-		return _factory.newFeatureType(_attrs, "cities", new URI("http://www.unep.org"));
+		return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType(_attrs, "cities", new URI("http://www.unep.org"));
 	}
 	
 	@Override
 	public void execute() throws Exception {
-		log.info("Start model");
-		
+//		log.info("Start model");
+//		
 		double _rise = (Double)this.getInputs().get("rise");
 		FeatureCollection _cities = (FeatureCollection) this.getInputs().get("cities");
 		
@@ -51,7 +48,7 @@ public class SwampCities extends AbstractProcessing {
 			while(_it.hasNext()){
 				Feature _f = _it.next();
 				if(((Double)_f.getAttribute("altitude")).doubleValue() < _rise){
-					log.info("Feature Id:" + _f.getID());
+//					log.info("Feature Id:" + _f.getID());
 					_fs.add(_ft.create(new Object[] {_f.getDefaultGeometry(), 1, _f.getAttribute("CITY_NAME")}, _f.getID()));
 				}
 			}
