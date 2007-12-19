@@ -71,7 +71,7 @@ public class DescribeProcessOp extends WpsOperation {
 			_input.setAbstract(_type.getDescribe());
 			
 			DataCategory _c = _categories.findCategory(_type.getCategoryArray(0));
-			if(_c.isLiteral()){
+			if(_c.getLiteral()){
 				LiteralInputType _liter = _input.addNewLiteralData();
 				_liter.addNewDataType().setStringValue(_c.getTitle());
 			}
@@ -92,7 +92,7 @@ public class DescribeProcessOp extends WpsOperation {
 			_output.setAbstract(_type.getDescribe());
 			
 			DataCategory _c = _categories.findCategory(_type.getCategoryArray(0));
-			if(_c.isLiteral()){
+			if(_c.getLiteral()){
 				LiteralOutputType _liter = _output.addNewLiteralOutput();
 				_liter.addNewDataType().setStringValue(_c.getTitle());
 			}

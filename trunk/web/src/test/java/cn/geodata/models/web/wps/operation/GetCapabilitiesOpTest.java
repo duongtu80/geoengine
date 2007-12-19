@@ -2,6 +2,8 @@ package cn.geodata.models.web.wps.operation;
 
 import java.util.logging.Logger;
 
+import net.opengeospatial.wps.DescribeProcessDocument;
+
 import cn.geodata.models.web.util.Util;
 import junit.framework.TestCase;
 
@@ -15,5 +17,12 @@ public class GetCapabilitiesOpTest extends TestCase {
 	public void testGetCapabilities() throws Exception {
 		GetCapabilitiesOp _op = new GetCapabilitiesOp();
 		log.info(_op.execute(null).toString());
+		
+		DescribeProcessOp _de = new DescribeProcessOp();
+		
+		DescribeProcessDocument _doc = DescribeProcessDocument.Factory.newInstance();
+		_doc.addNewDescribeProcess().addNewIdentifier().setStringValue("swamp.cities");
+		
+		log.info(_de.execute(_doc).xmlText());
 	}
 }
