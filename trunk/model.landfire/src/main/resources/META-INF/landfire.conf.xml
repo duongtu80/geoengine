@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<dataset>
+		<path>D:\mfeng\save\java\wps\data\fire\dataset</path>
+	</dataset>
+	<output>D:\mfeng\save\java\wps\data\fire\output</output>
+</config>

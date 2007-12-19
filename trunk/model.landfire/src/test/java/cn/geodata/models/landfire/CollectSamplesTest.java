@@ -3,6 +3,7 @@ package cn.geodata.models.landfire;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -19,6 +20,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.SchemaException;
 
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 
 import junit.framework.TestCase;
 
@@ -36,7 +38,12 @@ public class CollectSamplesTest extends TestCase {
 		String _id = "FS-0507-072-961018";
 		CollectSamples _o = new CollectSamples();
 		
-		List<Point> _list = _o.findSamples(_id, 20, 120);
+		Polygon _p = _o.findFireRegion(_id);
+		int _count = (int)(_p.getArea() / 250000);
+		
+		log.info("Area:" + _p.getArea() + " count:" + _count);
+		
+		List<Point> _list = _o.findSamples(_id, _count, 120);
 		FeatureStore _store = this.getFeatureWriter();
 		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
 		for(Point _pt : _list){
@@ -52,8 +59,9 @@ public class CollectSamplesTest extends TestCase {
 		_attrs[0] = _factory.newAttributeType("shape", Point.class);
 		_attrs[1] = _factory.newAttributeType("dnbr", Double.class);
 		
-		ShapefileDataStore _dataStore = new ShapefileDataStore((new File("O:\\tank\\save\\java\\geoengine\\data\\tmp\\out.shp").toURL()));
-		_dataStore.createSchema(CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType(_attrs, "out.shp"));
+		File _output = new File((new Configure()).getTempOutputPath(), (new Date()).getTime() + ".shp");
+		ShapefileDataStore _dataStore = new ShapefileDataStore(_output.toURL());
+		_dataStore.createSchema(CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType(_attrs, _output.getName()));
 		
 		return (FeatureStore) _dataStore.getFeatureSource();
 	}

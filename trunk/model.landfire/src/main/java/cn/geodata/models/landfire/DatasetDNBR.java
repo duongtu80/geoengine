@@ -93,7 +93,7 @@ public class DatasetDNBR {
 	}
 
 	public GridCoverage2D findFireRegionDataset(String id) throws IOException{
-		File _file = new File(Configure.getFireRepository(), id + "\\" + id + "_d.tif");
+		File _file = new File((new Configure()).getFireRepository(), id + "\\" + id + "_d.tif");
 		
 		if(_file.exists() == false){
 			throw new FileNotFoundException(_file.getAbsolutePath());

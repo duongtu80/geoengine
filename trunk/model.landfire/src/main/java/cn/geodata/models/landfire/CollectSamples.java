@@ -98,7 +98,7 @@ public class CollectSamples {
 	}
 	
 	public FeatureSource findFireRegionDataset(String id) throws IOException{
-		File _file = new File(Configure.getFireRepository(), id + "\\" + id + ".shp");
+		File _file = new File((new Configure()).getFireRepository(), id + "\\" + id + ".shp");
 		
 		if(_file.exists() == false){
 			throw new FileNotFoundException(_file.getAbsolutePath());
