@@ -5,9 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
-import net.opengeospatial.wps.ComplexValueType;
-import net.opengeospatial.wps.IOValueType;
-
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
@@ -23,8 +20,6 @@ import org.geotools.feature.FeatureTypeFactory;
 import org.geotools.feature.SchemaException;
 
 import cn.geodata.models.AbstractProcessing;
-import cn.geodata.models.value.ModelValueParserFinder;
-import cn.geodata.models.value.ModelValueUtil;
 
 import com.vividsolutions.jts.geom.Point;
 

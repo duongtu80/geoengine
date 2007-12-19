@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.opengeospatial.wps.ProcessDescriptionsDocument;
-import net.opengeospatial.wps.ProcessDescriptionsDocument.ProcessDescriptions;
 import cn.geodata.models.AbstractProcessingFactory;
 import cn.geodata.models.Processing;
+import cn.geodata.models.geoprocessing.ProcessesDocument;
 import cn.geodata.models.geoprocessing.ProcessesType;
 
 public class SwampCitiesFactory extends AbstractProcessingFactory {
@@ -18,7 +17,7 @@ public class SwampCitiesFactory extends AbstractProcessingFactory {
 	public SwampCitiesFactory() {
 		try {
 			
-			this.metadata = ProcessesType.Factory.parse(this.getClass().getResourceAsStream("/META-INF/metadata/swampModel.xml"));
+			this.metadata = ProcessesDocument.Factory.parse(this.getClass().getResourceAsStream("/META-INF/metadata/swampModel.xml")).getProcesses();
 		}
 		catch (Exception e) {
 			log.log(Level.SEVERE, "Failed to parse the metadata", e);

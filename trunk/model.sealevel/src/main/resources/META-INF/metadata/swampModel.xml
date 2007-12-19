@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<geo:processes xmlns:geo="http://www.geodata.cn/models/geoprocessing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.geodata.cn/models/geoprocessing ../../../../../../models/src/main/resources/conf/schema/geomodel/processingMeta.xsd ">
+<geo:processes xmlns:geo="http://www.geodata.cn/models/geoprocessing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<geo:process>
 		<geo:id>swamp.cities</geo:id>
 		<geo:title>Swamp Cities</geo:title>
