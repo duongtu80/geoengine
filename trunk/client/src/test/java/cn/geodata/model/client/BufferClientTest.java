@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.activation.MimeType;
+
 import junit.framework.TestCase;
 import net.opengeospatial.wps.ExecuteResponseDocument;
 import net.opengeospatial.wps.IOValueType;
@@ -74,7 +76,7 @@ public class BufferClientTest extends TestCase {
 		_inputs.add(_paramRise);
 		
 		IOValueType _paramCities = ModelValueUtil.createInputValue(_inputDefinitions.get("cities"));
-		_paramCities.setComplexValueReference(_finder.getComplexReferenceEncoder().encodeUrl(_citiesUrl.toString(), "text/gml", "utf-8", null));
+		_paramCities.setComplexValueReference(_finder.getReferenceEncoder().encodeUrl(_citiesUrl.toString(), "text/xml", "utf-8", null));
 		
 		_inputs.add(_paramCities);
 		
