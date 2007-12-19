@@ -52,7 +52,7 @@ public class GmlComplexParser implements ComplexParser {
 	@Override
 	public List<MimeType> getMimes() {
 		try {
-			return Arrays.asList(new MimeType[]{new MimeType("text/xml")});
+			return Arrays.asList(new MimeType[]{new MimeType("text/xml"), new MimeType("text/gml")});
 		} catch (MimeTypeParseException e) {
 			log.log(Level.WARNING, "Failed to create MIME list", e);
 			return null;

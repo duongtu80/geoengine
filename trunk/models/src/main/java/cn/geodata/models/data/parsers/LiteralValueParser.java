@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 
+import cn.geodata.models.category.data.DataCategories;
 import cn.geodata.models.category.data.DataCategory;
 import cn.geodata.models.data.LiteralParser;
 
@@ -19,7 +20,7 @@ public class LiteralValueParser implements LiteralParser {
 	@Override
 	public String encode(Object obj, DataCategory category,
 			Map<String, Object> params) throws IOException {
-		if(category.getJavaClass().isInstance(obj)){
+		if(category.isInstance(obj)){
 			log.warning("Value type does not match the output definition " + obj.getClass().toString() + " " + category.getJavaClass().toString());
 			throw new IOException("Value type does not match the output definition");
 		}
@@ -29,13 +30,15 @@ public class LiteralValueParser implements LiteralParser {
 
 	@Override
 	public List<DataCategory> getCategories() {
+		DataCategories _categories = DataCategories.getInstance();
+		
 		List<DataCategory> _list = new ArrayList<DataCategory>();
 
-		_list.add(new DataCategory("int", "Integer", "Integer", Integer.class, null));
-		_list.add(new DataCategory("long", "Long", "Long", Long.class, null));
-		_list.add(new DataCategory("float", "Float", "Float", Float.class, null));
-		_list.add(new DataCategory("double", "Double", "Double", Double.class, null));
-		_list.add(new DataCategory("string", "String", "String", String.class, null));
+		_list.add(_categories.findCategory("int"));
+		_list.add(_categories.findCategory("long"));
+		_list.add(_categories.findCategory("float"));
+		_list.add(_categories.findCategory("double"));
+		_list.add(_categories.findCategory("string"));
 		
 		return _list;
 	}

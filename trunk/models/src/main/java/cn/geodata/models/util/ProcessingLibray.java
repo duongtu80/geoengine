@@ -1,7 +1,6 @@
 package cn.geodata.models.util;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +8,7 @@ import cn.geodata.models.ProcessingFactory;
 import cn.geodata.models.geoprocessing.ProcessType;
 
 /**
- * 管理环境中的所有模型，并提供相关的辅助功能
+ * Manages models, and provides related functions
  * @author Fengm
  *
  */
@@ -37,7 +36,7 @@ public class ProcessingLibray {
 	}
 
 	/**
-	 * 加载ModelLibrary对象
+	 * Load ModelLibrary
 	 * @return
 	 */
 	public static ProcessingLibray createInstance(){
@@ -49,8 +48,8 @@ public class ProcessingLibray {
 	}
 
 	/**
-	 * 返回模型库
-	 * @return
+	 * 
+	 * @return Model factories
 	 */
 	public Map<String, ProcessingFactory> getModelFactories() {
 		return models;

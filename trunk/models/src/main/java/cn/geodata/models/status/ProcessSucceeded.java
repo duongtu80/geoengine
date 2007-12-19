@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 import cn.geodata.models.GeoNamespaceContext;
 
 /**
- * 进程执行成功结束
+ * Process finished successfully
  * @author Fengm
  *
  */

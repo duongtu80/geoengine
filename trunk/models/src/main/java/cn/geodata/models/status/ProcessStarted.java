@@ -2,8 +2,6 @@ package cn.geodata.models.status;
 
 import java.text.DecimalFormat;
 
-import net.opengeospatial.ows.ExceptionReportDocument.ExceptionReport;
-import net.opengeospatial.wps.ProcessFailedType;
 import net.opengeospatial.wps.ProcessStartedType;
 import net.opengeospatial.wps.StatusType;
 
@@ -13,7 +11,7 @@ import org.w3c.dom.Element;
 import cn.geodata.models.GeoNamespaceContext;
 
 /**
- * 进度进展状态
+ * Process is under processing
  * @author Fengm
  *
  */
@@ -25,7 +23,7 @@ public class ProcessStarted extends Status {
 	}
 
 	/**
-	 * 获取进度
+	 * Get the status
 	 * @return
 	 */
 	public float getPercent() {
@@ -33,8 +31,8 @@ public class ProcessStarted extends Status {
 	}
 
 	/**
-	 * 设置进度 
-	 * @param percent 进度百分比的分值 percent >0 and percent < 100
+	 * Percent of the processing 
+	 * @param percent percent >0 and percent < 100
 	 */
 	public void setPercent(float percent) {
 		if(percent > 100){
@@ -51,7 +49,7 @@ public class ProcessStarted extends Status {
 	}
 	
 	/**
-	 * 前进进度
+	 * Forward the processing
 	 * @param percent
 	 */
 	public void step(float percent){

@@ -11,7 +11,7 @@ import org.geotools.factory.FactoryRegistry;
 import cn.geodata.models.ProcessingFactory;
 
 /**
- * 工厂搜索类
+ * Factory finder
  * @author Fengm
  *
  */
@@ -24,7 +24,7 @@ public class ProcessingFactoryFinder {
 	}
 	
 	/**
-	 * 创建/加载全局唯一工厂查找类
+	 * Create and return the global unique instance
 	 * @return
 	 */
 	public static ProcessingFactoryFinder newInstance() {
@@ -36,7 +36,7 @@ public class ProcessingFactoryFinder {
 	}
 	
 	/**
-	 * 加载所有模型
+	 * Find model factories by condition
 	 * @param params
 	 * @return
 	 */
@@ -51,7 +51,7 @@ public class ProcessingFactoryFinder {
 	}
 	
 	/**
-	 * 加载所有模型工厂
+	 * Load all model factories
 	 * @return
 	 */
 	private FactoryRegistry getFactoryRegister() {
@@ -62,7 +62,7 @@ public class ProcessingFactoryFinder {
 	}
 	
 	/**
-	 * 获取所有模型工厂
+	 * List all model factories
 	 * 
 	 * @return
 	 */

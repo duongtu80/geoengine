@@ -1,6 +1,7 @@
 package cn.geodata.models.data;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,11 +13,15 @@ import net.opengeospatial.wps.IOValueType;
 import net.opengeospatial.wps.OutputDefinitionType;
 import net.opengeospatial.wps.IOValueType.ComplexValueReference;
 
+import org.apache.commons.io.FileUtils;
 import org.xml.sax.SAXException;
 
 import cn.geodata.models.category.data.DataCategories;
 import cn.geodata.models.category.data.DataCategory;
+import cn.geodata.models.data.parsers.GmlComplexParser;
+import cn.geodata.models.data.parsers.LiteralValueParser;
 import cn.geodata.models.geoprocessing.ValueType;
+import cn.geodata.models.value.gml.GMLComplexValueParser;
 
 public class DataParser {
 	private static Logger log = Logger.getAnonymousLogger();
@@ -34,6 +39,12 @@ public class DataParser {
 	public static DataParser getInstance(){
 		if(instance == null){
 			instance = new DataParser();
+			
+			instance.setComplexParsers(new ComplexParsers());
+			instance.getComplexParsers().setParsers(Arrays.asList(new ComplexParser[]{new GmlComplexParser()}));
+			
+			instance.setLiteralParsers(new LiteralParsers());
+			instance.getLiteralParsers().setParsers(Arrays.asList(new LiteralParser[]{new LiteralValueParser()}));
 		}
 		return instance;
 	}
@@ -92,13 +103,13 @@ public class DataParser {
 		DataCategories _categories = DataCategories.getInstance();
 		for(String _cat : type.getCategoryArray()){
 			DataCategory _c = _categories.findCategory(_cat);
-			if(_c.getJavaClass().isInstance(obj)){
+			if(_c.isInstance(obj)){
 				_category = _c;
 				break;
 			}
 		}
 		
-		if(_category.isLiteral()){
+		if(_category.getLiteral()){
 			_value.setLiteralValue(this.literalParsers.encodeLiteral(type, obj));
 		}
 		else{
@@ -107,7 +118,7 @@ public class DataParser {
 			try {
 				_mime = new MimeType("text/xml");
 
-				if(request.getFormat() != null && request.getFormat().length() > 0){
+				if(request != null && request.getFormat() != null && request.getFormat().length() > 0){
 					_mime = new MimeType(request.getFormat());
 				}
 				_complexStream = this.complexParsers.encodeToStream(type, _mime, obj);

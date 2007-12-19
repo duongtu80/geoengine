@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 import cn.geodata.models.GeoNamespaceContext;
 
 /**
- * 进程处于被接收状态，等待执行
+ * Process was accepted, but still not finished
  * @author Fengm
  *
  */

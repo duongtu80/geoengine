@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 import cn.geodata.models.GeoNamespaceContext;
 
 /**
- * 进程执行状态
+ * Process status
  * @author Fengm
  *
  */

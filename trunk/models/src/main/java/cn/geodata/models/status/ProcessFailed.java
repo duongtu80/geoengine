@@ -1,6 +1,5 @@
 package cn.geodata.models.status;
 
-import net.opengeospatial.ows.ExceptionType;
 import net.opengeospatial.ows.ExceptionReportDocument.ExceptionReport;
 import net.opengeospatial.wps.ProcessFailedType;
 import net.opengeospatial.wps.StatusType;
@@ -12,7 +11,7 @@ import cn.geodata.models.GeoNamespaceContext;
 import cn.geodata.models.exception.ProcessingException;
 
 /**
- * 进程执行失败
+ * Failed to execute the process
  * @author Fengm
  *
  */
@@ -24,7 +23,7 @@ public class ProcessFailed extends Status {
 	}
 
 	/**
-	 * 获取执行失败的异常信息
+	 * Exception information
 	 * @return
 	 */
 	public ProcessingException getException() {

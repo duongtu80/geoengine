@@ -207,6 +207,9 @@ public class ProcessingWrap implements Runnable {
 	}
 	
 	protected OutputDefinitionType findOutputRequest(String id){
+		if(this.request.getOutputDefinitions() == null){
+			return null;
+		}
 		for(OutputDefinitionType _type : this.request.getOutputDefinitions().getOutputArray()){
 			if(_type.getIdentifier().getStringValue().equalsIgnoreCase(id)){
 				return _type;

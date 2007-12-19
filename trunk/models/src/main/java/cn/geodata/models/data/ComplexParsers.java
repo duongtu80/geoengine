@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -25,6 +27,7 @@ import net.opengeospatial.wps.IOValueType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.jdom.Element;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.XMLOutputter;
@@ -42,6 +45,18 @@ public class ComplexParsers {
 	private static Logger log = Logger.getAnonymousLogger();
 	
 	private List<ComplexParser> parsers;
+	private DocumentBuilder documentBuilder;
+	
+	public ComplexParsers() {
+		DocumentBuilderFactory _factory = DocumentBuilderFactory.newInstance();
+		_factory.setNamespaceAware(true);
+		
+		try {
+			this.documentBuilder = _factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			log.log(Level.SEVERE, "Failed to create document builder", e);
+		}
+	}
 
 	public List<ComplexParser> getParsers() {
 		return parsers;
@@ -53,7 +68,7 @@ public class ComplexParsers {
 	
 	public boolean supports(DataCategory category, MimeType mime){
 		for(ComplexParser _parser : this.parsers){
-			if(_parser.getCategories().contains(category) && _parser.getMimes().contains(mime)){
+			if(_parser.getCategories().contains(category) && this.containsMime(_parser.getMimes(), mime)){
 				return true;
 			}
 		}
@@ -62,13 +77,22 @@ public class ComplexParsers {
 	
 	public ComplexParser findParser(MimeType mimeType, DataCategory category){
 		for(ComplexParser _p : this.parsers){
-			if(_p.getMimes().contains(mimeType) && _p.getCategories().contains(category)){
+			if(this.containsMime(_p.getMimes(), mimeType) && _p.getCategories().contains(category)){
 				return _p;
 			}
 		}
 		
 		log.warning("Not found parser for " + mimeType + " category:" + category);
 		return null;
+	}
+	
+	protected boolean containsMime(List<MimeType> list, MimeType mime) {
+		for(MimeType _m : list){
+			if(_m.match(mime)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public List<MimeType> getMimes4Category(DataCategory category) {
@@ -229,7 +253,7 @@ public class ComplexParsers {
 		DataCategory _category = null;
 		for(String _cat : type.getCategoryArray()){
 			DataCategory _c = DataCategories.getInstance().findCategory(_cat);
-			if(_c.getClass().isInstance(val)){
+			if(_c.isInstance(val)){
 				_category = _c;
 				break;
 			}
@@ -252,7 +276,7 @@ public class ComplexParsers {
 		}
 		
 		ComplexValueType _value = ComplexValueType.Factory.newInstance();
-		_value.setEncoding(_mime.toString());
+		_value.setFormat(_mime.toString());
 		
 		InputStream _stream = _parser.encode(val, _mime, new HashMap<String, Object>());
 		
@@ -267,8 +291,9 @@ public class ComplexParsers {
 		Document _doc = _value.getDomNode().getOwnerDocument();
 		
 		try {
-			if(stream.getMime().match("text/xml")){
-				Document _inputDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream.getStream());
+//			IOUtils.copy(stream.getStream(), new FileOutputStream(new File(new File("D:\\mfeng\\tmp\\test3"), (new Date().getTime() + ".xml"))));
+			if(stream.getMime().match("text/xml") || stream.getMime().match("text/gml")){
+				Document _inputDoc = this.documentBuilder.parse(stream.getStream());
 				_value.getDomNode().appendChild(_doc.importNode(_inputDoc.getDocumentElement(), true));
 			}
 			else{
@@ -282,9 +307,6 @@ public class ComplexParsers {
 			throw new IOException(e);
 		} catch (SAXException e) {
 			log.log(Level.SEVERE, "SAX exception", e);
-			throw new IOException(e);
-		} catch (ParserConfigurationException e) {
-			log.log(Level.SEVERE, "ParserConfigurationException", e);
 			throw new IOException(e);
 		}
 		

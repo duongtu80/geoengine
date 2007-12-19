@@ -3,13 +3,10 @@ package cn.geodata.models.category.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.opengeospatial.wps.ComplexValueType;
-
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -68,27 +65,43 @@ public class DataCategories {
 			instance = new DataCategories();
 
 			instance.addCategory(new DataCategory("feature", "Feature",
-					"Feature", Feature.class, null));
+					"Feature", Feature.class, false, null));
 			instance.addCategory(new DataCategory("featureCollection",
 					"Feature Collection", "Feature Collection",
-					FeatureCollection.class, null));
+					FeatureCollection.class, false, null));
 
 			instance.addCategory(new DataCategory("point", "Point", "Point",
-					Point.class, null));
+					Point.class, false, null));
 			instance.addCategory(new DataCategory("lineString", "LineString",
-					"LineString", LineString.class, null));
+					"LineString", LineString.class, false, null));
 			instance.addCategory(new DataCategory("polygon", "Polygon", "Polygon",
-					Polygon.class, null));
+					Polygon.class, false, null));
 			instance.addCategory(new DataCategory("multiPoint", "MultiPoint",
-					"MultiPoint", MultiPoint.class, null));
+					"MultiPoint", MultiPoint.class, false, null));
 			instance.addCategory(new DataCategory("multiLineString",
 					"MultiLineString", "MultiLineString",
-					MultiLineString.class, null));
+					MultiLineString.class, false, null));
 			instance.addCategory(new DataCategory("multiPolygon", "MultiPolygon",
-					"MultiPolygon", MultiPolygon.class, null));
+					"MultiPolygon", MultiPolygon.class, false, null));
 
 			instance.addCategory(new DataCategory("gridCoverage",
-					"Grid Coverage", "Grid Coverage", GridCoverage2D.class,
+					"Grid Coverage", "Grid Coverage", GridCoverage2D.class, false,
+					null));
+
+			instance.addCategory(new DataCategory("int",
+					"Integer", "Integer", Integer.class, true,
+					null));
+			instance.addCategory(new DataCategory("long",
+					"Long", "Long", Long.class, true,
+					null));
+			instance.addCategory(new DataCategory("float",
+					"Float", "Float", Float.class, true,
+					null));
+			instance.addCategory(new DataCategory("double",
+					"Double", "Double", Double.class, true,
+					null));
+			instance.addCategory(new DataCategory("string",
+					"String", "String", String.class, true,
 					null));
 		}
 		return instance;

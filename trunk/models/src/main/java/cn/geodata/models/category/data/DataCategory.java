@@ -1,5 +1,6 @@
 package cn.geodata.models.category.data;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,17 +10,19 @@ public class DataCategory {
 	private String describe;
 	private Class javaClass;
 	private List<DataCategory> children;
+	private boolean literal;
 
 	public DataCategory() {
 		
 	}
 	
 	public DataCategory(String id, String title, String describe,
-			Class javaClass, List<DataCategory> children) {
+			Class javaClass, boolean literal, List<DataCategory> children) {
 		this.id = id;
 		this.title = title;
 		this.describe = describe;
 		this.javaClass = javaClass;
+		this.literal = literal;
 		this.children = children;
 	}
 
@@ -66,8 +69,30 @@ public class DataCategory {
 		this.children = children;
 	}
 	
-	public boolean isLiteral() {
-		return this.javaClass.isPrimitive();
+	public boolean getLiteral() {
+		return this.literal;
+	}
+	
+	public void setLiteral(boolean literal){
+		this.literal = literal;
+	}
+	
+	public boolean isInstance(Object obj) throws IOException {
+		if(obj == null){
+			return false;
+		}
+		
+		if(this.javaClass.isInstance(obj) == true){
+			return true;
+		}
+		else{
+			if(obj.getClass().isPrimitive()){
+				throw new IOException("Can not accept primitive type");
+			}
+			else{
+				return false;
+			}
+		}
 	}
 
 	@Override
