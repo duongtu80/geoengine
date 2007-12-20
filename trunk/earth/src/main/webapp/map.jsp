@@ -10,10 +10,10 @@
 	@IMPORT url("css/map.css");
 </style>
 <style type="text/css">
-    @import "http://o.aolcdn.com/dojo/1.0.0/dijit/themes/tundra/tundra.css";
-    @import "http://o.aolcdn.com/dojo/1.0.0/dojo/dojo.css"
+    @import "http://o.aolcdn.com/dojo/1.0.2/dijit/themes/tundra/tundra.css";
+    @import "http://o.aolcdn.com/dojo/1.0.2/dojo/dojo.css"
 </style>
-<script type="text/javascript" src="http://o.aolcdn.com/dojo/1.0.0/dojo/dojo.xd.js" djConfig="parseOnLoad: true"></script>
+<script type="text/javascript" src="http://o.aolcdn.com/dojo/1.0.2/dojo/dojo.xd.js" djConfig="parseOnLoad: true"></script>
 
 <script type="text/javascript">
    dojo.require("dojo.parser");
@@ -22,6 +22,8 @@
    dojo.require("dijit.form.NumberTextBox");
    dojo.require("dijit.form.Button");
    dojo.require("dijit.form.ComboBox");
+   dojo.require("dojo.data.ItemFileWriteStore");
+   dojo.require("dojo.data.ItemFileReadStore");
 </script>
 
 <style type="text/css">
@@ -56,8 +58,8 @@
 							<button dojoType="dijit.form.Button" id="listModel" onclick="listModel();">List</button>
 						</div>
 						<div class="viewItem">
-							<span style="width: 50px;padding: 1px;">Model:</span><select id="modelList">
-							</select>
+							<span style="width: 50px;padding: 1px;">Model:</span>
+							<div id="modelList"></div>
 						</div>
 						<div class="viewItem"><span style="width: 50px;padding: 1px;">Cities:</span><input type="text" dojoType="dijit.form.TextBox" id="dataUrl" value="http://<%=request.getServerName() %>:18080/geoserver/wfs" style="width: 225px;" /></div>
 						<div class="viewItem"><span style="width: 50px;margin: auto;padding: 1px;">Sea level rise:</span><input type="text" dojoType="dijit.form.NumberTextBox" id="seaLevel" value='0' style="width: 50px;" /> meters</div>

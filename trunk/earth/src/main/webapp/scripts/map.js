@@ -69,6 +69,11 @@ function initMap() {
 }
 
 function search(){
+	if(_combox == null || _combox.getValue() == null || _combox.getValue() == ''){
+		alert('Please select a model');
+		return;
+	}
+	
 	var _processTip = dojo.byId('processTip');
 	_processTip.innerHTML = 'loading...';
 //	_processTip.style.visibility = 'visible';
@@ -149,6 +154,8 @@ function mousedown(evt) {
 //	OpenLayers.Event.stop(evt);
 }
 
+var _combox = null;
+
 function listModel() {
 	var _processTip = dojo.byId('processTip');
 	_processTip.innerHTML = 'loading...';
@@ -162,16 +169,34 @@ function listModel() {
         
         timeout: 60000,
         load: function(response, ioArgs) {
-        	var _list = dojo.byId('modelList');
-        	if(response.identifier == 'models'){
-	        	for(var i=0;i<response.items.length;i++){
-	        		var _option = new Option(response.items[i].label, response.items[i].value);
-	        		_list.add(_option, null);
-	        	}
+        	
+        	if (_combox == null){
+        		var _modelStore = new dojo.data.ItemFileReadStore({data: response});
+        		
+//        	var _modelStore = new dojo.data.ItemFileReadStore({data: {identifier:'name', label:'label', items: [{name:'test1', label:'eeee'}]}});
+	        	var _list = dojo.byId('modelList');
+        		_combox = new dijit.form.ComboBox({store: _modelStore}, _list);        		
+//        		_combox.setValue(reponse.items[0].name);
         	}
-        	else{
-        		alert(response.text);
-        	}
+//        	for(var i=0;i<response.items.length;i++){
+//        		_modelStore.newItem({name: response.items[i].name, label: response.items[i].label});
+//        	}
+        	
+//        	_combox.value = response.items[0].name;
+        	
+//        	var _list = dojo.byId('modelList');
+        	
+//        	_modelStore
+//        	_modelStore.newItem({name: 'bar'});
+//        	if(response.identifier == 'models'){
+//	        	for(var i=0;i<response.items.length;i++){
+//	        		var _option = new Option(response.items[i].label, response.items[i].value);
+//	        		_list.add(_option, null);
+//	        	}
+//        	}
+//        	else{
+//        		alert(response.text);
+//        	}
         	
 	        _processTip.innerHTML = 'finished';
         },
@@ -180,5 +205,4 @@ function listModel() {
 			_processTip.innerHTML = 'error';
 		}
 	});
-
 }
