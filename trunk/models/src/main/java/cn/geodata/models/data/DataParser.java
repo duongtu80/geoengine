@@ -7,21 +7,16 @@ import java.util.logging.Logger;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
-import javax.xml.parsers.ParserConfigurationException;
 
 import net.opengeospatial.wps.IOValueType;
 import net.opengeospatial.wps.OutputDefinitionType;
 import net.opengeospatial.wps.IOValueType.ComplexValueReference;
-
-import org.apache.commons.io.FileUtils;
-import org.xml.sax.SAXException;
-
 import cn.geodata.models.category.data.DataCategories;
 import cn.geodata.models.category.data.DataCategory;
+import cn.geodata.models.data.parsers.GeoJsonComplexParser;
 import cn.geodata.models.data.parsers.GmlComplexParser;
 import cn.geodata.models.data.parsers.LiteralValueParser;
 import cn.geodata.models.geoprocessing.ValueType;
-import cn.geodata.models.value.gml.GMLComplexValueParser;
 
 public class DataParser {
 	private static Logger log = Logger.getAnonymousLogger();
@@ -41,7 +36,7 @@ public class DataParser {
 			instance = new DataParser();
 			
 			instance.setComplexParsers(new ComplexParsers());
-			instance.getComplexParsers().setParsers(Arrays.asList(new ComplexParser[]{new GmlComplexParser()}));
+			instance.getComplexParsers().setParsers(Arrays.asList(new ComplexParser[]{new GmlComplexParser(), new GeoJsonComplexParser()}));
 			
 			instance.setLiteralParsers(new LiteralParsers());
 			instance.getLiteralParsers().setParsers(Arrays.asList(new LiteralParser[]{new LiteralValueParser()}));
