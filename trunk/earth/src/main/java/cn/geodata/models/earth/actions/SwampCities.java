@@ -66,7 +66,7 @@ public class SwampCities {
 		log.info("Data url:" + this.dataUrl);
 
 		org.apache.xml.utils.URI _citiesUrl = new org.apache.xml.utils.URI(this.dataUrl);
-		_citiesUrl.setQueryString("service=WFS&request=GetFeature&typename=unep:cities");
+		_citiesUrl.setQueryString("service=WFS&request=GetFeature&typename=unep:cities&version=1.0.0");
 
 		log.info("Cities url:" + _citiesUrl.toString());
 
