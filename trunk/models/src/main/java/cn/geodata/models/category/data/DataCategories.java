@@ -1,11 +1,19 @@
 package cn.geodata.models.category.data;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
+
+import cn.geodata.models.util.Utilities;
 
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -15,6 +23,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class DataCategories {
+	private static Logger log = Utilities.getLogger();
 	private static DataCategories instance;
 
 	private List<DataCategory> categories;
@@ -105,5 +114,28 @@ public class DataCategories {
 					null));
 		}
 		return instance;
+	}
+	
+	public MimeType getDefaultMime(DataCategory category) throws IOException{
+		if(category.getLiteral()){
+			throw new IOException("Literal type does not support MIME");
+		}
+		
+		if(category.equals(this.findCategory("gridCoverage"))){
+			try {
+				return new MimeType("geotiff");
+			} catch (MimeTypeParseException e) {
+				log.log(Level.WARNING, "Failed to create MIME geotiff", e);
+				throw new IOException(e);
+			}
+		}
+		else{
+			try {
+				return new MimeType("text/xml");
+			} catch (MimeTypeParseException e) {
+				log.log(Level.WARNING, "Failed to create MIME text/xml", e);
+				throw new IOException(e);
+			}
+		}
 	}
 }

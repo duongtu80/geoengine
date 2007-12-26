@@ -24,9 +24,10 @@ import cn.geodata.models.category.data.DataCategory;
 import cn.geodata.models.data.ComplexParser;
 import cn.geodata.models.geojson.GeoJSON;
 import cn.geodata.models.geojson.GeoJSONUtil;
+import cn.geodata.models.util.Utilities;
 
 public class GeoJsonComplexParser implements ComplexParser {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = Utilities.getLogger();
 	private GeoJSON parser;
 	
 	public GeoJsonComplexParser(){
@@ -44,7 +45,7 @@ public class GeoJsonComplexParser implements ComplexParser {
 		_list.add(_c.findCategory("multiPoint"));
 		_list.add(_c.findCategory("multiLineString"));
 		_list.add(_c.findCategory("multiPolygon"));
-		_list.add(_c.findCategory("FeatureCollection"));
+		_list.add(_c.findCategory("featureCollection"));
 		
 		return _list;
 	}

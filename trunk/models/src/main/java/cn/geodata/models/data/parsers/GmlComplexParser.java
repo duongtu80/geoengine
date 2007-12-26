@@ -24,9 +24,10 @@ import cn.geodata.gml.ParserUtil;
 import cn.geodata.models.category.data.DataCategories;
 import cn.geodata.models.category.data.DataCategory;
 import cn.geodata.models.data.ComplexParser;
+import cn.geodata.models.util.Utilities;
 
 public class GmlComplexParser implements ComplexParser {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = Utilities.getLogger();
 	private ParserFinder finder;
 	
 	public GmlComplexParser() {
@@ -44,7 +45,7 @@ public class GmlComplexParser implements ComplexParser {
 		_list.add(_c.findCategory("multiPoint"));
 		_list.add(_c.findCategory("multiLineString"));
 		_list.add(_c.findCategory("multiPolygon"));
-		_list.add(_c.findCategory("FeatureCollection"));
+		_list.add(_c.findCategory("featureCollection"));
 		
 		return _list;
 	}

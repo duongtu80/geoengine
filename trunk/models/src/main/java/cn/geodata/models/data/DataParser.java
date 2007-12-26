@@ -17,9 +17,10 @@ import cn.geodata.models.data.parsers.GeoJsonComplexParser;
 import cn.geodata.models.data.parsers.GmlComplexParser;
 import cn.geodata.models.data.parsers.LiteralValueParser;
 import cn.geodata.models.geoprocessing.ValueType;
+import cn.geodata.models.util.Utilities;
 
 public class DataParser {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = Utilities.getLogger();
 	
 	private ComplexParsers complexParsers;
 	private LiteralParsers literalParsers;
@@ -111,7 +112,8 @@ public class DataParser {
 			MimeType _mime;
 			ComplexStream _complexStream;
 			try {
-				_mime = new MimeType("text/xml");
+				//Find the default output MIME type
+				_mime = _categories.getDefaultMime(_category);
 
 				if(request != null && request.getFormat() != null && request.getFormat().length() > 0){
 					_mime = new MimeType(request.getFormat());

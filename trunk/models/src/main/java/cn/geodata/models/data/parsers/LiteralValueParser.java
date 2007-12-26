@@ -13,9 +13,10 @@ import org.apache.commons.io.IOUtils;
 import cn.geodata.models.category.data.DataCategories;
 import cn.geodata.models.category.data.DataCategory;
 import cn.geodata.models.data.LiteralParser;
+import cn.geodata.models.util.Utilities;
 
 public class LiteralValueParser implements LiteralParser {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = Utilities.getLogger();
 	
 	@Override
 	public String encode(Object obj, DataCategory category,

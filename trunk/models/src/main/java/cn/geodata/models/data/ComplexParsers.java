@@ -40,7 +40,7 @@ import cn.geodata.models.category.data.DataCategory;
 import cn.geodata.models.geoprocessing.ValueType;
 
 public class ComplexParsers {
-	private static Logger log = Logger.getAnonymousLogger();
+	private static Logger log = cn.geodata.models.util.Utilities.getLogger();
 	
 	private List<ComplexParser> parsers;
 	private DocumentBuilder documentBuilder;
@@ -111,13 +111,12 @@ public class ComplexParsers {
 	public ComplexStream parseToStream(ValueType type, ComplexValueType value) throws IOException {
 		MimeType _mime = null;
 		try {
-			_mime = new MimeType("text/xml");
 			if(value.getFormat() != null && value.getFormat().length() > 0){
 				_mime = new MimeType(value.getFormat());
 			}
 			
 		} catch (MimeTypeParseException e) {
-			log.log(Level.SEVERE, "Failed to create MIME", e);
+			log.log(Level.SEVERE, "Failed to create MIME " + value.getFormat(), e);
 			throw new IOException("Failed to create MIME");
 		}
 		
@@ -130,9 +129,21 @@ public class ComplexParsers {
 		NodeList _nodes = value.getDomNode().getChildNodes();
 		//If only one child node
 		if(_nodes.getLength() == 1 && _nodes.item(0).getNodeType() == Node.TEXT_NODE){
+			if(_mime == null){
+				throw new IOException("Unknown input stream type");
+			}
+			
 			_stream = new ByteArrayInputStream(_nodes.item(0).getNodeValue().getBytes());
 		}
 		else{
+			try {
+				if(_mime == null){
+					_mime = new MimeType("text/xml");
+				}
+			} catch (MimeTypeParseException e) {
+				log.log(Level.WARNING, "Failed to create MIME text/xml", e);
+			}
+			
 			//Find the element node
 			for(int i=0;i<_nodes.getLength();i++){
 				if(_nodes.item(i).getNodeType() == Node.ELEMENT_NODE){
@@ -157,9 +168,11 @@ public class ComplexParsers {
 	public ComplexStream parseToStream(ValueType type, IOValueType.ComplexValueReference reference) throws IOException {
 		MimeType _mime = null;
 		try {
-			_mime = new MimeType("text/xml");
 			if(reference.getFormat() != null && reference.getFormat().length() > 0){
 				_mime = new MimeType(reference.getFormat());
+			}
+			else{
+				throw new IOException("Unknown input stream type");
 			}
 		} catch (MimeTypeParseException e) {
 			log.log(Level.SEVERE, "Failed to create MIME", e);
@@ -177,10 +190,16 @@ public class ComplexParsers {
 		return new ComplexStream(_mime, _list, _stream);
 	}
 	
-	public ComplexURL parseToUrl(ValueType type, ComplexValueType value) throws MimeTypeParseException, IOException {
-		MimeType _mime = new MimeType("text/xml");
-		if(value.getFormat() != null && value.getFormat().length() > 0){
-			_mime = new MimeType(value.getFormat());
+	public ComplexURL parseToUrl(ValueType type, ComplexValueType value) throws IOException {
+		MimeType _mime = null;
+		try {
+			if(value.getFormat() != null && value.getFormat().length() > 0){
+				_mime = new MimeType(value.getFormat());
+			}
+			
+		} catch (MimeTypeParseException e) {
+			log.log(Level.SEVERE, "Failed to create MIME " + value.getFormat(), e);
+			throw new IOException("Failed to create MIME");
 		}
 		
 		List<DataCategory> _list = new ArrayList<DataCategory>();
@@ -193,9 +212,21 @@ public class ComplexParsers {
 		NodeList _nodes = value.getDomNode().getChildNodes();
 		//If only one child node
 		if(_nodes.getLength() == 1 && _nodes.item(0).getNodeType() == Node.TEXT_NODE){
+			if(_mime == null){
+				throw new IOException("Unknown input stream type");
+			}
+			
 			FileUtils.writeStringToFile(_f, _nodes.item(0).getNodeValue());
 		}
 		else{
+			try {
+				if(_mime == null){
+					_mime = new MimeType("text/xml");
+				}
+			} catch (MimeTypeParseException e) {
+				log.log(Level.WARNING, "Failed to create MIME text/xml", e);
+			}
+
 			//Find the element node
 			for(int i=0;i<_nodes.getLength();i++){
 				if(_nodes.item(i).getNodeType() == Node.ELEMENT_NODE){
@@ -215,9 +246,17 @@ public class ComplexParsers {
 	}
 
 	public ComplexURL parseToUrl(ValueType type, IOValueType.ComplexValueReference reference) throws MimeTypeParseException, IOException {
-		MimeType _mime = new MimeType("text/xml");
+		MimeType _mime = null;
 		if(reference.getFormat() != null && reference.getFormat().length() > 0){
-			_mime = new MimeType(reference.getFormat());
+			try {
+				_mime = new MimeType(reference.getFormat());
+			} catch (MimeTypeParseException e) {
+				log.log(Level.SEVERE, "Failed to create MIME", e);
+				throw new IOException("Failed to create MIME");
+			}
+		}
+		else{
+				throw new IOException("Unknown input stream type");
 		}
 		
 		List<DataCategory> _list = new ArrayList<DataCategory>();
