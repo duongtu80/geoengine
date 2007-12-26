@@ -9,11 +9,20 @@
 	@IMPORT url("css/common.css");
 	@IMPORT url("css/map.css");
 </style>
+<!-- 
 <style type="text/css">
     @import "http://o.aolcdn.com/dojo/1.0.2/dijit/themes/tundra/tundra.css";
     @import "http://o.aolcdn.com/dojo/1.0.2/dojo/dojo.css"
 </style>
-<script type="text/javascript" src="http://o.aolcdn.com/dojo/1.0.2/dojo/dojo.xd.js" djConfig="parseOnLoad: true"></script>
+<script type="text/javascript" src="/dojo/dojo.xd.js" djConfig="parseOnLoad: true"></script>
+ -->
+<style type="text/css">
+	@import "js/dojo.1.0.2/dijit/themes/tundra/tundra.css";
+	@import "js/dojo.1.0.2/dojo/resources/dojo.css"
+</style>
+
+<script type="text/javascript" src="js/dojo.1.0.2/dojo/dojo.js.uncompressed.js"
+            djConfig="parseOnLoad: true"></script>
 
 <script type="text/javascript">
    dojo.require("dojo.parser");
@@ -30,9 +39,9 @@
 	@IMPORT url("controls/css/style.css");
 </style>
 <!-- 
-<script type="text/javascript" src="lib/OpenLayers.js"></script>
- -->
 <script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
+ -->
+<script type="text/javascript" src="lib/OpenLayers.js"></script>
 <script src='http://dev.virtualearth.net/mapcontrol/v3/mapcontrol.js'></script>
 <script type="text/javascript" src="controls/js/Navigation.js" ></script>
 <script type="text/javascript" src="controls/js/SearchFeature.js" ></script>
@@ -59,9 +68,9 @@
 						</div>
 						<div class="viewItem">
 							<span style="width: 50px;padding: 1px;">Model:</span>
-							<div id="modelList"></div>
+							<div dojoType="dijit.form.ComboBox" id="comModels" jsId="modelsList" style="width: 150px;"/>
 						</div>
-						<div class="viewItem"><span style="width: 50px;padding: 1px;">Cities:</span><input type="text" dojoType="dijit.form.TextBox" id="dataUrl" value="http://<%=request.getServerName() %>:18080/geoserver/wfs" style="width: 225px;" /></div>
+						<div class="viewItem"><span style="width: 50px;padding: 1px;">Cities:</span><input type="text" dojoType="dijit.form.TextBox" id="dataUrl" value="http://<%=request.getServerName() %>:18080/geoserver/wfs?version=1.0.0&" style="width: 225px;" /></div>
 						<div class="viewItem"><span style="width: 50px;margin: auto;padding: 1px;">Sea level rise:</span><input type="text" dojoType="dijit.form.NumberTextBox" id="seaLevel" value='0' style="width: 50px;" /> meters</div>
 						<div>
 							<button dojoType="dijit.form.Button" id="search" onclick="search();">Run</button>

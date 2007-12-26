@@ -69,8 +69,13 @@ function initMap() {
 }
 
 function search(){
-	if(_combox == null || _combox.getValue() == null || _combox.getValue() == ''){
+	if(modelsList.item == null){
 		alert('Please select a model');
+		return;
+	}
+	
+	if(modelsList.item.id != 'swamp.cities'){
+		alert('Only supports Swamp Cities model');
 		return;
 	}
 	
@@ -154,8 +159,6 @@ function mousedown(evt) {
 //	OpenLayers.Event.stop(evt);
 }
 
-var _combox = null;
-
 function listModel() {
 	var _processTip = dojo.byId('processTip');
 	_processTip.innerHTML = 'loading...';
@@ -169,15 +172,31 @@ function listModel() {
         
         timeout: 60000,
         load: function(response, ioArgs) {
+//        	var _items = modelsStore._getItemsArray();
+//        	for(var i=0;i<_items.length;i++){
+//        		modelsStore.deleteItem(_items[i]);
+//        	}
         	
-        	if (_combox == null){
-        		var _modelStore = new dojo.data.ItemFileReadStore({data: response});
-        		
+//        	for(var i=0;i<response.items.length;i++){
+//        		modelsStore.newItem(response.items[i]);
+//        	}
+        	
+        	var _modelStore = new dojo.data.ItemFileReadStore({data: response});
+        	modelsList.store = _modelStore;
+        	
+     
+//        	for(var _item : modelsStoreObj.getItems()){
+//        		modelsStoreObj.deleteItem(_item);
+//        	}
+        	
+//        	if (_combox == null){
+//        		var _modelStore = new dojo.data.ItemFileReadStore({data: response});
+//        		
 //        	var _modelStore = new dojo.data.ItemFileReadStore({data: {identifier:'name', label:'label', items: [{name:'test1', label:'eeee'}]}});
-	        	var _list = dojo.byId('modelList');
-        		_combox = new dijit.form.ComboBox({store: _modelStore}, _list);        		
+//	        	var _list = dojo.byId('modelList');
+//        		_combox = new dijit.form.ComboBox({store: _modelStore}, _list);        		
 //        		_combox.setValue(reponse.items[0].name);
-        	}
+//        	}
 //        	for(var i=0;i<response.items.length;i++){
 //        		_modelStore.newItem({name: response.items[i].name, label: response.items[i].label});
 //        	}
