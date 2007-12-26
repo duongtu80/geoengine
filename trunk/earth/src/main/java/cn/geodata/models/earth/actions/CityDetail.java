@@ -27,7 +27,7 @@ public class CityDetail {
 	private String dataUrl;
 
 	public CityDetail() {
-		this.dataUrl = "http://152.61.40.52:18080/geoserver/wfs";
+		this.dataUrl = "http://152.61.40.52:18080/geoserver/wfs?version=1.0.0&";
 	}
 	
 	public void setDataUrl(String dataUrl) {

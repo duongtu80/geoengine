@@ -32,7 +32,7 @@ public class ListModel {
 		
 		StringBuilder _txt = new StringBuilder();
 		try{
-			_txt.append("{identifier:'name', items:[");
+			_txt.append("{identifier:'id', items:[");
 			
 			boolean _a = false;
 			WpsClient _client = new WpsClient(new URI(this.modelUrl));
@@ -40,7 +40,7 @@ public class ListModel {
 				if(_a){
 					_txt.append(",");
 				}
-				_txt.append("{name:'" + _process.getIdentifier().getStringValue() + "',label:'" + _process.getTitle() + "',abstract:'" + _process.getAbstract() + "'}");
+				_txt.append("{id:'" + _process.getIdentifier().getStringValue() + "',name:'" + _process.getTitle() + "',abstract:'" + _process.getAbstract() + "'}");
 				_a = true;
 			}
 			_txt.append("]}");
