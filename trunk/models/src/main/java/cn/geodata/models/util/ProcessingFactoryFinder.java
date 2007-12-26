@@ -16,23 +16,10 @@ import cn.geodata.models.ProcessingFactory;
  *
  */
 public class ProcessingFactoryFinder {
-	private static ProcessingFactoryFinder instance = null;
 	private FactoryRegistry register;
 	
 	public ProcessingFactoryFinder() {
 		
-	}
-	
-	/**
-	 * Create and return the global unique instance
-	 * @return
-	 */
-	public static ProcessingFactoryFinder newInstance() {
-		if(instance == null){
-			instance = new ProcessingFactoryFinder();
-		}
-		
-		return instance;
 	}
 	
 	/**

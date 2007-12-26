@@ -22,7 +22,7 @@ public class ProcessingLibray {
 		this.models = new HashMap<String, ProcessingFactory>();
 		this.metadata = new HashMap<String, ProcessType>();
 		
-		List<ProcessingFactory> _list = ProcessingFactoryFinder.newInstance().loadModelFactories(params);
+		List<ProcessingFactory> _list = new ProcessingFactoryFinder().loadModelFactories(params);
 		for(ProcessingFactory _m : _list){
 			for(ProcessType _p : _m.getMetadata().getProcessArray()){
 				models.put(_p.getId(), _m);

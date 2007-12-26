@@ -32,6 +32,7 @@ import org.geotools.feature.FeatureType;
 import org.geotools.feature.FeatureTypeFactory;
 import org.geotools.feature.SchemaException;
 
+import cn.geodata.models.data.DataParser;
 import cn.geodata.models.value.ModelValueParserFinder;
 import cn.geodata.models.value.ModelValueUtil;
 import cn.geodata.models.wps.WpsClient;
@@ -49,7 +50,50 @@ public class BufferClientTest extends TestCase {
 		}
 	}
 	
-	public void testSwampCities() throws Exception {
+	public void testSwampReport() throws Exception {
+		WpsClient _client = new WpsClient(new URI("http://127.0.0.1:8080/web/wps"));
+
+		String _dataUrl = "http://127.0.0.1:18080/geoserver/wfs";
+		String _cityId = "cities.1";
+		
+		org.apache.xml.utils.URI _citiesUrl = new org.apache.xml.utils.URI(_dataUrl);
+		_citiesUrl.setQueryString("service=WFS&request=GetFeature&typename=unep:cities&version=1.0.0");
+
+		log.info("Cities url:" + _citiesUrl.toString());
+
+		ProcessDescriptionType _processDesc = _client.describeProcess(new String[]{"swamp.report"}).getProcessDescriptions().getProcessDescriptionArray(0);
+		
+		Map<String, InputDescriptionType> _inputDefinitions = new HashMap<String, InputDescriptionType>();
+		for(InputDescriptionType _inputType : _processDesc.getDataInputs().getInputArray()){
+			_inputDefinitions.put(_inputType.getIdentifier().getStringValue(), _inputType);
+		}
+
+		ModelValueParserFinder _finder = ModelValueUtil.createParserFinder();
+		
+		List<IOValueType> _inputs = new ArrayList<IOValueType>();
+		
+		DataParser _parser = DataParser.getInstance();
+		
+		IOValueType _paramRise = ModelValueUtil.createInputValue(_inputDefinitions.get("cityId"));
+		_paramRise.setLiteralValue(_finder.getLiteralEncoder().encodeLiteral(_cityId));
+		_inputs.add(_paramRise);
+		
+		IOValueType _paramCities = ModelValueUtil.createInputValue(_inputDefinitions.get("cities"));
+		_paramCities.setComplexValueReference(_finder.getReferenceEncoder().encodeUrl(_citiesUrl.toString(), "text/xml", "utf-8", null));
+		
+		_inputs.add(_paramCities);
+		
+		ExecuteResponseDocument _execute = _client.execute(_processDesc.getIdentifier().getStringValue(), _inputs.toArray(new IOValueType[0]));		
+
+//		ModelValue[] _inputs = new ModelValue[2];
+//		_inputs[0] = new LiteralValue("rise", "rise", "", 5.0);
+//		_inputs[1] = new ComplexValueReference("cities", "cities", "", "http://152.61.40.52:18080/geoserver/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=unep:cities", "text/gml", "utf-8", null);
+//		
+//		ExecuteResponseDocument _execute = _client.execute("SwampCities", _inputs);
+		log.info(_execute.getExecuteResponse().xmlText());
+	}
+	
+	public void atestSwampCities() throws Exception {
 		WpsClient _client = new WpsClient(new URI("http://127.0.0.1:8080/web/wps"));
 
 		String _dataUrl = "http://127.0.0.1:18080/geoserver/wfs";

@@ -83,6 +83,11 @@ public class LiteralValueParser implements LiteralParser, LiteralEncoder {
 	public LiteralValueType encodeLiteral(double val) throws IOException {
 		return (LiteralValueType)this.encode(val);
 	}
+	
+	@Override
+	public LiteralValueType encodeLiteral(String val) throws IOException {
+		return (LiteralValueType)this.encode(val);
+	}
 
 	@Override
 	public boolean canParse(XmlObject type) {

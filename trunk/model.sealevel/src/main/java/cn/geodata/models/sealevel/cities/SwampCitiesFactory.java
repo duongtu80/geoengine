@@ -16,7 +16,6 @@ public class SwampCitiesFactory extends AbstractProcessingFactory {
 	
 	public SwampCitiesFactory() {
 		try {
-			
 			this.metadata = ProcessesDocument.Factory.parse(this.getClass().getResourceAsStream("/META-INF/metadata/swampModel.xml")).getProcesses();
 		}
 		catch (Exception e) {
@@ -37,6 +36,15 @@ public class SwampCitiesFactory extends AbstractProcessingFactory {
 	@Override
 	public Processing createProcessing(String identify, Map<String, String> params)
 			throws IOException {
-		return new SwampCities();
+		if(identify.equalsIgnoreCase("swamp.report")){
+			return new SwampReport();
+		}
+		else if(identify.equalsIgnoreCase("swamp.cities")){
+			return new SwampCities();
+		}
+		else{
+			log.severe("Does not support the require process " + identify);
+			throw new IOException("Does not support the require process");
+		}
 	}
 }

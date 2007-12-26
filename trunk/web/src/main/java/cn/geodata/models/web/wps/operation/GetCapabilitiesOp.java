@@ -1,6 +1,7 @@
 package cn.geodata.models.web.wps.operation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import net.opengeospatial.ows.AddressType;
@@ -25,7 +26,6 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.xmlbeans.XmlObject;
 
 import cn.geodata.models.geoprocessing.ProcessType;
-import cn.geodata.models.geoprocessing.ProcessesType;
 import cn.geodata.models.util.ProcessingLibray;
 import cn.geodata.models.web.util.Util;
 
@@ -42,19 +42,17 @@ public class GetCapabilitiesOp extends WpsOperation {
 		//ProcessOfferings element
 		ProcessOfferings _processOfferings = _capabilities.addNewProcessOfferings();
 		
-		ProcessingLibray _lib = ProcessingLibray.createInstance();
-		for(String _title : _lib.getModelFactories().keySet()){
+		Map<String, ProcessType> _metadata = ProcessingLibray.createInstance().getMetadata();
+		for(String _title : _metadata.keySet()){
 			log.info("Add processing:" + _title);
+
+			ProcessType _proc = _metadata.get(_title);
 			
-			ProcessesType _model = _lib.getModelFactories().get(_title).getMetadata();
-			for(ProcessType _proc : _model.getProcessArray()){
-				ProcessBriefType _processBrief = _processOfferings.addNewProcess();
-				_processBrief.addNewIdentifier().setStringValue(_proc.getId());
-				
-				_processBrief.setTitle(_proc.getTitle());
-				_processBrief.setAbstract(_proc.getDescribe());
-//				_processBrief.setMetadataArray(_proc.getMetadataArray());
-			}
+			ProcessBriefType _processBrief = _processOfferings.addNewProcess();
+			_processBrief.addNewIdentifier().setStringValue(_proc.getId());
+			
+			_processBrief.setTitle(_proc.getTitle());
+			_processBrief.setAbstract(_proc.getDescribe());
 		}
 		
 		return _doc;

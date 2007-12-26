@@ -131,6 +131,7 @@ function mousedown(evt) {
 	        handleAs: "text",
 	        content: {
 	        	'id': _f.fid,
+	        	'modelUrl': dojo.byId('modelUrl').value,
 	        	'dataUrl': dojo.byId('dataUrl').value
 	        },
 	        
@@ -183,6 +184,16 @@ function listModel() {
         	
         	var _modelStore = new dojo.data.ItemFileReadStore({data: response});
         	modelsList.store = _modelStore;
+        	
+        	modelsList.setValue("");
+        	_modelStore.fetch({onItem: function(item, request){
+        			if(modelsList.getValue() == ""){
+	        			modelsList.setValue(item.name);
+	        			modelsList.item = item;
+        			}
+        			modelsList.abort();
+        		}});
+        	
         	
      
 //        	for(var _item : modelsStoreObj.getItems()){

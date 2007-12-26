@@ -12,4 +12,6 @@ public interface LiteralEncoder extends Encoder {
 	LiteralValueType encodeLiteral(float val) throws IOException;
 	
 	LiteralValueType encodeLiteral(double val) throws IOException;
+	
+	LiteralValueType encodeLiteral(String val) throws IOException;
 }

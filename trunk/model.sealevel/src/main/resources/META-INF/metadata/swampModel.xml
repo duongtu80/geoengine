@@ -2,7 +2,7 @@
 <geo:processes xmlns:geo="http://www.geodata.cn/models/geoprocessing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<geo:process>
 		<geo:id>swamp.cities</geo:id>
-		<geo:title>Swamp Cities</geo:title>
+		<geo:title>Swamp cities</geo:title>
 		<geo:tags>swamp</geo:tags>
 		<geo:inputs>
 			<geo:input>
@@ -23,6 +23,33 @@
 				<geo:id>swamp</geo:id>
 				<geo:title>Swampped cities</geo:title>
 				<geo:describe>Swampped cities</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+	<geo:process>
+		<geo:id>swamp.report</geo:id>
+		<geo:title>Swamp report</geo:title>
+		<geo:tags>swamp</geo:tags>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>cityId</geo:id>
+				<geo:title>City id</geo:title>
+				<geo:describe>City id</geo:describe>
+				<geo:category>string</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>cities</geo:id>
+				<geo:title>Cities</geo:title>
+				<geo:describe>Cities</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>report</geo:id>
+				<geo:title>Swamp report</geo:title>
+				<geo:describe>Swamp report</geo:describe>
 				<geo:category>featureCollection</geo:category>
 			</geo:output>
 		</geo:outputs>
