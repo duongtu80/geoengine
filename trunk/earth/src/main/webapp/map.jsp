@@ -9,13 +9,14 @@
 	@IMPORT url("css/common.css");
 	@IMPORT url("css/map.css");
 </style>
-<!-- 
 <style type="text/css">
     @import "http://o.aolcdn.com/dojo/1.0.2/dijit/themes/tundra/tundra.css";
     @import "http://o.aolcdn.com/dojo/1.0.2/dojo/dojo.css"
 </style>
-<script type="text/javascript" src="/dojo/dojo.xd.js" djConfig="parseOnLoad: true"></script>
- -->
+<script type="text/javascript" src="http://o.aolcdn.com/dojo/1.0.2/dojo/dojo.xd.js"
+            djConfig="parseOnLoad: true"></script>
+
+<!-- 
 <style type="text/css">
 	@import "js/dojo.1.0.2/dijit/themes/tundra/tundra.css";
 	@import "js/dojo.1.0.2/dojo/resources/dojo.css"
@@ -23,6 +24,7 @@
 
 <script type="text/javascript" src="js/dojo.1.0.2/dojo/dojo.js.uncompressed.js"
             djConfig="parseOnLoad: true"></script>
+ -->
 
 <script type="text/javascript">
    dojo.require("dojo.parser");
@@ -39,16 +41,16 @@
 	@IMPORT url("controls/css/style.css");
 </style>
 <!-- 
-<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
- -->
 <script type="text/javascript" src="lib/OpenLayers.js"></script>
+ -->
+<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
 <script src='http://dev.virtualearth.net/mapcontrol/v3/mapcontrol.js'></script>
 <script type="text/javascript" src="controls/js/Navigation.js" ></script>
 <script type="text/javascript" src="controls/js/SearchFeature.js" ></script>
 <script type="text/javascript" src="controls/js/DataViewToolbar.js" ></script>
 <script type="text/javascript" src="scripts/map.js"></script>
 </head>
-<body onload="initMap();" class="tundra" style="font-size: 13px;">
+<body onload="initMap();" class="tundra" style="font-size: 12px;">
 	<div class="bodywrap">
 		<jsp:include page="inc/top.jsp"></jsp:include>
 		<div id="mainPanel">
