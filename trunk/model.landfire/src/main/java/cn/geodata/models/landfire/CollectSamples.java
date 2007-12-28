@@ -6,12 +6,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.FactoryRegistryException;
+import org.geotools.factory.GeoTools;
+import org.geotools.feature.AttributeType;
+import org.geotools.feature.AttributeTypeFactory;
 import org.geotools.feature.Feature;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.feature.FeatureType;
+import org.geotools.feature.IllegalAttributeException;
+import org.geotools.feature.SchemaException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -24,21 +34,44 @@ public class CollectSamples {
 	private static Logger log = Logger.getAnonymousLogger();
 	private static int MAX_TRY = 10;
 	
-	public List<Point> findSamples(String id, int count, double minDistance) throws IOException{
-		List<Point> _list = new ArrayList<Point>();
+	protected FeatureType createResultFeatureType() throws IOException{
+		AttributeTypeFactory _attributeFactory = CommonFactoryFinder.getAttributeTypeFactory(GeoTools.getDefaultHints());
+		List<AttributeType> _attrs = new ArrayList<AttributeType>();
+		
+		_attrs.add(_attributeFactory.newAttributeType("shape", Point.class));
+		_attrs.add(_attributeFactory.newAttributeType("dnbr", Double.class));
+		
+		try {
+			return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType((AttributeType[])_attrs.toArray(new AttributeType[0]), "samples");
+		} catch (FactoryRegistryException e) {
+			log.log(Level.SEVERE, "Failed to create featureType", e);
+			throw new IOException(e);
+		} catch (SchemaException e) {
+			log.log(Level.SEVERE, "Failed to create featureType", e);
+			throw new IOException(e);
+		}
+	}
+	
+	public FeatureCollection findSamples(String id, int count, double minDistance) throws IOException{
+		FeatureType _featureType = this.createResultFeatureType();
+		
+		List<Feature> _list = new ArrayList<Feature>();
 		Polygon _p = this.findFireRegion(id);
 		
 		for(int i=0;i<count;i++){
-			Point _pt = findSample(id, _p, _list, minDistance);
+			Feature _pt = findSample(_featureType, id, _p, _list, minDistance);
 			if(_pt != null){
 				_list.add(_pt);
 			}
 		}
 		
-		return _list;
+		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
+		_fs.addAll(_list);
+		
+		return _fs;
 	}
 	
-	public Point findSample(String id, Polygon polygon, List<Point>list, double minDistance) throws IOException{
+	public Feature findSample(FeatureType featureType, String id, Polygon polygon, List<Feature>list, double minDistance) throws IOException{
 		Envelope _extent = polygon.getEnvelopeInternal();
 		GeometryFactory _factory = new GeometryFactory();
 		DatasetDNBR _dnbr = new DatasetDNBR();
@@ -59,7 +92,12 @@ public class CollectSamples {
 				double _val = _dnbr.getAtLocation(id, _pt);
 				
 				if(_val != Double.NaN){
-					return _pt;
+					try {
+						return featureType.create(new Object[]{_pt, _val});
+					} catch (IllegalAttributeException e) {
+						log.log(Level.WARNING, "Failed to create feature", e);
+						throw new IOException(e);
+					}
 				}
 			}
 		}
@@ -67,9 +105,9 @@ public class CollectSamples {
 		return null;
 	}
 	
-	public boolean isOverLay(List<Point> list, Point pt, double minDistance){
-		for(Point _loc : list){
-			if(_loc.distance(pt) < minDistance){
+	public boolean isOverLay(List<Feature> list, Point pt, double minDistance){
+		for(Feature _loc : list){
+			if(_loc.getDefaultGeometry().distance(pt) < minDistance){
 				return true;
 			}
 		}

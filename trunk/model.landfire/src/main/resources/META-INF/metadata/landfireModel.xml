@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<geo:processes xmlns:geo="http://www.geodata.cn/models/geoprocessing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.geodata.cn/models/geoprocessing ../../../../../../geoprocess/src/main/resources/conf/schema/geomodel/processingMeta.xsd ">
+	<geo:process>
+		<geo:id>landfire.samples</geo:id>
+		<geo:title>Collect Samples</geo:title>
+		<geo:describe>Collect samples</geo:describe>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>datasetId</geo:id>
+				<geo:title>Dataset Id</geo:title>
+				<geo:describe>Dataset Id</geo:describe>
+				<geo:category>string</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>maxCount</geo:id>
+				<geo:title>Maximize Count</geo:title>
+				<geo:describe>Maximize Count</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>minDistance</geo:id>
+				<geo:title>Minimize Distance</geo:title>
+				<geo:describe>Minimize Distance</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>samples</geo:id>
+				<geo:title>Samples</geo:title>
+				<geo:describe>Samples</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+</geo:processes>

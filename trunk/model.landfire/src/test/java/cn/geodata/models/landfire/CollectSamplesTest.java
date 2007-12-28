@@ -2,14 +2,12 @@ package cn.geodata.models.landfire;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
+import junit.framework.TestCase;
+
 import org.geotools.data.FeatureStore;
-import org.geotools.data.FeatureWriter;
-import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.FactoryRegistryException;
@@ -21,8 +19,6 @@ import org.geotools.feature.SchemaException;
 
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-
-import junit.framework.TestCase;
 
 public class CollectSamplesTest extends TestCase {
 	private static Logger log = Logger.getAnonymousLogger();
@@ -43,12 +39,8 @@ public class CollectSamplesTest extends TestCase {
 		
 		log.info("Area:" + _p.getArea() + " count:" + _count);
 		
-		List<Point> _list = _o.findSamples(_id, _count, 120);
+		FeatureCollection _fs = _o.findSamples(_id, _count, 120);
 		FeatureStore _store = this.getFeatureWriter();
-		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
-		for(Point _pt : _list){
-			_fs.add(_store.getSchema().create(new Object[]{_pt, _dnbr.getAtLocation(_id, _pt)}));
-		}
 		
 		_store.addFeatures(_fs);
 	}
