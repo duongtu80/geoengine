@@ -10,8 +10,6 @@ import java.util.logging.Logger;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
-import org.apache.commons.io.IOUtils;
-
 import net.opengeospatial.wps.IOValueType;
 import net.opengeospatial.wps.OutputDefinitionType;
 import net.opengeospatial.wps.IOValueType.ComplexValueReference;
