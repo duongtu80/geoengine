@@ -3,12 +3,19 @@ package cn.geodata.models.earth.actions;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import cn.geodata.models.wps.client.WpsService;
 
 import net.opengeospatial.wps.ProcessBriefType;
-
-import cn.geodata.models.wps.WpsClient;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class ListModel {
+	private static Logger log = Logger.getAnonymousLogger();
+	
 	private InputStream stream;
 	private String modelUrl;
 
@@ -29,31 +36,33 @@ public class ListModel {
 	}
 
 	public String execute() throws Exception {
-		
-		StringBuilder _txt = new StringBuilder();
+		log.info("Model Url:" + this.modelUrl);
+		JSONObject _models = new JSONObject();
 		try{
-			_txt.append("{identifier:'id', items:[");
+			WpsService _service = new WpsService(new URI(this.modelUrl));
+			_service.connect();
 			
-			boolean _a = false;
-			WpsClient _client = new WpsClient(new URI(this.modelUrl));
-			for(ProcessBriefType _process : _client.getCapibilities().getCapabilities().getProcessOfferings().getProcessArray()){
-				if(_a){
-					_txt.append(",");
-				}
-				_txt.append("{id:'" + _process.getIdentifier().getStringValue() + "',name:'" + _process.getTitle() + "',abstract:'" + _process.getAbstract() + "'}");
-				_a = true;
+			List<JSONObject> _items = new ArrayList<JSONObject>();
+			for(ProcessBriefType _process : _service.listProcesses()){
+				JSONObject _model = new JSONObject();
+				
+				_model.put("id", _process.getIdentifier().getStringValue());
+				_model.put("name", _process.getTitle());
+				_model.put("abstract", _process.getAbstract());
+				
+				_items.add(_model);
 			}
-			_txt.append("]}");
+			
+			_models.put("identifier", "id");
+			_models.put("items", JSONArray.fromCollection(_items));
 		}
 		catch(Exception e){
-			_txt.append("{identifier:'error', text:\"" + this.formatJSON(e.getMessage()) + "\"}");		
+			_models.put("identifier", "error");
+			_models.put("text", e.getMessage());
 		}
-		this.stream = new ByteArrayInputStream(_txt.toString().getBytes());
+		
+		this.stream = new ByteArrayInputStream(_models.toString().getBytes());
 		
 		return "success";
-	}
-	
-	public String formatJSON(String v){
-		return v.replace("\\", "\\\\").replace("\"", "\\\"").replace("/", "\\/");
 	}
 }
