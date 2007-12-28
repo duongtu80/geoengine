@@ -30,8 +30,8 @@ public class LiteralParsers {
 		return false;
 	}
 	
-	public Object parseLiteral(ValueType type, LiteralValueType value) throws IOException {
-		if(type.getCategoryArray().length != 1){
+	public Object parseLiteral(List<DataCategory> categories, LiteralValueType value) throws IOException {
+		if(categories.size() != 1){
 			throw new IOException("Literal value can only support one type");
 		}
 		
@@ -39,11 +39,11 @@ public class LiteralParsers {
 			throw new IOException("Failed to find a avaliable literal parser");
 		}
 		
-		return this.parsers.get(0).parse(value.getStringValue(), DataCategories.getInstance().findCategory(type.getCategoryArray(0)), new HashMap<String, Object>());
+		return this.parsers.get(0).parse(value.getStringValue(), categories.get(0), new HashMap<String, Object>());
 	}
 	
-	public LiteralValueType encodeLiteral(ValueType type, Object obj) throws IOException{
-		if(type.getCategoryArray().length != 1){
+	public LiteralValueType encodeLiteral(List<DataCategory> categories, Object obj) throws IOException{
+		if(categories.size() != 1){
 			throw new IOException("Literal value can only support one type");
 		}
 		
@@ -52,7 +52,7 @@ public class LiteralParsers {
 		}
 		
 		LiteralValueType _val = LiteralValueType.Factory.newInstance();
-		_val.setStringValue(this.parsers.get(0).encode(obj, DataCategories.getInstance().findCategory(type.getCategoryArray(0)), new HashMap<String, Object>()));
+		_val.setStringValue(this.parsers.get(0).encode(obj, categories.get(0), new HashMap<String, Object>()));
 		
 		return _val;
 	}

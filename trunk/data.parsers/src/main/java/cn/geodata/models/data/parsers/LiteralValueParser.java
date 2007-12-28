@@ -17,7 +17,7 @@ public class LiteralValueParser implements LiteralParser {
 	@Override
 	public String encode(Object obj, DataCategory category,
 			Map<String, Object> params) throws IOException {
-		if(category.isInstance(obj)){
+		if(category.isInstance(obj) == false){
 			log.warning("Value type does not match the output definition " + obj.getClass().toString() + " " + category.getJavaClass().toString());
 			throw new IOException("Value type does not match the output definition");
 		}

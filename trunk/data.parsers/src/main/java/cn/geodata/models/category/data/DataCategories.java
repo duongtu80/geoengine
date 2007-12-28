@@ -138,4 +138,13 @@ public class DataCategories {
 			}
 		}
 	}
+	
+	public DataCategory findPossibleCategory(Object obj) throws IOException{
+		for(DataCategory _c : this.categories){
+			if(_c.isInstance(obj)){
+				return _c;
+			}
+		}
+		throw new NullPointerException("Not found the possible category for " + obj.getClass().toString());
+	}
 }

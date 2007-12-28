@@ -37,7 +37,6 @@ import org.xml.sax.SAXException;
 
 import cn.geodata.models.category.data.DataCategories;
 import cn.geodata.models.category.data.DataCategory;
-import cn.geodata.models.geoprocessing.ValueType;
 
 public class ComplexParsers {
 	private static Logger log = Utilities.getLogger();
@@ -108,7 +107,7 @@ public class ComplexParsers {
 		return this.getMimes4Category(category).get(0);
 	}
 	
-	public ComplexStream parseToStream(ValueType type, ComplexValueType value) throws IOException {
+	public ComplexStream parseToStream(List<DataCategory> categories, ComplexValueType value) throws IOException {
 		MimeType _mime = null;
 		try {
 			if(value.getFormat() != null && value.getFormat().length() > 0){
@@ -121,8 +120,8 @@ public class ComplexParsers {
 		}
 		
 		List<DataCategory> _list = new ArrayList<DataCategory>();
-		for(String _c : type.getCategoryArray()){
-			_list.add(DataCategories.getInstance().findCategory(_c));
+		for(DataCategory _c : categories){
+			_list.add(_c);
 		}
 		
 		InputStream _stream = null;
@@ -151,9 +150,10 @@ public class ComplexParsers {
 					
 					ByteArrayOutputStream _out = new ByteArrayOutputStream();
 					XMLOutputter _outputer = new XMLOutputter();
-					_outputer.outputElementContent(_ele, _out);
+					_outputer.output(_ele, _out);
 					
 					_stream = new ByteArrayInputStream(_out.toByteArray());
+					break;
 				}
 			}
 			if(_stream == null){
@@ -165,7 +165,7 @@ public class ComplexParsers {
 		return new ComplexStream(_mime, _list, _stream);
 	}
 
-	public ComplexStream parseToStream(ValueType type, IOValueType.ComplexValueReference reference) throws IOException {
+	public ComplexStream parseToStream(List<DataCategory> categories, IOValueType.ComplexValueReference reference) throws IOException {
 		MimeType _mime = null;
 		try {
 			if(reference.getFormat() != null && reference.getFormat().length() > 0){
@@ -180,8 +180,8 @@ public class ComplexParsers {
 		}
 		
 		List<DataCategory> _list = new ArrayList<DataCategory>();
-		for(String _c : type.getCategoryArray()){
-			_list.add(DataCategories.getInstance().findCategory(_c));
+		for(DataCategory _c : categories){
+			_list.add(_c);
 		}
 		
 		URL _url = new URL(reference.getReference());
@@ -190,7 +190,7 @@ public class ComplexParsers {
 		return new ComplexStream(_mime, _list, _stream);
 	}
 	
-	public ComplexURL parseToUrl(ValueType type, ComplexValueType value) throws IOException {
+	public ComplexURL parseToUrl(List<DataCategory> categories, ComplexValueType value) throws IOException {
 		MimeType _mime = null;
 		try {
 			if(value.getFormat() != null && value.getFormat().length() > 0){
@@ -203,8 +203,8 @@ public class ComplexParsers {
 		}
 		
 		List<DataCategory> _list = new ArrayList<DataCategory>();
-		for(String _c : type.getCategoryArray()){
-			_list.add(DataCategories.getInstance().findCategory(_c));
+		for(DataCategory _c : categories){
+			_list.add(_c);
 		}
 		
 		File _f = Utilities.createTempFile();
@@ -245,7 +245,7 @@ public class ComplexParsers {
 		return new ComplexURL(_mime, _list, _f.toURL());
 	}
 
-	public ComplexURL parseToUrl(ValueType type, IOValueType.ComplexValueReference reference) throws MimeTypeParseException, IOException {
+	public ComplexURL parseToUrl(List<DataCategory> categories, IOValueType.ComplexValueReference reference) throws MimeTypeParseException, IOException {
 		MimeType _mime = null;
 		if(reference.getFormat() != null && reference.getFormat().length() > 0){
 			try {
@@ -260,8 +260,8 @@ public class ComplexParsers {
 		}
 		
 		List<DataCategory> _list = new ArrayList<DataCategory>();
-		for(String _c : type.getCategoryArray()){
-			_list.add(DataCategories.getInstance().findCategory(_c));
+		for(DataCategory _c : categories){
+			_list.add(_c);
 		}
 		
 		URL _url = new URL(reference.getReference());
@@ -286,18 +286,17 @@ public class ComplexParsers {
 		return _parser.parse(object.getStream(), object.getMime(), new HashMap<String, Object>());
 	}
 	
-	public ComplexStream encodeToStream(ValueType type, MimeType requestMime, Object val) throws IOException {
+	public ComplexStream encodeToStream(List<DataCategory> categories, MimeType requestMime, Object val) throws IOException {
 		DataCategory _category = null;
-		for(String _cat : type.getCategoryArray()){
-			DataCategory _c = DataCategories.getInstance().findCategory(_cat);
-			if(_c.isInstance(val)){
-				_category = _c;
+		for(DataCategory _cat : categories){
+			if(_cat.isInstance(val)){
+				_category = _cat;
 				break;
 			}
 		}
 		
 		if(_category == null){
-			log.warning("The output value is not valiable type:" + val.getClass().toString() + " list:" + Arrays.toString(type.getCategoryArray()));
+			log.warning("The output value is not valiable type:" + val.getClass().toString());
 			throw new NullPointerException("The output value is not valiable type");
 		}
 		
