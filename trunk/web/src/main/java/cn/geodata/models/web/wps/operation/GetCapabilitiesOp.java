@@ -123,7 +123,7 @@ public class GetCapabilitiesOp extends WpsOperation {
 
 		//DescribeProcess
 		Operation _describeProcess = _operationsMetadata.addNewOperation();
-		_getCapabilities.setName("DescribeProcess");
+		_describeProcess.setName("DescribeProcess");
 		
 		HTTP _describeProcessHttp = _describeProcess.addNewDCP().addNewHTTP();
 		_describeProcessHttp.addNewGet().setHref(_url);
@@ -131,7 +131,7 @@ public class GetCapabilitiesOp extends WpsOperation {
 
 		//DescribeProcess
 		Operation _execute = _operationsMetadata.addNewOperation();
-		_getCapabilities.setName("Execute");
+		_execute.setName("Execute");
 		
 		HTTP _executeHttp = _execute.addNewDCP().addNewHTTP();
 		_executeHttp.addNewPost().setHref(_url);
