@@ -36,13 +36,6 @@
       <artifactId>struts2-spring-plugin</artifactId>
       <version>2.0.9</version>
     </dependency>
-<!-- 
-    <dependency>
-      <groupId>cn.geodata.models</groupId>
-      <artifactId>model.buffer</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
- -->
     <dependency>
       <groupId>cn.geodata.models</groupId>
       <artifactId>model.sealevel</artifactId>
@@ -57,6 +50,11 @@
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
       <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>cn.geodata.models</groupId>
+      <artifactId>model.landfire</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>
