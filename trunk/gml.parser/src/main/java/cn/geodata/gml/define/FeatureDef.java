@@ -18,6 +18,7 @@ import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureType;
 import org.geotools.feature.IllegalAttributeException;
 import org.geotools.feature.SchemaException;
+import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -147,7 +148,13 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 		}
 		
 		try {
-			return featureType.create(_list.toArray(), ele.getAttributeValue("fid"));
+			String _id = null;
+			for(Attribute _attr : (List<Attribute>)ele.getAttributes()){
+				if("id".equalsIgnoreCase(_attr.getName()) || "fid".equalsIgnoreCase(_attr.getName())){
+					_id = _attr.getValue();
+				}
+			}
+			return featureType.create(_list.toArray(), _id);
 		} catch (IllegalAttributeException e) {
 			throw new IOException(e);
 		}
@@ -162,15 +169,21 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 		List<AttributeType> _attributes = new ArrayList<AttributeType>();
 		
 		for(Element _c : (List<Element>) _ele.getChildren()){
-			List<Element> _children = _c.getChildren();
-			if(_children.size() == 0){
-				_attributes.add(parseSimpleElement(eles, _c.getName(), _c.getNamespace()));
-			}
-			else if(_children.size() == 1){
-				_attributes.add(parseComplexElement(eles, _c.getName(), _c.getNamespace()));
+			if(_c.getNamespace().equals(_ele.getNamespace())){
+				List<Element> _children = _c.getChildren();
+				if(_children.size() == 0){
+					_attributes.add(parseSimpleElement(eles, _c.getName(), _c.getNamespace()));
+				}
+				else if(_children.size() == 1){
+					_attributes.add(parseComplexElement(eles, _c.getName(), _c.getNamespace()));
+				}
+				else{
+					log.severe("Node:" + _c.getNamespaceURI() + "#" + _c.getName() + " children size:" + _children.size());
+					throw new IOException("Does not support complex field except GML");
+				}
 			}
 			else{
-				throw new IOException("Does not support complex field except GML");
+				log.warning("Unparsed node:" + _c.getNamespaceURI() + "#" + _c.getName());
 			}
 		}
 		

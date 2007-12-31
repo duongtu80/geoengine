@@ -34,9 +34,9 @@ public class FeatureCollectionDefTest extends TestCase {
 	}
 
 	public void testWFS() throws Exception {
-//		SAXBuilder _builder = new SAXBuilder();
-//		Document _doc = _builder.build(new URL("http://127.0.0.1:18080/geoserver/wfs?service=WFS&request=GetFeature&typename=unep:cities"));
-//		
-//		log.info(ParserUtil.createParserFinder().parse(_doc.getRootElement()).toString());
+		SAXBuilder _builder = new SAXBuilder();
+		Document _doc = _builder.build(new URL("http://127.0.0.1:18080/geoserver/wfs?service=WFS&request=GetFeature&typename=unep:cities&version=1.0.0"));
+		
+		log.info(ParserUtil.createParserFinder().parse(_doc.getRootElement()).toString());
 	}
 }

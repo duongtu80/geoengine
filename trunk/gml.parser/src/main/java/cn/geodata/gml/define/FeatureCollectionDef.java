@@ -75,6 +75,13 @@ public class FeatureCollectionDef extends AbstractParser {
 			_list.add((Element)_fm.getChildren().get(0));
 		}
 		
+		Element _featureMembers = ele.getChild("featureMembers", this.config.getUriGML());
+		if(_featureMembers != null){
+			for(Element _fm : (List<Element>)_featureMembers.getChildren()){
+				_list.add(_fm);
+			}
+		}
+		
 		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
 		FeatureType _featureType = _featureParser.parseFeatureType((Element[])_list.toArray(new Element[0]));
 		for(Element _ele : _list){

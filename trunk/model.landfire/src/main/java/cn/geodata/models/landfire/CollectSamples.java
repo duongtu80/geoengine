@@ -119,22 +119,25 @@ public class CollectSamples {
 	}
 	
 	public Polygon findFireRegion(String id) throws IOException{
+		MultiPolygon _multiPolygon = (MultiPolygon) this.findFireFeature(id).getDefaultGeometry();
+
+		return (Polygon) _multiPolygon.getGeometryN(0);
+	}
+
+	public Feature findFireFeature(String id) throws IOException{
 		FeatureIterator _it = this.findFireRegionDataset(id).getFeatures().features();
 		try{
 			if(_it.hasNext() == false){
 				throw new IOException("Dataset is empty");
 			}
 			
-			Feature _f = _it.next();
-			MultiPolygon _multiPolygon = (MultiPolygon) _f.getDefaultGeometry();
-			
-			return (Polygon) _multiPolygon.getGeometryN(0);
+			return _it.next();
 		}
 		finally{
 			_it.close();
 		}
 	}
-	
+
 	public FeatureSource findFireRegionDataset(String id) throws IOException{
 		File _file = new File((new Configure()).getFireRepository(), id + "\\" + id + ".shp");
 		
