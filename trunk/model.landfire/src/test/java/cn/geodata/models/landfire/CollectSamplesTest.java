@@ -68,7 +68,7 @@ public class CollectSamplesTest extends TestCase {
 			log.info(i + ":" + _p.getX() + "," + _p.getY());
 		}
 		
-		ShapefileDataStore _dataStore = new ShapefileDataStore((new File("O:\\tank\\save\\java\\geoengine\\data\\tmp\\out2.shp")).toURL());
+		ShapefileDataStore _dataStore = new ShapefileDataStore((new File("D:\\mfeng\\save\\java\\wps\\data\\fire\\tmp\\out2.shp")).toURL());
 		
 		FeatureType _featureType = CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints())
 			.newFeatureType(new AttributeType[]{

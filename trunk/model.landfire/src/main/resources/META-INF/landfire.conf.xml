@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 	<dataset>
-		<path>O:\tank\save\java\geoengine\data\fire</path>
+		<path>D:\mfeng\save\java\wps\data\fire\dataset</path>
 	</dataset>
-	<output>O:\tank\save\java\geoengine\data\tmp</output>
+	<output>D:\mfeng\save\java\wps\data\fire\output</output>
 </config>
