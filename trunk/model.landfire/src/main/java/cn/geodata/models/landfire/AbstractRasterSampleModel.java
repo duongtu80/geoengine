@@ -5,7 +5,6 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.factory.Hints;
@@ -14,11 +13,11 @@ import org.geotools.geometry.Envelope2D;
 
 import com.vividsolutions.jts.geom.Point;
 
-public class DatasetDNBR {
-	private static Logger log = Logger.getAnonymousLogger();
-	
-	public double getAtLocation(String id, Point pt) throws IOException{
-		GridCoverage2D _grid = this.findFireRegionDataset(id);
+public abstract class AbstractRasterSampleModel extends AbstractSampleModel {
+
+	@Override
+	public Double[] getSample(String id, Point pt) throws IOException {
+		GridCoverage2D _grid = this.findRegionDataset(id);
 		
 		Envelope2D _extent = _grid.getEnvelope2D();
 		RenderedImage _image = _grid.getRenderedImage();
@@ -38,13 +37,13 @@ public class DatasetDNBR {
 		
 		if(_col < 0 || _col >= _image.getWidth() || _row < 0 || _row >= _image.getHeight()){
 			log.warning("Out of the image:" + _col + "," + _row);
-			return Double.NaN;
+			return new Double[]{Double.NaN};
 		}
 		
 		return this.evaluateValue(_image, _col, _row);
 	}
-	
-	protected double evaluateValue(RenderedImage image, int col, int row) {
+
+	protected Double[] evaluateValue(RenderedImage image, int col, int row) {
 		int _minC = col - 2;
 		int _maxC = col + 2;
 		
@@ -79,9 +78,9 @@ public class DatasetDNBR {
 		
 		if(_count == 0){
 			log.warning("Not found avalible cell");
-			return Double.NaN;
+			return new Double[]{Double.NaN};
 		}
-		return (double)_total / (double)_count;
+		return new Double[]{_total / (double)_count};
 	}
 
 	protected int getCellValue(RenderedImage image, int col, int row) {
@@ -92,8 +91,8 @@ public class DatasetDNBR {
 		return _raster.getSample(col, row, 0);
 	}
 
-	public GridCoverage2D findFireRegionDataset(String id) throws IOException{
-		File _file = new File((new Configure()).getFireRepository(), id + "\\" + id + "_d.tif");
+	public GridCoverage2D findRegionDataset(String id) throws IOException{
+		File _file = this.getImageFile(id);
 		
 		if(_file.exists() == false){
 			throw new FileNotFoundException(_file.getAbsolutePath());
@@ -102,4 +101,6 @@ public class DatasetDNBR {
 		GeoTiffReader _reader = new GeoTiffReader(_file, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
 		return (GridCoverage2D) _reader.read(null);
 	}
+	
+	public abstract File getImageFile(String id);
 }

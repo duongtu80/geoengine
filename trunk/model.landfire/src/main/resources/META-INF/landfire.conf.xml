@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<dataset>
-		<path>D:\mfeng\save\java\wps\data\fire\dataset</path>
-	</dataset>
-	<output>D:\mfeng\save\java\wps\data\fire\output</output>
+	<sample>
+		<shapefile>D:\mfeng\save\java\wps\data\fire\dataset</shapefile>
+		<outputShp>D:\mfeng\save\java\wps\data\fire\output1\out.shp</outputShp>
+		<numFactor>0.000001</numFactor>
+		<bufferFactor>0.3</bufferFactor>
+		<minDistance>10</minDistance>
+		<maxTry>10</maxTry>
+		<models>dnbr</models>
+	</sample>
+	<dnbr>
+		<repository>D:\mfeng\save\java\wps\data\fire\dataset</repository>
+	</dnbr>
+<!-- 
+	<dem>
+		<type>standard</type>
+		<path></path>
+		<nodata></nodata>
+	</dem>
+ -->
 </config>

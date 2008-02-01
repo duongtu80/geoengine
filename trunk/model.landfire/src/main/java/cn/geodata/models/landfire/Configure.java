@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 
 public class Configure {
@@ -19,11 +20,11 @@ public class Configure {
 		}
 	}
 	
-	public File getFireRepository(){
-		return new File(this.configure.getString("dataset.path"));
+	public XMLConfiguration getConfigure(){
+		return this.configure;
 	}
 	
-	public File getTempOutputPath(){
-		return new File(this.configure.getString("output"));
+	public HierarchicalConfiguration getSubConfig(String sub){
+		return (new Configure()).getConfigure().configurationAt(sub);
 	}
 }

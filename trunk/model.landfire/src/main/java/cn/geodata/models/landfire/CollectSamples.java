@@ -4,24 +4,32 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.FactoryRegistryException;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.AttributeType;
 import org.geotools.feature.AttributeTypeFactory;
 import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.FeatureType;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.SchemaException;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.ReferencingFactoryFinder;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -31,53 +39,109 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class CollectSamples {
-	private static Logger log = Logger.getAnonymousLogger();
-	private static int MAX_TRY = 10;
+	private static Logger log = Logger.getAnonymousLogger();	
+	private HierarchicalConfiguration config;
+	private MathTransform transform;
 	
-	protected FeatureType createResultFeatureType() throws IOException{
-		AttributeTypeFactory _attributeFactory = CommonFactoryFinder.getAttributeTypeFactory(GeoTools.getDefaultHints());
-		List<AttributeType> _attrs = new ArrayList<AttributeType>();
+	public CollectSamples() throws NoSuchAuthorityCodeException, FactoryException{
+		this.config = (new Configure()).getSubConfig("sample");
+
+		CoordinateReferenceSystem _proCoordSys = CRS.decode("EPSG:42303");
+		CoordinateReferenceSystem _geoCoordSys = CRS.decode("EPSG:4326");
 		
-		_attrs.add(_attributeFactory.newAttributeType("shape", Point.class));
-		_attrs.add(_attributeFactory.newAttributeType("dnbr", Double.class));
+		CoordinateOperationFactory _coFactory = ReferencingFactoryFinder.getCoordinateOperationFactory(GeoTools.getDefaultHints());
+		CoordinateOperation _ch = _coFactory.createOperation(_proCoordSys, _geoCoordSys);
 		
-		try {
-			return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType((AttributeType[])_attrs.toArray(new AttributeType[0]), "samples");
-		} catch (FactoryRegistryException e) {
-			log.log(Level.SEVERE, "Failed to create featureType", e);
-			throw new IOException(e);
-		} catch (SchemaException e) {
-			log.log(Level.SEVERE, "Failed to create featureType", e);
-			throw new IOException(e);
-		}
+		this.transform = _ch.getMathTransform();
 	}
 	
-	public FeatureCollection findSamples(String id, int count, double minDistance) throws IOException{
-		FeatureType _featureType = this.createResultFeatureType();
+	private AbstractRasterSampleModel rasterModel;
+	
+	public AbstractRasterSampleModel getRasterModel() {
+		return rasterModel;
+	}
+
+	public void setRasterModel(AbstractRasterSampleModel rasterModel) {
+		this.rasterModel = rasterModel;
+	}
+	
+	public Map<String, AttributeType> getFields(){
+		Map<String, AttributeType> _fields = new HashMap<String, AttributeType>();
+
+		_fields.put("sample", AttributeTypeFactory.newAttributeType("sample", Point.class));
+		_fields.put("id", AttributeTypeFactory.newAttributeType("id", String.class, true, 100));
+		_fields.put("fireId", AttributeTypeFactory.newAttributeType("fireId", String.class, true, 100));
+		_fields.put("x", AttributeTypeFactory.newAttributeType("x", Double.class));
+		_fields.put("y", AttributeTypeFactory.newAttributeType("y", Double.class));
+		_fields.put("lat", AttributeTypeFactory.newAttributeType("lat", Double.class));
+		_fields.put("lon", AttributeTypeFactory.newAttributeType("lon", Double.class));
+		_fields.put("fireArea", AttributeTypeFactory.newAttributeType("fireArea", Double.class));
+		_fields.put("BuffArea", AttributeTypeFactory.newAttributeType("buffArea", Double.class));
 		
-		List<Feature> _list = new ArrayList<Feature>();
+		return _fields;
+	}
+
+//	protected FeatureType createResultFeatureType() throws IOException{
+//		AttributeTypeFactory _attributeFactory = CommonFactoryFinder.getAttributeTypeFactory(GeoTools.getDefaultHints());
+//		List<AttributeType> _attrs = new ArrayList<AttributeType>();
+//		
+//		_attrs.add(_attributeFactory.newAttributeType("shape", Point.class));
+//		_attrs.add(_attributeFactory.newAttributeType("dnbr", Double.class));
+//		
+//		try {
+//			return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType((AttributeType[])_attrs.toArray(new AttributeType[0]), "samples");
+//		} catch (FactoryRegistryException e) {
+//			log.log(Level.SEVERE, "Failed to create featureType", e);
+//			throw new IOException(e);
+//		} catch (SchemaException e) {
+//			log.log(Level.SEVERE, "Failed to create featureType", e);
+//			throw new IOException(e);
+//		}
+//	}
+//	
+	public List<Map<String, Object>> findSamples(String id, double numFactor, double minDistance, double bufferFactor, int maxTry) throws IOException, MismatchedDimensionException, TransformException{
+		List<Map<String, Object>> _list = new ArrayList<Map<String, Object>>();
+		
 		Polygon _p = this.findFireRegion(id);
+		int _count = (int) Math.ceil(_p.getArea() * numFactor);
 		
-		for(int i=0;i<count;i++){
-			Feature _pt = findSample(_featureType, id, _p, _list, minDistance);
-			if(_pt != null){
-				_list.add(_pt);
+		double _bufferDistance = Math.sqrt(_p.getArea() / Math.PI) * bufferFactor;
+		Polygon _bufP = (Polygon) _p.buffer(_bufferDistance);
+		
+		log.info("count:" + _count);
+		log.info("area:" + _p.getArea());
+		log.info("bufferDistance:" + _bufferDistance);
+		log.info("bufferArea:" + _bufP.getArea());
+		
+		for(int i=0;i<_count;i++){
+			Map<String, Object> _sample = findSample(id, _bufP, _list, minDistance, maxTry);
+			if(_sample != null){
+				Point _pt = (Point) _sample.get("sample");
+				Point _geoPt = this.transform2Geo(_pt);
+				
+				_sample.put("fireId", id);
+				_sample.put("fireArea", _p.getArea());
+				_sample.put("buffArea", _bufP.getArea() - _p.getArea());
+				
+				_sample.put("id", id + "-" + String.format("%04d", i));
+				_sample.put("x", _pt.getX());
+				_sample.put("y", _pt.getY());
+				_sample.put("lon", _geoPt.getX());
+				_sample.put("lat", _geoPt.getY());
+				
+				_list.add(_sample);
 			}
 		}
 		
-		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
-		_fs.addAll(_list);
-		
-		return _fs;
+		return _list;
 	}
 	
-	public Feature findSample(FeatureType featureType, String id, Polygon polygon, List<Feature>list, double minDistance) throws IOException{
+	public Map<String, Object> findSample(String id, Polygon polygon, List<Map<String, Object>>list, double minDistance, int maxTry) throws IOException{
 		Envelope _extent = polygon.getEnvelopeInternal();
 		GeometryFactory _factory = new GeometryFactory();
-		DatasetDNBR _dnbr = new DatasetDNBR();
-		
+
 		Random _r = new Random();
-		for(int i=0;i<MAX_TRY;i++){
+		for(int i=0;i<maxTry;i++){
 			log.info("Try " + i);
 			
 			double _x = _r.nextDouble();
@@ -89,15 +153,14 @@ public class CollectSamples {
 			Point _pt = _factory.createPoint(new Coordinate(_x, _y));
 			
 			if(polygon.contains(_pt) && isOverLay(list, _pt, minDistance) == false){
-				double _val = _dnbr.getAtLocation(id, _pt);
+				double _val = this.getRasterModel().getSample(id, _pt)[0];
 				
 				if(_val != Double.NaN){
-					try {
-						return featureType.create(new Object[]{_pt, _val});
-					} catch (IllegalAttributeException e) {
-						log.log(Level.WARNING, "Failed to create feature", e);
-						throw new IOException(e);
-					}
+					Map<String, Object> _map = new HashMap<String, Object>();
+					_map.put("sample", _pt);
+					_map.put("dnbr", _val);
+					
+					return _map;
 				}
 			}
 		}
@@ -105,9 +168,9 @@ public class CollectSamples {
 		return null;
 	}
 	
-	public boolean isOverLay(List<Feature> list, Point pt, double minDistance){
-		for(Feature _loc : list){
-			if(_loc.getDefaultGeometry().distance(pt) < minDistance){
+	public boolean isOverLay(List<Map<String, Object>> list, Point pt, double minDistance){
+		for(Map<String, Object> _loc : list){
+			if(((Point)_loc.get("sample")).distance(pt) < minDistance){
 				return true;
 			}
 		}
@@ -139,12 +202,17 @@ public class CollectSamples {
 	}
 
 	public FeatureSource findFireRegionDataset(String id) throws IOException{
-		File _file = new File((new Configure()).getFireRepository(), id + "\\" + id + ".shp");
+		File _file = new File(config.getString("shapefile"), id + "\\" + id + ".shp");
 		
 		if(_file.exists() == false){
 			throw new FileNotFoundException(_file.getAbsolutePath());
 		}
 		
 		return (new ShapefileDataStore(_file.toURL())).getFeatureSource();
+	}
+	
+	public Point transform2Geo(Point pt) throws MismatchedDimensionException, TransformException{
+		return (Point) JTS.transform(pt, this.transform);
+
 	}
 }
