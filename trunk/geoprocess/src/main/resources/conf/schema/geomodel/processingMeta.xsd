@@ -1,57 +1,61 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://www.geodata.cn/models/geoprocessing" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:geo="http://www.geodata.cn/models/geoprocessing">
-
-    <element name="processes" type="geo:processesType"></element>
-    
-    <complexType name="processesType">
-    	<sequence>
-    		<element ref="geo:process" maxOccurs="unbounded" minOccurs="0"></element>
-    	</sequence>
-    </complexType>
-
-    <complexType name="processType">
-    	<sequence>
-    		<element name="id" type="string"></element>
-    		<element name="title" type="string"></element>
-    		<element name="describe" type="string" maxOccurs="1"
-    			minOccurs="0">
-    		</element>
-    		<element name="tags" type="string" maxOccurs="unbounded"
-    			minOccurs="0">
-    		</element>
-            <element name="metadata" type="anyURI" maxOccurs="unbounded" minOccurs="0"></element>
-            <element name="inputs" type="geo:inputsType"></element>
-    		<element name="outputs" type="geo:outputsType"></element>
-
-    	</sequence>
-    </complexType>
-    
-
-    <complexType name="inputsType">
-    	<sequence>
-    		<element name="input" type="geo:valueType" maxOccurs="unbounded" minOccurs="0"></element>
-    	</sequence>
-    </complexType>
-
-    <complexType name="valueType">
-    	<sequence>
-    		<element name="id" type="string"></element>
-    		<element name="title" type="string"></element>
-    		<element name="describe" type="string"></element>
-            <element name="tags" type="string" maxOccurs="1" minOccurs="0"></element>
-            <element name="metadata" type="anyURI" maxOccurs="1" minOccurs="0"></element>
-    		<element name="category" type="string" maxOccurs="unbounded" minOccurs="1"></element>
-    		<element name="occurs" type="string" maxOccurs="1" minOccurs="0"></element>
-    	</sequence>
-    </complexType>
-
-    <complexType name="outputsType">
-    	<sequence>
-    		<element name="output" type="geo:valueType"
-    			maxOccurs="unbounded" minOccurs="0">
-    		</element>
-    	</sequence>
-    </complexType>
-
-    <element name="process" type="geo:processType"></element>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.6.0 (http://www.liquid-technologies.com) -->
+<schema xmlns:geo="http://www.geodata.cn/models/geoprocessing" elementFormDefault="qualified" targetNamespace="http://www.geodata.cn/models/geoprocessing" xmlns="http://www.w3.org/2001/XMLSchema">
+  <element name="processes" type="geo:processesType" />
+  <complexType name="processesType">
+    <sequence>
+      <element name="id" type="string" />
+      <element name="title" type="string" />
+      <element minOccurs="0" name="provider">
+        <complexType>
+          <choice>
+            <element minOccurs="0" name="IndividualName" type="string" />
+            <element minOccurs="0" name="OrganisationName" type="string" />
+            <element minOccurs="0" name="PositionName" type="string" />
+            <element minOccurs="0" name="Role" type="string" />
+            <element minOccurs="0" name="ContactInfo">
+              <complexType>
+                <sequence />
+              </complexType>
+            </element>
+          </choice>
+        </complexType>
+      </element>
+      <element minOccurs="0" name="describe" />
+      <element minOccurs="0" maxOccurs="unbounded" ref="geo:process" />
+    </sequence>
+  </complexType>
+  <complexType name="processType">
+    <sequence>
+      <element name="id" type="string" />
+      <element name="title" type="string" />
+      <element minOccurs="0" maxOccurs="1" name="describe" type="string" />
+      <element minOccurs="0" maxOccurs="unbounded" name="tags" type="string" />
+      <element minOccurs="0" maxOccurs="unbounded" name="metadata" type="anyURI" />
+      <element name="inputs" type="geo:inputsType" />
+      <element name="outputs" type="geo:outputsType" />
+    </sequence>
+  </complexType>
+  <complexType name="inputsType">
+    <sequence>
+      <element minOccurs="0" maxOccurs="unbounded" name="input" type="geo:valueType" />
+    </sequence>
+  </complexType>
+  <complexType name="valueType">
+    <sequence>
+      <element name="id" type="string" />
+      <element name="title" type="string" />
+      <element minOccurs="0" name="describe" type="string" />
+      <element minOccurs="0" maxOccurs="1" name="tags" type="string" />
+      <element minOccurs="0" maxOccurs="1" name="metadata" type="anyURI" />
+      <element minOccurs="1" maxOccurs="unbounded" name="category" type="string" />
+      <element minOccurs="0" maxOccurs="1" name="occurs" type="string" />
+    </sequence>
+  </complexType>
+  <complexType name="outputsType">
+    <sequence>
+      <element minOccurs="0" maxOccurs="unbounded" name="output" type="geo:valueType" />
+    </sequence>
+  </complexType>
+  <element name="process" type="geo:processType" />
 </schema>
