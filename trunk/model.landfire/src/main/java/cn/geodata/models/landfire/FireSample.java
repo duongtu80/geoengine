@@ -59,12 +59,13 @@ public class FireSample {
 		
 		List<AbstractSampleModel> _models = new ArrayList<AbstractSampleModel>();
 		for(String _model : config.getStringArray("models")){
-			log.info("add model:" + _model);
 			String _modelType = config.getString(_model + ".type", "");
 			if(_modelType.equalsIgnoreCase("standard")){
+				System.out.println("add standard model:" + _model);
 				_models.add(new StandardRasterModel(_model, config.configurationAt(_model)));
 			}
 			else{
+				System.out.println("add customized model:" + _model);
 				_models.add((AbstractSampleModel)this.beanFactory.getBean(_model));
 			}
 		}
@@ -89,47 +90,52 @@ public class FireSample {
 		
 		List<String> _ids = this.retrieveIdList(_repositoryPath);
 		for(String _id : _ids){
-			List<Map<String, Object>> _result = _collect.findSamples(_id, _numFactor, _minDistance, _bufferFactor, _maxTry);
-			
-			log.info("process " + _id);
-			for(int i=0;i<_result.size();i++){
-				log.info("  sample...");
+			try{
+				List<Map<String, Object>> _result = _collect.findSamples(_id, _numFactor, _minDistance, _bufferFactor, _maxTry);
 				
-				Map<String, Object> _vals = _result.get(i);
-				Point _pt = (Point) _vals.get("sample");
-
-				log.info("  point count:" + _vals.size());
-				for(AbstractSampleModel _model: _models){
-					Double[] _results = _model.getSample(_id, _pt);
+				System.out.println("process " + _id);
+				for(int i=0;i<_result.size();i++){
+					System.out.println("  sample...");
 					
-					log.info("    process model " + _model.getModelName() + "...");
-					for (int j = 0; j < _results.length; j++) {
+					Map<String, Object> _vals = _result.get(i);
+					Point _pt = (Point) _vals.get("sample");
+	
+					System.out.println("  point count:" + _vals.size());
+					for(AbstractSampleModel _model: _models){
+						Double[] _results = _model.getSample(_id, _pt);
 						
-						String _colName = _model.getFields()[j];
-						if(_vals.containsKey(_colName) == false){
-							_vals.put(_colName, _results[j]);
+						System.out.println("    process model " + _model.getModelName() + "...");
+						for (int j = 0; j < _results.length; j++) {
+							
+							String _colName = _model.getFields()[j];
+							if(_vals.containsKey(_colName) == false){
+								_vals.put(_colName, _results[j]);
+							}
 						}
 					}
+					
+					System.out.println("  create feature...");
+					List<Object> _fldValues = new ArrayList<Object>();
+					for(int m=0;m < _featureType.getAttributeCount();m++){
+						_fldValues.add(_vals.get(_featureType.getAttributeType(m).getLocalName()));
+					}
+					
+					_fs.add(_featureType.create(_fldValues.toArray()));
 				}
-				
-				log.info("  create feature...");
-				List<Object> _fldValues = new ArrayList<Object>();
-				for(int m=0;m < _featureType.getAttributeCount();m++){
-					_fldValues.add(_vals.get(_featureType.getAttributeType(m).getLocalName()));
-				}
-				
-				_fs.add(_featureType.create(_fldValues.toArray()));
+			}
+			catch(Exception err){
+				log.warning(err.getMessage());
 			}
 		}
 		
-		log.info("save features...");
+		System.out.println("save features...");
 		ShapefileDataStore _dataStore = new ShapefileDataStore(_output.toURL());
 		_dataStore.createSchema(_featureType);
 		
 		FeatureStore _featureStore = (FeatureStore) _dataStore.getFeatureSource();
 		_featureStore.addFeatures(_fs);
 		
-		log.info("finished. " + _fs.size() + " features saved.");
+		System.out.println("finished. " + _fs.size() + " features saved.");
 	}
 	
 	private List<String> retrieveIdList(File repository) {
