@@ -142,7 +142,7 @@ public class CollectSamples {
 
 		Random _r = new Random();
 		for(int i=0;i<maxTry;i++){
-			log.info("Try " + i);
+			log.info("try " + i);
 			
 			double _x = _r.nextDouble();
 			double _y = _r.nextDouble();
@@ -159,6 +159,8 @@ public class CollectSamples {
 					Map<String, Object> _map = new HashMap<String, Object>();
 					_map.put("sample", _pt);
 					_map.put("dnbr", _val);
+					
+					log.info("found point:" + _x + "," + _y);
 					
 					return _map;
 				}

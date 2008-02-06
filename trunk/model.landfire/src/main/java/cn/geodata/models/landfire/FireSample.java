@@ -92,6 +92,7 @@ public class FireSample {
 		for(String _id : _ids){
 			try{
 				List<Map<String, Object>> _result = _collect.findSamples(_id, _numFactor, _minDistance, _bufferFactor, _maxTry);
+				log.info("feature count:" + _result);
 				
 				System.out.println("process " + _id);
 				for(int i=0;i<_result.size();i++){
@@ -124,7 +125,7 @@ public class FireSample {
 				}
 			}
 			catch(Exception err){
-				log.warning(err.getMessage());
+				log.severe(_id + "=" + err.getMessage());
 			}
 		}
 		
