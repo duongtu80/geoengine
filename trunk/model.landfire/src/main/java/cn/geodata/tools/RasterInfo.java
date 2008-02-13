@@ -4,6 +4,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.factory.Hints;
@@ -12,6 +13,8 @@ import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
 
 public class RasterInfo {
+	private Logger log = Logger.getAnonymousLogger();
+	
 	private File file;
 	private GridCoverage2D grid;
 	private Envelope2D envelope;
@@ -56,19 +59,38 @@ public class RasterInfo {
 		int _tileX = _col / image.getTileWidth();
 		int _tileY = _row / image.getTileHeight();
 
+		return this.getTile(_tileX, _tileY).getSample(_col, _row, 0);
+	}
+	
+	public int getCell(int col, int row){
+		int _tileX = col / image.getTileWidth();
+		int _tileY = row / image.getTileHeight();
+			
+		return this.getTile(_tileX, _tileY).getSample(col, row, 0);
+	}
+	
+	public Raster getTile(int x, int y){
 		Raster _raster = null;
-		if(this.rasterCache != null && this.lastTileX == _tileX && this.lastTileY == _tileY){
+		if(this.rasterCache != null && this.lastTileX == x && this.lastTileY == y){
 			_raster = this.rasterCache;
 		}
 		else{
-			_raster = image.getTile(_tileX, _tileY);
+			_raster = image.getTile(x, y);
+			
 			this.rasterCache = _raster;
-			this.lastTileX = _tileX;
-			this.lastTileY = _tileY;
+			this.lastTileX = x;
+			this.lastTileY = y;
 		}
 		
-//		Raster _raster = image.getTile(_tileX, _tileY);
-		return _raster.getSample(_col, _row, 0);
+		return _raster;
+	}
+	
+	public int getCol(double x){
+		return (int)Math.floor(((x - this.envelope.getMinX()) / this.cellSizeX));
+	}
+	
+	public int getRow(double y){
+		return (int)Math.floor(((this.envelope.getMaxY() - y) / this.cellSizeY));		
 	}
 
 	public File getFile() {
