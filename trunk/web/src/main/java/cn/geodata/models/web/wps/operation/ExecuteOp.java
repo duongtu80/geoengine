@@ -15,7 +15,7 @@ import net.opengeospatial.wps.impl.ExecuteDocumentImpl;
 import org.apache.xmlbeans.XmlObject;
 
 import cn.geodata.models.ProcessingFactory;
-import cn.geodata.models.ProcessingFactoryWarp;
+import cn.geodata.models.ProcessingFactoryWrap;
 import cn.geodata.models.ProcessingWrap;
 import cn.geodata.models.WPS;
 import cn.geodata.models.exception.OptionNotSupportedException;
@@ -30,7 +30,7 @@ public class ExecuteOp extends WpsOperation {
 		Execute _execute = _input.getExecute();
 
 		//Create process
-		ProcessingWrap _processWrap = (new ProcessingFactoryWarp()).createProcess(_execute, null);
+		ProcessingWrap _processWrap = (new ProcessingFactoryWrap()).createProcess(_execute, null);
 
 		//Run the model process
 		_processWrap.run();
