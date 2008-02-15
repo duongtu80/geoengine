@@ -106,7 +106,8 @@ public class CollectSamples {
 		int _count = (int) Math.ceil(_p.getArea() * numFactor);
 		
 		double _bufferDistance = Math.sqrt(_p.getArea() / Math.PI) * bufferFactor;
-		Polygon _bufP = (Polygon) _p.buffer(_bufferDistance);
+//		Polygon _bufP = (Polygon) _p.buffer(_bufferDistance);
+		Polygon _bufP = _p;
 		
 		log.info("count:" + _count);
 		log.info("area:" + _p.getArea());
