@@ -10,7 +10,7 @@ import cn.geodata.models.geoprocessing.ProcessType;
 import cn.geodata.models.geoprocessing.ProcessesType;
 import cn.geodata.models.util.ProcessingLibray;
 
-public class ProcessingFactoryWarp {
+public class ProcessingFactoryWrap {
 	
 	/**
 	 * Find and create a new processing 
