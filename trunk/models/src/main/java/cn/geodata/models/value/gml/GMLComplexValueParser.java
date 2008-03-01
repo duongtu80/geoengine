@@ -14,8 +14,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import cn.geodata.gml.ParserFinder;
-import cn.geodata.gml.ParserUtil;
+import cn.geodata.models.gml.ParserFinder;
+import cn.geodata.models.gml.ParserUtil;
 import cn.geodata.models.value.ComplexEncoder;
 import cn.geodata.models.value.ComplexParser;
 

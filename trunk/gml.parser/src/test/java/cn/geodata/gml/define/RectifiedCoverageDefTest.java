@@ -11,7 +11,7 @@ import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.opengis.coverage.grid.GridCoverage;
 
-import cn.geodata.gml.ParserUtil;
+import cn.geodata.models.gml.ParserUtil;
 
 public class RectifiedCoverageDefTest extends TestCase {
 	private static Logger log = Logger.getAnonymousLogger();

@@ -15,9 +15,9 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
-import cn.geodata.gml.GMLConfiguration;
-import cn.geodata.gml.ParserFinder;
-import cn.geodata.gml.ParserUtil;
+import cn.geodata.models.gml.GMLConfiguration;
+import cn.geodata.models.gml.ParserFinder;
+import cn.geodata.models.gml.ParserUtil;
 
 import junit.framework.TestCase;
 

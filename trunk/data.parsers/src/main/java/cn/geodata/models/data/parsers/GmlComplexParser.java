@@ -19,12 +19,12 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
-import cn.geodata.gml.ParserFinder;
-import cn.geodata.gml.ParserUtil;
 import cn.geodata.models.category.data.DataCategories;
 import cn.geodata.models.category.data.DataCategory;
 import cn.geodata.models.data.ComplexParser;
 import cn.geodata.models.data.Utilities;
+import cn.geodata.models.gml.ParserFinder;
+import cn.geodata.models.gml.ParserUtil;
 
 public class GmlComplexParser implements ComplexParser {
 	private static Logger log = Utilities.getLogger();

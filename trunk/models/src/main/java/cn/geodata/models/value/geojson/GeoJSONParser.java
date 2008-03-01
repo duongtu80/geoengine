@@ -24,9 +24,9 @@ import org.w3c.dom.Text;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import cn.geodata.gml.ParserFinder;
-import cn.geodata.gml.ParserUtil;
 import cn.geodata.models.geojson.GeoJSON;
+import cn.geodata.models.gml.ParserFinder;
+import cn.geodata.models.gml.ParserUtil;
 import cn.geodata.models.util.Utilities;
 import cn.geodata.models.value.ComplexEncoder;
 import cn.geodata.models.value.ComplexParser;

@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cn.geodata.models</groupId>
-  <artifactId>data.parsers</artifactId>
-  <name>data.parsers</name>
+  <artifactId>ge-data.parsers</artifactId>
+  <name>Data Parser</name>
   <version>1.0-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
   <build>
@@ -26,17 +26,17 @@
     </dependency>
     <dependency>
       <groupId>cn.geodata.models</groupId>
-      <artifactId>geoprocess</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>cn.geodata.gml</groupId>
-      <artifactId>gml.parser</artifactId>
+      <artifactId>ge-geoprocess</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>cn.geodata.models</groupId>
-      <artifactId>geojson.parser</artifactId>
+      <artifactId>ge-gml.parser</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>cn.geodata.models</groupId>
+      <artifactId>ge-geojson.parser</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>

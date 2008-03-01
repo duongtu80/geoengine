@@ -15,10 +15,10 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureCollection;
 import org.jdom.output.XMLOutputter;
 
-import cn.geodata.gml.ParserFinder;
-import cn.geodata.gml.ParserUtil;
 import cn.geodata.models.geojson.GeoJSON;
 import cn.geodata.models.geojson.GeoJSONUtil;
+import cn.geodata.models.gml.ParserFinder;
+import cn.geodata.models.gml.ParserUtil;
 
 public class GeoJSONParserTest extends TestCase {
 	private Logger log = Logger.getAnonymousLogger();

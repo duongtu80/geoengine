@@ -13,8 +13,8 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
-import cn.geodata.gml.ParserFinder;
-import cn.geodata.gml.ParserUtil;
+import cn.geodata.models.gml.ParserFinder;
+import cn.geodata.models.gml.ParserUtil;
 
 public class FeatureCollectionDefTest extends TestCase {
 	private static Logger log = Logger.getAnonymousLogger();

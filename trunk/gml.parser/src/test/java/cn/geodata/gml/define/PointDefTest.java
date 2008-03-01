@@ -6,8 +6,8 @@ import junit.framework.TestCase;
 
 import org.jdom.Element;
 
-import cn.geodata.gml.GMLConfiguration;
-import cn.geodata.gml.ParserUtil;
+import cn.geodata.models.gml.GMLConfiguration;
+import cn.geodata.models.gml.ParserUtil;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;

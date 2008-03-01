@@ -13,8 +13,8 @@ import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import cn.geodata.gml.ParserUtil;
 import cn.geodata.models.GeoNamespaceContext;
+import cn.geodata.models.gml.ParserUtil;
 import cn.geodata.models.value.ReferenceEncoder;
 import cn.geodata.models.value.ReferenceParser;
 
