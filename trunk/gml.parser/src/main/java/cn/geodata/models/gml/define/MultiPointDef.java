@@ -1,4 +1,4 @@
-package cn.geodata.gml.define;
+package cn.geodata.models.gml.define;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.jdom.Element;
 
-import cn.geodata.gml.UnsupportedType;
+import cn.geodata.models.gml.UnsupportedType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;

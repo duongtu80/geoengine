@@ -1,8 +1,8 @@
-package cn.geodata.gml.define;
+package cn.geodata.models.gml.define;
 
-import cn.geodata.gml.GMLConfiguration;
-import cn.geodata.gml.Parser;
-import cn.geodata.gml.ParserFinder;
+import cn.geodata.models.gml.GMLConfiguration;
+import cn.geodata.models.gml.Parser;
+import cn.geodata.models.gml.ParserFinder;
 
 
 public abstract class AbstractParser implements Parser {

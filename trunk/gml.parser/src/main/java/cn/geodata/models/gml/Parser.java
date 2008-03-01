@@ -1,4 +1,4 @@
-package cn.geodata.gml;
+package cn.geodata.models.gml;
 
 
 import java.io.IOException;

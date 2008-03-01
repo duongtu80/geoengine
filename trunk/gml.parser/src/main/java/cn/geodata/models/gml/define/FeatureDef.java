@@ -1,4 +1,4 @@
-package cn.geodata.gml.define;
+package cn.geodata.models.gml.define;
 
 
 import java.io.IOException;
@@ -22,9 +22,9 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import cn.geodata.gml.FeatureParser;
-import cn.geodata.gml.ParserUtil;
-import cn.geodata.gml.UnsupportedType;
+import cn.geodata.models.gml.FeatureParser;
+import cn.geodata.models.gml.ParserUtil;
+import cn.geodata.models.gml.UnsupportedType;
 
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;

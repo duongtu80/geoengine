@@ -1,4 +1,4 @@
-package cn.geodata.gml.define;
+package cn.geodata.models.gml.define;
 
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -11,8 +11,8 @@ import org.geotools.geometry.Envelope2D;
 import org.jdom.Element;
 import org.opengis.coverage.grid.GridGeometry;
 
-import cn.geodata.gml.ParserUtil;
-import cn.geodata.gml.UnsupportedType;
+import cn.geodata.models.gml.ParserUtil;
+import cn.geodata.models.gml.UnsupportedType;
 
 
 

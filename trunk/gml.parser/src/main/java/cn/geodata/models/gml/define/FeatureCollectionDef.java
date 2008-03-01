@@ -1,4 +1,4 @@
-package cn.geodata.gml.define;
+package cn.geodata.models.gml.define;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,9 +12,9 @@ import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.FeatureType;
 import org.jdom.Element;
 
-import cn.geodata.gml.FeatureParser;
-import cn.geodata.gml.ParserUtil;
-import cn.geodata.gml.UnsupportedType;
+import cn.geodata.models.gml.FeatureParser;
+import cn.geodata.models.gml.ParserUtil;
+import cn.geodata.models.gml.UnsupportedType;
 
 public class FeatureCollectionDef extends AbstractParser {
 	private static Logger log = ParserUtil.getLogger();

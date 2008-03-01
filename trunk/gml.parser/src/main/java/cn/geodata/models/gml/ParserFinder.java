@@ -1,4 +1,4 @@
-package cn.geodata.gml;
+package cn.geodata.models.gml;
 
 
 import java.io.IOException;
@@ -12,7 +12,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 
-import cn.geodata.gml.define.FeatureDef;
+import cn.geodata.models.gml.define.FeatureDef;
 
 
 
