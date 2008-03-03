@@ -29,21 +29,23 @@ import com.vividsolutions.jts.geom.Point;
 
 public class FireSample {
 	private Logger log = Logger.getAnonymousLogger();
-	private HierarchicalConfiguration config;
+	private HierarchicalConfiguration sampleConfig;
+	private Configure config;
 	private XmlBeanFactory beanFactory;
 	
 	public FireSample(){
 		this.beanFactory = new XmlBeanFactory(new ClassPathResource("/META-INF/fireModelLib.xml"));
-		this.config = (new Configure()).getSubConfig("sample");
+		this.config = new Configure();
+		this.sampleConfig = this.config.getSubConfig("sample");
 	}
 	
 	public void doSamples() throws IOException, FactoryRegistryException, SchemaException, IllegalAttributeException, MismatchedDimensionException, TransformException{
-		double _numFactor = config.getDouble("numFactor");
-		double _minDistance = config.getDouble("minDistance");
-		int _maxTry = config.getInt("maxTry");
-		File _repositoryPath = new File(config.getString("shapefile"));
-		double _bufferFactor = config.getDouble("bufferFactor");
-		File _output = new File(config.getString("outputShp"));
+		double _numFactor = sampleConfig.getDouble("numFactor");
+		double _minDistance = sampleConfig.getDouble("minDistance");
+		int _maxTry = sampleConfig.getInt("maxTry");
+		File _repositoryPath = new File(sampleConfig.getString("shapefile"));
+		double _bufferFactor = sampleConfig.getDouble("bufferFactor");
+		File _output = new File(sampleConfig.getString("outputShp"));
 		
 		log.info("numFactor:" + _numFactor);
 		log.info("minDistance:" + _minDistance);
@@ -58,11 +60,11 @@ public class FireSample {
 		log.info("output:" + _output.getAbsolutePath());
 		
 		List<AbstractSampleModel> _models = new ArrayList<AbstractSampleModel>();
-		for(String _model : config.getStringArray("models")){
-			String _modelType = config.getString(_model + ".type", "");
+		for(String _model : sampleConfig.getStringArray("models")){
+			String _modelType = this.config.getSubConfig(_model).getString("type", "");
 			if(_modelType.equalsIgnoreCase("standard")){
 				System.out.println("add standard model:" + _model);
-				_models.add(new StandardRasterModel(_model, config.configurationAt(_model)));
+				_models.add(new StandardRasterModel(_model, this.config.getSubConfig(_model)));
 			}
 			else{
 				System.out.println("add customized model:" + _model);

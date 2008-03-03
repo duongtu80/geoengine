@@ -37,8 +37,8 @@ public abstract class AbstractRasterSampleModel extends AbstractSampleModel {
 	}
 
 	protected Double[] evaluateValue(RasterInfo raster, int col, int row) {
-		int _minC = col - 2;
-		int _maxC = col + 2;
+		int _minC = col - 1;
+		int _maxC = col + 1;
 		
 		if(_minC < 0){
 			_minC = 0;
@@ -47,8 +47,8 @@ public abstract class AbstractRasterSampleModel extends AbstractSampleModel {
 			_maxC = raster.getImage().getWidth() - 1;
 		}
 		
-		int _minR = row - 2;
-		int _maxR = row + 2;
+		int _minR = row - 1;
+		int _maxR = row + 1;
 		
 		if(_minR < 0){
 			_minR = 0;

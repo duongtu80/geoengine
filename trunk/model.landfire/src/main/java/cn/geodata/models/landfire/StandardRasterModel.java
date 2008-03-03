@@ -20,7 +20,7 @@ public class StandardRasterModel extends AbstractSampleModel {
 		this.modelName = modelName;
 		this.config = config;
 		
-		this.manager = new RasterManager(new File(config.getString("path")), config.getInt("nodata"));
+		this.manager = new RasterManager(new File(config.getString("path")), config.getInt("nodata", 0));
 	}
 	
 	@Override
