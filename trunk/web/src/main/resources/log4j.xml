@@ -8,7 +8,7 @@
 		</layout>
 	</appender>
 	<category name="cn.geodata">
-		<level value="INFO" />
+		<level value="FINE" />
 	</category>
 	<category name="cn.geodata.common">
 		<level value="INFO" />
