@@ -1,0 +1,65 @@
+@CHARSET "UTF-8";
+
+body {
+	font-family: Verdana,Times New Roman;
+	font-size: 15px;
+	padding: 0px;
+	margin: auto 0px auto 0px;
+}
+
+div.bodywrap {
+	background-color: #FFFFFF;
+	width: 980px;
+	margin: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 0px;
+	border: 0px;
+}
+
+#mainPanel {
+	background-color: #FFFFFF;
+}
+
+#leftPanel {
+	background-color: #EEEEEE;
+	width: 700px;
+	height:400px;
+}
+
+#rightPanel {
+	background-color: #FFFFFF;
+	width: 278px;
+	height:400px;
+}
+
+div.textBlock {
+	text-align: left;
+	padding: 2px;
+	margin: 5px;
+	border: 1px solid #EEEEEE;
+}
+
+div.blockTitle {
+	font-weight: bold;
+}
+
+div.blockBody {
+	line-height: 30px;
+}
+
+div.viewItem{
+	line-height: 33px;
+}
+
+td.cellTitle {
+	font-weight: bold;;
+	background-color: #EEEEEE;
+	border: 1px solid #888888;
+	line-height: 20px;
+}
+
+td.cellBody {
+	border: 1px solid #888888;
+	line-height: 20px;
+}
