@@ -18,4 +18,9 @@
 		<property name="width" value="900"></property>
 		<property name="height" value="400"></property>
 	</bean>
+	<bean id="chartImage2" class="cn.geodata.models.wetland.actions.map.ChartImage2">
+		<property name="manager" ref="chartManager"></property>
+		<property name="width" value="900"></property>
+		<property name="height" value="400"></property>
+	</bean>
 </beans>

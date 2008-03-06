@@ -2,8 +2,6 @@ package cn.geodata.models.wetland.actions.map;
 
 import org.geotools.feature.Feature;
 
-import jj2000.j2k.codestream.CorruptedCodestreamException;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
