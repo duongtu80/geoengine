@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Created with Liquid XML Studio 1.0.6.0 (http://www.liquid-technologies.com) -->
+<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
 <schema xmlns:geo="http://www.geodata.cn/models/geoprocessing" elementFormDefault="qualified" targetNamespace="http://www.geodata.cn/models/geoprocessing" xmlns="http://www.w3.org/2001/XMLSchema">
-  <element name="processes" type="geo:processesType" />
-  <complexType name="processesType">
+  <element name="model" type="geo:modelType" />
+  <complexType name="modelType">
     <sequence>
       <element name="id" type="string" />
       <element name="title" type="string" />
+      <element minOccurs="0" maxOccurs="unbounded" name="metadata" type="anyURI" />
       <element minOccurs="0" name="provider">
         <complexType>
           <choice>
@@ -21,7 +22,7 @@
           </choice>
         </complexType>
       </element>
-      <element minOccurs="0" name="describe" />
+      <element minOccurs="0" name="describe" type="string" />
       <element minOccurs="0" maxOccurs="unbounded" ref="geo:process" />
     </sequence>
   </complexType>
