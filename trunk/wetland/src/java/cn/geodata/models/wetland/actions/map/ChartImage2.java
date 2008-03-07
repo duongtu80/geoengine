@@ -20,6 +20,7 @@ public class ChartImage2 {
 	private ChartManager manager;
 	private String wetland;
 	private InputStream stream;
+	private String errorImagePath;
 	private String type;
 	
 	public String getType() {
@@ -67,52 +68,61 @@ public class ChartImage2 {
 	public void setChartType(String chartType) {
 		this.chartType = chartType;
 	}
-	
-	public String execute() throws Exception{		
-		ChartData2 _chart = this.getManager().loadChartData2(this.getType());
-		if(_chart.getData().containsKey(this.getWetland()) == false){
-			throw new NullPointerException("Not found the request wetland");
-		}
-		
-		ArrayList<Double> _values = _chart.getData().get(this.getWetland());
-		
-		String _xAxisTitle= "Month";
-		String _yAxisTitle= "Waterlevel";
-		String _title= null; //"WaterLevel";
-		
-        TimeSeries s1 = new TimeSeries(this.getWetland(), Month.class);
-		int _row = 0;
-		int _pos = 0;
-		for(int i=0;i<_values.size();i++){
-			if(_values.get(i).doubleValue() != Double.NaN){
-				s1.add(new Month(_pos + 1, 1988 + _row), _values.get(i).doubleValue());
+	public String execute() throws Exception{
+		try{
+			ChartData2 _chart = this.getManager().loadChartData2(this.getType());
+			if(_chart.getData().containsKey(this.getWetland()) == false){
+				throw new NullPointerException("Not found the request wetland");
 			}
 			
-			_pos++;
-			if(_pos >= 12){
-				_row ++;
-				_pos = 0;
+			ArrayList<Double> _values = _chart.getData().get(this.getWetland());
+			
+			String _xAxisTitle= "Year";
+			String _yAxisTitle= "Waterlevel";
+			String _title= null; //"WaterLevel";
+			
+	        TimeSeries s1 = new TimeSeries(this.getWetland(), Month.class);
+			int _row = 0;
+			int _pos = 0;
+			for(int i=0;i<_values.size();i++){
+				if(_values.get(i).doubleValue() != Double.NaN){
+					s1.add(new Month(_pos + 1, 1988 + _row), _values.get(i).doubleValue());
+				}
+				
+				_pos++;
+				if(_pos >= 12){
+					_row ++;
+					_pos = 0;
+				}
 			}
-		}
-	
-	    TimeSeriesCollection dataset = new TimeSeriesCollection();
-	    dataset.addSeries(s1);
-
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                _title,  // title
-                _xAxisTitle,             // x-axis label
-                _yAxisTitle,   // y-axis label
-                dataset,            // data
-                false,               // create legend?
-                true,               // generate tooltips?
-                false               // generate URLs?
-            );
-
-		ByteOutputStream _outputStream = new ByteOutputStream();
-        EncoderUtil.writeBufferedImage(chart.createBufferedImage(this.width, this.height), "png", _outputStream);
 		
-		this.stream = _outputStream.newInputStream();
-
+		    TimeSeriesCollection dataset = new TimeSeriesCollection();
+		    dataset.addSeries(s1);
+	
+	        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+	                _title,  // title
+	                _xAxisTitle,             // x-axis label
+	                _yAxisTitle,   // y-axis label
+	                dataset,            // data
+	                false,               // create legend?
+	                true,               // generate tooltips?
+	                false               // generate URLs?
+	            );
+	
+			ByteOutputStream _outputStream = new ByteOutputStream();
+	        EncoderUtil.writeBufferedImage(chart.createBufferedImage(this.width, this.height), "png", _outputStream);
+			
+			this.stream = _outputStream.newInputStream();
+		}
+		catch(Exception err){
+			this.stream = ChartImage2.class.getResourceAsStream(this.errorImagePath);
+		}
 		return "success";
+	}
+	public String getErrorImagePath() {
+		return errorImagePath;
+	}
+	public void setErrorImagePath(String errorImagePath) {
+		this.errorImagePath = errorImagePath;
 	}
 }

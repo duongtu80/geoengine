@@ -36,8 +36,13 @@
 	<div class="bodywrap">
 		<jsp:include page="inc/top.jsp"></jsp:include>
 		<div id="mainPanel">
-			Not found wetland at location <s:property value="pt"/>
-		</div>
+			<div id="mainPanel">
+				Not found wetland at location <s:property value="pt"/>
+			</div>
+			<div>
+				<img src="chartWaterTable.do?pt=<s:property value="pt"/>" />
+			</div>
+		</div>		
 		<jsp:include page="inc/tail.jsp"></jsp:include>
 	</div>
 </body>

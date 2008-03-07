@@ -88,7 +88,7 @@ public class ChartImage {
 		this.chartType = chartType;
 	}
 	
-	public String execute() throws Exception{		
+	public String execute() throws Exception{	
 		ChartData2 _chart = this.getManager().loadChartData2(this.getType());
 		if(_chart.getData().containsKey(this.getWetland()) == false){
 			throw new NullPointerException("Not found the request wetland");

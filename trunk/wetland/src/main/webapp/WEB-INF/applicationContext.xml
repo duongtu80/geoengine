@@ -3,7 +3,7 @@
 <beans>
 	<bean id="mapMap" class="cn.geodata.models.wetland.actions.map.Map"></bean>
 	<bean id="mapChart" class="cn.geodata.models.wetland.actions.map.Chart">
-		<property name="envi" ref="geoEnvironment" />
+		<property name="catchment" ref="catchment" />
 	</bean>
 	<bean id="geoEnvironment" class="cn.geodata.models.wetland.actions.map.GeoEnvironment">
 		<property name="geoserver" value="D:/mfeng/save/java/wps/service/wetland/tomcat-6.0.16" />
@@ -15,12 +15,32 @@
 	<bean id="chartImage" class="cn.geodata.models.wetland.actions.map.ChartImage">
 		<property name="manager" ref="chartManager"></property>
 		<property name="api" value="http://chart.apis.google.com/chart?"></property>
-		<property name="width" value="900"></property>
+		<property name="width" value="980"></property>
 		<property name="height" value="400"></property>
 	</bean>
 	<bean id="chartImage2" class="cn.geodata.models.wetland.actions.map.ChartImage2">
 		<property name="manager" ref="chartManager"></property>
-		<property name="width" value="900"></property>
+		<property name="width" value="980"></property>
 		<property name="height" value="400"></property>
+		<property name="errorImagePath" value="/wetland.data/images/nodata.png"></property>
+	</bean>
+	<bean id="etModel" class="cn.geodata.models.wetland.ETModel">
+		<property name="albedo" value="0.08"></property>
+		<property name="height" value="557.7"></property>
+		<property name="windSpeed" value="1"></property>
+	</bean>
+	<bean id="waterTableModel" class="cn.geodata.models.wetland.WaterTableModel">
+		<property name="catchmentArea" value="3"></property>
+		<property name="saturationPrcp" value="0.003"></property>
+		<property name="etModel" ref="etModel"></property>
+	</bean>
+	<bean id="chartWaterTable" class="cn.geodata.models.wetland.actions.map.ChartWaterTable">
+		<property name="waterTableModel" ref="waterTableModel"></property>
+		<property name="width" value="980"></property>
+		<property name="height" value="500"></property>
+	</bean>
+	<bean id="catchment" class="cn.geodata.models.wetland.actions.map.Catchment">
+		<property name="envi" ref="geoEnvironment" />
+		<property name="fieldName" value="Name"></property>
 	</bean>
 </beans>

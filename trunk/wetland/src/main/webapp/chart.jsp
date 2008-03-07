@@ -42,6 +42,9 @@
 			<div>
 				<img src="chartImage.do?wetland=<s:property value="code"/>&type=watertable" />
 			</div>
+			<div>
+				<img src="chartWaterTable.do?pt=<s:property value="pt"/>" />
+			</div>
 		</div>
 		<jsp:include page="inc/tail.jsp"></jsp:include>
 	</div>
