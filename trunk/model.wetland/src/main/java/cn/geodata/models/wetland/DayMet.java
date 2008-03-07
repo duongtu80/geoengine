@@ -1,6 +1,12 @@
 package cn.geodata.models.wetland;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class DayMet {
+	private double x;
+	private double y;
 	private int year;
 	private int day;
 	private double tmax;
@@ -64,5 +70,22 @@ public class DayMet {
 	}
 	public void setDaylen(double daylen) {
 		this.daylen = daylen;
+	}
+	
+	public Date getDate() throws ParseException{
+		SimpleDateFormat _format = new SimpleDateFormat("yyyy.D");
+		return _format.parse(this.year + "." + this.day);
+	}
+	public double getX() {
+		return x;
+	}
+	public void setX(double x) {
+		this.x = x;
+	}
+	public double getY() {
+		return y;
+	}
+	public void setY(double y) {
+		this.y = y;
 	}
 }
