@@ -2,7 +2,9 @@ package cn.geodata.models.wetland;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,8 +17,13 @@ public class DayMetReader {
 		
 	}
 	
-	public ArrayList<DayMet> read(double x, double y) throws IOException{
+	public ArrayList<DayMet> read(Date startDate, Date endDate, double x, double y) throws IOException, ParseException{
 		URL _url = new URL("http://www.daymet.org/getRawData.do?lat=" + y + "&lon=" + x);
+		
+		boolean _inside = false;
+		if(startDate == null){
+			_inside = true;
+		}
 		
 		ArrayList<DayMet> _list = new ArrayList<DayMet>();
 		List<String> _lines = (List<String>)IOUtils.readLines(_url.openStream());
@@ -38,7 +45,16 @@ public class DayMetReader {
 				_met.setX(x);
 				_met.setY(y);
 				
-				_list.add(_met);
+				if(_inside == false && startDate != null && _met.getDate().before(startDate) == false){
+					_inside = true;
+				}
+				if(_inside == true && endDate != null && _met.getDate().after(endDate)){
+					_inside = false;
+					break;
+				}
+				
+				if(_inside)
+					_list.add(_met);
 			}
 			else{
 				log.warning("skip " + _lines.get(i));

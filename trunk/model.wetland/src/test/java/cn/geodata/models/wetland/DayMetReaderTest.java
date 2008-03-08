@@ -14,7 +14,7 @@ public class DayMetReaderTest extends TestCase {
 		double _x = -99.08000;
 		double _y = 47.08000;
 		
-		ArrayList<DayMet> _list = _reader.read(_x, _y);
+		ArrayList<DayMet> _list = _reader.read(null, null, _x, _y);
 		for(DayMet _line : _list){
 			System.out.println(_line.getDate().toString());
 		}
