@@ -32,6 +32,14 @@
   				<param name="bufferSize">1024</param>
     		</result>
     	</action>
+    	<action name="searchWetland" class="searchWetland">
+    		<result type="stream">
+    			<param name="contentType">text/json</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.png"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
 <!-- 
     	<global-results>
     		<result name="Exception">/error.jsp</result>

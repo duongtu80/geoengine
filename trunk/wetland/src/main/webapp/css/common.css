@@ -31,6 +31,7 @@ div.bodywrap {
 	background-color: #FFFFFF;
 	width: 278px;
 	height:400px;
+	vertical-align: top;
 }
 
 div.textBlock {

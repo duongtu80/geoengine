@@ -48,8 +48,36 @@
 					</div>
 				</td>
 				<td id="rightPanel">
-					<div style="border: 1px solid #AAAAAA; height: 100%;text-align: left;">
+					<div class="blockTitle">Parameters</div>
+					<div class="textBlock">
+						Date <input type="text" id='startDate' value="1980-01-01" dojoType='dijit.form.DateTextBox' trim="true" style="width: 100px;" /> -
+						<input type="text" id='endDate' value="2002-12-31" dojoType='dijit.form.DateTextBox' trim="true" style="width: 100px;" />
 					</div>
+					<div class="textBlock">
+						Albedo <input type="text" id='txtAlbedo' value="0.08" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+					</div>
+					<div class="textBlock">
+						WindSpeed <input type="text" id='txtWindSpeed' value="1" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+					</div>
+					<div class="textBlock">
+						CatchmentArea <input type="text" id='txtCatchmentArea' value="3" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+					</div>
+					<div class="textBlock">
+						SaturationPrcp <input type="text" id='txtSaturationPrcp' value="0.003" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="position: relative;">
+					<div id='divWetlandInfo' style='position: relative; top: 0px; visibility: hidden; background-color: #EEEEEE; line-height: 22px; padding-left: 10px;'>
+						<div>
+							Wetland: <div id='txtWetland' style="display: inline"></div>
+						</div>
+						<div>
+							Location: <div id='txtLocation'  style="display: inline"></div>
+						</div>
+					</div>
+					<div id='divWaterTableText' style='visibility: hidden;'><img id="imgWaterTable"/></div>
 				</td>
 			</tr>
 			</table>

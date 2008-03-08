@@ -6,17 +6,11 @@
 		<property name="catchment" ref="catchment" />
 	</bean>
 	<bean id="geoEnvironment" class="cn.geodata.models.wetland.actions.map.GeoEnvironment">
-		<property name="geoserver" value="D:/mfeng/save/java/wps/service/wetland/tomcat-6.0.16" />
+		<property name="geoserver" value="O:/tank/save/java/geoengine/server/tomcat-6.0.16" />
 		<property name="wetland" value="webapps/geoserver/data/data/wetland/wetland.shp" />
 	</bean>
 	<bean id="chartManager" class="cn.geodata.models.wetland.actions.map.ChartManager">
 		<property name="dataPath" value="/wetland.data/" />
-	</bean>
-	<bean id="chartImage" class="cn.geodata.models.wetland.actions.map.ChartImage">
-		<property name="manager" ref="chartManager"></property>
-		<property name="api" value="http://chart.apis.google.com/chart?"></property>
-		<property name="width" value="980"></property>
-		<property name="height" value="400"></property>
 	</bean>
 	<bean id="chartImage2" class="cn.geodata.models.wetland.actions.map.ChartImage2">
 		<property name="manager" ref="chartManager"></property>
@@ -42,5 +36,8 @@
 	<bean id="catchment" class="cn.geodata.models.wetland.actions.map.Catchment">
 		<property name="envi" ref="geoEnvironment" />
 		<property name="fieldName" value="Name"></property>
+	</bean>
+	<bean id="searchWetland" class="cn.geodata.models.wetland.actions.map.SearchWetland">
+		<property name="catchment" ref="catchment" />
 	</bean>
 </beans>

@@ -1,5 +1,7 @@
 package cn.geodata.models.wetland.actions.map;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -9,8 +11,6 @@ import org.jfree.chart.encoders.EncoderUtil;
 import org.jfree.data.time.Month;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 public class ChartImage2 {
 	private int width;
@@ -109,10 +109,10 @@ public class ChartImage2 {
 	                false               // generate URLs?
 	            );
 	
-			ByteOutputStream _outputStream = new ByteOutputStream();
+	        ByteArrayOutputStream _outputStream = new ByteArrayOutputStream();
 	        EncoderUtil.writeBufferedImage(chart.createBufferedImage(this.width, this.height), "png", _outputStream);
-			
-			this.stream = _outputStream.newInputStream();
+
+			this.stream = new ByteArrayInputStream(_outputStream.toByteArray());
 		}
 		catch(Exception err){
 			this.stream = ChartImage2.class.getResourceAsStream(this.errorImagePath);

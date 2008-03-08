@@ -29,7 +29,7 @@ public class ChartETTest extends TestCase {
 		_et.setWaterTableModel(_waterModel);
 		System.out.println(_et.execute());
 		
-		FileOutputStream _stream = new FileOutputStream(new File("D:/mfeng/save/c++/zhengpeng/test.png"));
+		FileOutputStream _stream = new FileOutputStream(new File("D:/test.png"));
 		IOUtils.copy(_et.getStream(), _stream);
 		_stream.close();
 	}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -27,7 +28,25 @@ public class ChartWaterTable {
 	private int width;
 	private int height;
 	private WaterTableModel waterTableModel;
+	private Date startDate;
+	private Date endDate;
 	
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	public WaterTableModel getWaterTableModel() {
 		return waterTableModel;
 	}
@@ -45,11 +64,14 @@ public class ChartWaterTable {
 			throw new ArrayIndexOutOfBoundsException(_parts.length);
 		}
 		
+		System.out.println("StartDate:" + startDate.toString());
+		System.out.println("EndDate:" + endDate.toString());
+
 		GeometryFactory _factory = new GeometryFactory();
 		Point _pt = _factory.createPoint(new Coordinate(Double.parseDouble(_parts[0]), Double.parseDouble(_parts[1])));
 		
 		DayMetReader _reader = new DayMetReader();
-		ArrayList<DayMet> _daymets = _reader.read(_pt.getX(), _pt.getY());
+		ArrayList<DayMet> _daymets = _reader.read(this.startDate, this.endDate, _pt.getX(), _pt.getY());
 		
 		String _xAxisTitle= null; //"Date";
 		String _yAxisTitle= "Waterlevel";
