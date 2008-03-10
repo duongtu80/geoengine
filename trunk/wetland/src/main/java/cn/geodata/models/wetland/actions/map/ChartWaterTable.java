@@ -79,11 +79,15 @@ public class ChartWaterTable {
 		
 		waterTableModel.setWaterLevel(0);
 		
-        TimeSeries s1 = new TimeSeries("P1", Day.class);
+        TimeSeries s1 = new TimeSeries("WaterTable (m)", Day.class);
+        TimeSeries s2 = new TimeSeries("ET (cm)", Day.class);
+        TimeSeries s3 = new TimeSeries("Prec (cm)", Day.class);
         for(int i=0;i<_daymets.size();i++){
         	waterTableModel.setDayMet(_daymets.get(i));
-        	
-        	s1.add(new Day(_daymets.get(i).getDate()), waterTableModel.calculate());
+        	waterTableModel.calculate();
+        	s1.add(new Day(_daymets.get(i).getDate()), waterTableModel.getWaterLevel());
+        	s2.add(new Day(_daymets.get(i).getDate()), waterTableModel.getEtModel().getEt() / 10.0);
+        	s3.add(new Day(_daymets.get(i).getDate()), _daymets.get(i).getPrcp());
 //        	System.out.println(waterTableModel.getWaterLevel() + "," + waterTableModel.getEtModel().getEt());
         }
         
@@ -91,13 +95,15 @@ public class ChartWaterTable {
         
 	    TimeSeriesCollection dataset = new TimeSeriesCollection();
 	    dataset.addSeries(s1);
+	    dataset.addSeries(s2);
+	    dataset.addSeries(s3);
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
                 _title,  // title
                 _xAxisTitle,             // x-axis label
                 _yAxisTitle,   // y-axis label
                 dataset,            // data
-                false,               // create legend?
+                true,               // create legend?
                 true,               // generate tooltips?
                 false               // generate URLs?
             );

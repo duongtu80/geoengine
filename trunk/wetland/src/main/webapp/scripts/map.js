@@ -41,7 +41,7 @@ function initMap() {
 			["http://labs.metacarta.com/wms-c/Basic.py?","http://t2.labs.metacarta.com/wms-c/Basic.py?", "http://t1.labs.metacarta.com/wms-c/Basic.py?"], {layers: 'satellite'} 
 	);
 	
-	var layer2 = new OpenLayers.Layer.WMS("Wetland", "http://127.0.0.1:58080/geoserver/wms?", {layers: "wet:wetland", transparent: true});
+	var layer2 = new OpenLayers.Layer.WMS("Wetland", wetlandWMS, {layers: wetlandLayers, transparent: true});
 
 
 	map.addLayer(layer);
@@ -79,35 +79,12 @@ function changeExtentByBounds(pt){
 			dojo.byId('divWetlandInfo').style.visibility = 'visible';
 
         	if(response.code != 'not found'){
-				_processTip.innerHTML = 'calculating water table ...';
-				
-				var _url = 'chartWaterTable.do?pt=' + pt.toShortString();
-				if(dojo.byId('txtAlbedo').value != ''){
-					_url += '&waterTableModel.etModel.albedo=' + dojo.byId('txtAlbedo').value;
-				}
-				if(dojo.byId('txtWindSpeed').value != ''){
-					_url += '&waterTableModel.etModel.windSpeed=' + dojo.byId('txtWindSpeed').value;
-				}
-				if(dojo.byId('txtCatchmentArea').value != ''){
-					_url += '&waterTableModel.catchmentArea=' + dojo.byId('txtCatchmentArea').value;
-				}
-				if(dojo.byId('txtSaturationPrcp').value != ''){
-					_url += '&waterTableModel.saturationPrcp=' + dojo.byId('txtSaturationPrcp').value;
-				}
-				if(dojo.byId('startDate').value != ''){
-					_url += '&startDate=' + dojo.byId('startDate').value;
-				}
-				if(dojo.byId('endDate').value != ''){
-					_url += '&endDate=' + dojo.byId('endDate').value;
-				}
-				
-//				alert(_url);
-				dojo.byId('imgWaterTable').src = _url;
-				//dojo.byId('imgWaterTable').src = 'chartWaterTable.do?pt=' + pt.toShortString();
+        		dijit.byId('btnCalculateWaterTable').setDisabled(false);
         	}
         	else{
-   	        	_processTip.innerHTML = 'finished';
+        		dijit.byId('btnCalculateWaterTable').setDisabled(true);
         	}
+        	_processTip.innerHTML = 'finished';
         },
         error: function(response, ioArgs) { //
 			console.error("HTTP status code: ", ioArgs.xhr.status); //
@@ -121,4 +98,37 @@ function changeExtentByBounds(pt){
 function chartLoaded() {
 	dojo.byId('divWaterTableText').style.visibility = 'visible';
 	dojo.byId('processTip').innerHTML = 'finished';
+	
+	dijit.byId('btnCalculateWaterTable').setDisabled(false);
+}
+
+function calculateWaterTable(){
+	dijit.byId('btnCalculateWaterTable').setDisabled(true);
+	
+	var _processTip = dojo.byId('processTip');
+	_processTip.innerHTML = 'calculating water table ...';
+	
+	var _url = 'chartWaterTable.do?pt=' + dojo.byId('txtLocation').innerHTML;
+	if(dojo.byId('txtAlbedo').value != ''){
+		_url += '&waterTableModel.etModel.albedo=' + dojo.byId('txtAlbedo').value;
+	}
+	if(dojo.byId('txtWindSpeed').value != ''){
+		_url += '&waterTableModel.etModel.windSpeed=' + dojo.byId('txtWindSpeed').value;
+	}
+	if(dojo.byId('txtCatchmentArea').value != ''){
+		_url += '&waterTableModel.catchmentArea=' + dojo.byId('txtCatchmentArea').value;
+	}
+	if(dojo.byId('txtSaturationPrcp').value != ''){
+		_url += '&waterTableModel.saturationPrcp=' + dojo.byId('txtSaturationPrcp').value;
+	}
+	if(dojo.byId('startDate').value != ''){
+		_url += '&startDate=' + dojo.byId('startDate').value;
+	}
+	if(dojo.byId('endDate').value != ''){
+		_url += '&endDate=' + dojo.byId('endDate').value;
+	}
+	
+//				alert(_url);
+	dojo.byId('imgWaterTable').src = _url;
+	//dojo.byId('imgWaterTable').src = 'chartWaterTable.do?pt=' + pt.toShortString();
 }

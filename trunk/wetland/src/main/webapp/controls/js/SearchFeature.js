@@ -36,9 +36,8 @@ OpenLayers.Control.SearchFeature = OpenLayers.Class(OpenLayers.Control, {
  	* Method: SearchFeature
  	*/
 	searchFeature: function(geometry) {
-		this.layer.eraseFeatures(this.layer.features);
-
-		//this.layer.addFeatures(new OpenLayers.Feature.Vector(geometry));
+		this.layer.removeFeatures(this.layer.features);
+		this.layer.addFeatures(new OpenLayers.Feature.Vector(geometry));
 		changeExtentByBounds(geometry);
 	},
 

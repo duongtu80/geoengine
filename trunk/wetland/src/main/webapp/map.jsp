@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
+<%@ taglib prefix="s" uri="/struts-tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -30,6 +31,10 @@
 <style type="text/css">
 	@IMPORT url("controls/css/style.css");
 </style>
+<script type="text/javascript">
+	var wetlandWMS = '<s:property value="wetlandWMS"/>';
+	var wetlandLayers = '<s:property value="wetlandLayers"/>';
+</script>
 <script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
 <script type="text/javascript" src="controls/js/Navigation.js" ></script>
 <script type="text/javascript" src="controls/js/SearchFeature.js" ></script>
@@ -64,6 +69,9 @@
 					</div>
 					<div class="textBlock">
 						SaturationPrcp <input type="text" id='txtSaturationPrcp' value="0.003" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+					</div>
+					<div>
+						<button id='btnCalculateWaterTable' dojoType="dijit.form.Button" onclick="calculateWaterTable();" disabled='true'>Calculate</button>
 					</div>
 				</td>
 			</tr>
