@@ -6,7 +6,16 @@ public class ETModel {
 	private double height;
 	private double windSpeed;
 	private double et;
+	private double coefficient;
 	
+	public double getCoefficient() {
+		return coefficient;
+	}
+
+	public void setCoefficient(double cofficient) {
+		this.coefficient = cofficient;
+	}
+
 	public double getHeight() {
 		return height;
 	}
@@ -40,7 +49,7 @@ public class ETModel {
 		
 		double _et = (_dedt * dayMet.getSrad() * (1.0 - albedo) * 0.408 + _vpd * this.windSpeed * _p_constant * 900 / (dayMet.getTday() + 273)) / (_dedt + _p_constant * (1 + 0.34 * windSpeed));
 		
-		this.et = _et * 1.2;
+		this.et = _et * coefficient;
 		return this.et;
 	}
 

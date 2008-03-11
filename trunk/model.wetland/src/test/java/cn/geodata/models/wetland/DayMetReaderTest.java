@@ -10,6 +10,7 @@ public class DayMetReaderTest extends TestCase {
 
 	public void testRead() throws IOException, ParseException {
 		DayMetReader _reader = new DayMetReader();
+		_reader.setUrl("http://www.daymet.org/getRawData.do?lon=%f&lat=%f");
 		
 		double _x = -99.08000;
 		double _y = 47.08000;

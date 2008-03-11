@@ -13,12 +13,23 @@ import org.apache.commons.io.IOUtils;
 public class DayMetReader {
 	private static Logger log = Logger.getAnonymousLogger();
 	
+	private String url;
+	
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
 	public DayMetReader(){
 		
 	}
 	
 	public ArrayList<DayMet> read(Date startDate, Date endDate, double x, double y) throws IOException, ParseException{
-		URL _url = new URL("http://www.daymet.org/getRawData.do?lat=" + y + "&lon=" + x);
+		log.info("URL" + this.url);
+		URL _url = new URL(String.format(this.url, x, y));
 		
 		boolean _inside = false;
 		if(startDate == null){
