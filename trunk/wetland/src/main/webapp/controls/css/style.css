@@ -21,10 +21,10 @@
   background-repeat: no-repeat;
 }
 .olControlDataViewToolbar .olControlSearchFeatureItemActive { 
-  background-image: url("img/draw_box_on.png");
+  background-image: url("img/select_point_on.png");
   background-repeat: no-repeat;
 }
 .olControlDataViewToolbar .olControlSearchFeatureItemInactive { 
-  background-image: url("img/draw_box_off.png");
+  background-image: url("img/select_point_off.png");
   background-repeat: no-repeat;
 }
