@@ -25,6 +25,7 @@
 		<property name="albedo" value="0.08"></property>
 		<property name="height" value="557.7"></property>
 		<property name="windSpeed" value="1"></property>
+		<property name="coefficient" value="1.2"></property>
 	</bean>
 	<bean id="waterTableModel" class="cn.geodata.models.wetland.WaterTableModel">
 		<property name="catchmentArea" value="3"></property>
@@ -34,6 +35,7 @@
 	</bean>
 	<bean id="chartWaterTable" class="cn.geodata.models.wetland.actions.map.ChartWaterTable">
 		<property name="waterTableModel" ref="waterTableModel"></property>
+		<property name="dayMetReader" ref="dayMetReader"></property>
 		<property name="width" value="980"></property>
 		<property name="height" value="300"></property>
 	</bean>
@@ -43,5 +45,8 @@
 	</bean>
 	<bean id="searchWetland" class="cn.geodata.models.wetland.actions.map.SearchWetland">
 		<property name="catchment" ref="catchment" />
+	</bean>
+	<bean id="dayMetReader" class="cn.geodata.models.wetland.DayMetReader">
+		<property name="url" value="http://www.daymet.org/getRawData.do?lon=%f&amp;lat=%f"></property>
 	</bean>
 </beans>

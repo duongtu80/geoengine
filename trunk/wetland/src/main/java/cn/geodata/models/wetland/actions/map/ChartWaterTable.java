@@ -1,5 +1,7 @@
 package cn.geodata.models.wetland.actions.map;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -17,7 +19,6 @@ import cn.geodata.models.wetland.DayMet;
 import cn.geodata.models.wetland.DayMetReader;
 import cn.geodata.models.wetland.WaterTableModel;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -30,7 +31,16 @@ public class ChartWaterTable {
 	private WaterTableModel waterTableModel;
 	private Date startDate;
 	private Date endDate;
+	private DayMetReader dayMetReader;
 	
+	public DayMetReader getDayMetReader() {
+		return dayMetReader;
+	}
+
+	public void setDayMetReader(DayMetReader dayMetReader) {
+		this.dayMetReader = dayMetReader;
+	}
+
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -70,8 +80,7 @@ public class ChartWaterTable {
 		GeometryFactory _factory = new GeometryFactory();
 		Point _pt = _factory.createPoint(new Coordinate(Double.parseDouble(_parts[0]), Double.parseDouble(_parts[1])));
 		
-		DayMetReader _reader = new DayMetReader();
-		ArrayList<DayMet> _daymets = _reader.read(this.startDate, this.endDate, _pt.getX(), _pt.getY());
+		ArrayList<DayMet> _daymets = dayMetReader.read(this.startDate, this.endDate, _pt.getX(), _pt.getY());
 		
 		String _xAxisTitle= null; //"Date";
 		String _yAxisTitle= "Waterlevel";
@@ -81,7 +90,7 @@ public class ChartWaterTable {
 		
         TimeSeries s1 = new TimeSeries("WaterTable (m)", Day.class);
         TimeSeries s2 = new TimeSeries("ET (cm)", Day.class);
-        TimeSeries s3 = new TimeSeries("Prec (cm)", Day.class);
+        TimeSeries s3 = new TimeSeries("Prep (cm)", Day.class);
         for(int i=0;i<_daymets.size();i++){
         	waterTableModel.setDayMet(_daymets.get(i));
         	waterTableModel.calculate();
@@ -108,11 +117,10 @@ public class ChartWaterTable {
                 false               // generate URLs?
             );
 
-		ByteOutputStream _outputStream = new ByteOutputStream();
+        ByteArrayOutputStream _outputStream = new ByteArrayOutputStream();
         EncoderUtil.writeBufferedImage(chart.createBufferedImage(this.width, this.height), "png", _outputStream);
-		
-		this.stream = _outputStream.newInputStream();
-		
+		this.stream = new ByteArrayInputStream(_outputStream.toByteArray());
+
 		return "success";
 	}
 

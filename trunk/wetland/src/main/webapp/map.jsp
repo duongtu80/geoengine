@@ -53,24 +53,36 @@
 					</div>
 				</td>
 				<td id="rightPanel">
-					<div class="blockTitle">Parameters</div>
+					<div class="blockTitle">Data Parameters</div>
 					<div class="textBlock">
-						Date <input type="text" id='startDate' value="1980-01-01" dojoType='dijit.form.DateTextBox' trim="true" style="width: 100px;" /> -
-						<input type="text" id='endDate' value="2002-12-31" dojoType='dijit.form.DateTextBox' trim="true" style="width: 100px;" />
+						DayMet Service <input type="text" id='txtDayMetReader' value="http://www.daymet.org/getRawData.do?lon=%d&lat=%d" dojoType='dijit.form.TextBox' trim='true' required='true' style="width: 150px;" />
 					</div>
+					<div class="blockTitle">Period</div>
+					<div class="textBlock">
+						Date <input type="text" id='startDate' value="1990-01-01" dojoType='dijit.form.DateTextBox' trim="true" style="width: 100px;" /> -
+						<input type="text" id='endDate' value="1999-12-31" dojoType='dijit.form.DateTextBox' trim="true" style="width: 100px;" />
+					</div>
+					<div class="blockTitle">ET Model Parameters</div>
 					<div class="textBlock">
 						Albedo <input type="text" id='txtAlbedo' value="0.08" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
 					</div>
 					<div class="textBlock">
-						WindSpeed <input type="text" id='txtWindSpeed' value="1" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+						Wind Speed <input type="text" id='txtWindSpeed' value="1" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
 					</div>
 					<div class="textBlock">
-						CatchmentArea <input type="text" id='txtCatchmentArea' value="3" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+						Coefficient <input type="text" id='txtCoefficient' value="1.2" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+					</div>
+					<div class="blockTitle">WaterTable Model Parameters</div>
+					<div class="textBlock">
+						Spill Point <input type="text" id='txtSpillPoint' value="3" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
 					</div>
 					<div class="textBlock">
-						SaturationPrcp <input type="text" id='txtSaturationPrcp' value="0.003" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+						Catchment Area <input type="text" id='txtCatchmentArea' value="3" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
 					</div>
-					<div>
+					<div class="textBlock">
+						Saturation Prcp <input type="text" id='txtSaturationPrcp' value="0.003" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+					</div>
+					<div style="padding-top: 10px; padding-left: 5px;">
 						<button id='btnCalculateWaterTable' dojoType="dijit.form.Button" onclick="calculateWaterTable();" disabled='true'>Calculate</button>
 					</div>
 				</td>

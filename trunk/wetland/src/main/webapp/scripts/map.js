@@ -99,11 +99,13 @@ function chartLoaded() {
 	dojo.byId('divWaterTableText').style.visibility = 'visible';
 	dojo.byId('processTip').innerHTML = 'finished';
 	
+	dijit.byId('btnCalculateWaterTable').setLabel('Calculate');
 	dijit.byId('btnCalculateWaterTable').setDisabled(false);
 }
 
 function calculateWaterTable(){
 	dijit.byId('btnCalculateWaterTable').setDisabled(true);
+	dijit.byId('btnCalculateWaterTable').setLabel('Calculating...');
 	
 	var _processTip = dojo.byId('processTip');
 	_processTip.innerHTML = 'calculating water table ...';
@@ -121,14 +123,24 @@ function calculateWaterTable(){
 	if(dojo.byId('txtSaturationPrcp').value != ''){
 		_url += '&waterTableModel.saturationPrcp=' + dojo.byId('txtSaturationPrcp').value;
 	}
+	if(dojo.byId('txtCoefficient').value != ''){
+		_url += '&waterTableModel.etModel.coefficient=' + dojo.byId('txtCoefficient').value;
+	}
+	if(dojo.byId('txtSpillPoint').value != ''){
+		_url += '&waterTableModel.spillPoint=' + dojo.byId('txtSpillPoint').value;
+	}
 	if(dojo.byId('startDate').value != ''){
 		_url += '&startDate=' + dojo.byId('startDate').value;
 	}
 	if(dojo.byId('endDate').value != ''){
 		_url += '&endDate=' + dojo.byId('endDate').value;
 	}
+	if(dojo.byId('txtDayMetReader').value != ''){
+		_url += '&waterTableModel.dayMetReader.url=' + escape(dojo.byId('txtDayMetReader').value);
+	}
+	_url += '&time=' + (new Date()).getTime();
 	
-//				alert(_url);
+//	alert(_url);
 	dojo.byId('imgWaterTable').src = _url;
 	//dojo.byId('imgWaterTable').src = 'chartWaterTable.do?pt=' + pt.toShortString();
 }

@@ -9,7 +9,7 @@
   <groupId>cn.geodata.models</groupId>
   <artifactId>wetland</artifactId>
   <packaging>war</packaging>
-  <name>wetland Maven Webapp</name>
+  <name>Wetland Webapp</name>
   <version>1.0-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
   <build>
