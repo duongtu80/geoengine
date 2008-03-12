@@ -36,9 +36,10 @@
 <!--    <module>model.buffer</module>-->
     <module>model.landfire</module>
     <module>model.sealevel</module>
+    <module>model.wetland</module>
 <!--    <module>client</module>-->
     <module>web</module>
     <module>earth</module>
+    <module>wetland</module>
   </modules>
 </project>
-

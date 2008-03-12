@@ -3,7 +3,7 @@
 <beans>
 	<bean id="mapMap" class="cn.geodata.models.wetland.actions.map.Map">
 		<property name="wetlandWMS" value="http://152.61.40.52:58080/geoserver/wms?"></property>
-		<property name="wetlandLayers" value="wet:wetland"></property>
+		<property name="wetlandLayers" value="wet:catchment"></property>
 	</bean>
 	<bean id="mapChart" class="cn.geodata.models.wetland.actions.map.Chart">
 		<property name="catchment" ref="catchment" />

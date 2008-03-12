@@ -1,5 +1,7 @@
 package cn.geodata.models.wetland.actions.map;
 
+import cn.geodata.models.wetland.Catchment;
+
 
 public class Chart {
 	private String code;
@@ -23,7 +25,7 @@ public class Chart {
 	}
 	
 	public String execute() throws Exception {
-		this.code = this.catchment.findCatchment(pt);
+		this.code = this.catchment.findCatchmentTag(pt);
 		if(this.code == null){
 			return "notfound";
 		}

@@ -3,6 +3,8 @@ package cn.geodata.models.wetland.actions.map;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import cn.geodata.models.wetland.Catchment;
+
 import net.sf.json.JSONObject;
 
 public class SearchWetland {
@@ -32,7 +34,7 @@ public class SearchWetland {
 	}
 	
 	public String execute() throws Exception {
-		this.code = this.catchment.findCatchment(pt);
+		this.code = this.catchment.findCatchmentTag(pt);
 		if(this.code == null){
 			this.code = "not found";
 		}
