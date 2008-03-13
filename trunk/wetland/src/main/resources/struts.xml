@@ -24,11 +24,19 @@
   				<param name="bufferSize">1024</param>
     		</result>
     	</action>
-    	<action name="chartWaterTable" class="chartWaterTable">
+    	<action name="imageStream" class="imageStream">
     		<result type="stream">
     			<param name="contentType">image/png</param>
     			<param name="inputName">stream</param>
     			<param name="contentDisposition">filename="chart.png"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="chartWaterTable" class="chartWaterTable">
+    		<result type="stream">
+    			<param name="contentType">text/json</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
   				<param name="bufferSize">1024</param>
     		</result>
     	</action>

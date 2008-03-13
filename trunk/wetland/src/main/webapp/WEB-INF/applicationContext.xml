@@ -2,15 +2,15 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
 	<bean id="mapMap" class="cn.geodata.models.wetland.actions.map.Map">
-		<property name="wetlandWMS" value="http://152.61.40.52:58080/geoserver/wms?"></property>
+		<property name="wetlandWMS" value="http://127.0.0.1:58080/geoserver/wms?"></property>
 		<property name="wetlandLayers" value="wet:catchment"></property>
 	</bean>
 	<bean id="mapChart" class="cn.geodata.models.wetland.actions.map.Chart">
 		<property name="catchment" ref="catchment" />
 	</bean>
-	<bean id="geoEnvironment" class="cn.geodata.models.wetland.actions.map.GeoEnvironment">
-		<property name="geoserver" value="D:/mfeng/save/java/wps/service/wetland/tomcat-6.0.16" />
-		<property name="wetland" value="webapps/geoserver/data/data/wetland/wetland.shp" />
+	<bean id="geoEnvironment" class="cn.geodata.models.wetland.GeoEnvironment">
+		<property name="geoserver" value="O:/tank/save/java/geoengine/server/tomcat-6.0.16" />
+		<property name="wetland" value="webapps/geoserver/data/data/wetland/catchment.shp" />
 	</bean>
 	<bean id="chartManager" class="cn.geodata.models.wetland.actions.map.ChartManager">
 		<property name="dataPath" value="/wetland.data/" />
@@ -38,10 +38,14 @@
 		<property name="dayMetReader" ref="dayMetReader"></property>
 		<property name="width" value="980"></property>
 		<property name="height" value="300"></property>
+		<property name="tempDir" value="D:\temp"></property>
 	</bean>
-	<bean id="catchment" class="cn.geodata.models.wetland.actions.map.Catchment">
+	<bean id="imageStream" class="cn.geodata.models.wetland.actions.map.ImageStream">
+		<property name="tempDir" value="D:\temp"></property>
+	</bean>
+	<bean id="catchment" class="cn.geodata.models.wetland.Catchment">
 		<property name="envi" ref="geoEnvironment" />
-		<property name="fieldName" value="Name"></property>
+		<property name="fieldName" value="NAME"></property>
 	</bean>
 	<bean id="searchWetland" class="cn.geodata.models.wetland.actions.map.SearchWetland">
 		<property name="catchment" ref="catchment" />

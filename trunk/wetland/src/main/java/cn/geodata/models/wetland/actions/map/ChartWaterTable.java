@@ -1,13 +1,17 @@
 package cn.geodata.models.wetland.actions.map;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import net.sf.json.JSONObject;
+
+import org.apache.commons.io.FileUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.encoders.EncoderUtil;
@@ -32,7 +36,16 @@ public class ChartWaterTable {
 	private Date startDate;
 	private Date endDate;
 	private DayMetReader dayMetReader;
+	private String tempDir;
 	
+	public String getTempDir() {
+		return tempDir;
+	}
+
+	public void setTempDir(String tempDir) {
+		this.tempDir = tempDir;
+	}
+
 	public DayMetReader getDayMetReader() {
 		return dayMetReader;
 	}
@@ -87,16 +100,21 @@ public class ChartWaterTable {
 		String _title= null; //"WaterLevel";
 		
 		waterTableModel.setWaterLevel(0);
-		
+
+		JSONObject _waterTable = new JSONObject();
+
         TimeSeries s1 = new TimeSeries("WaterTable (m)", Day.class);
         TimeSeries s2 = new TimeSeries("ET (cm)", Day.class);
         TimeSeries s3 = new TimeSeries("Prep (cm)", Day.class);
         for(int i=0;i<_daymets.size();i++){
         	waterTableModel.setDayMet(_daymets.get(i));
         	waterTableModel.calculate();
+
         	s1.add(new Day(_daymets.get(i).getDate()), waterTableModel.getWaterLevel());
         	s2.add(new Day(_daymets.get(i).getDate()), waterTableModel.getEtModel().getEt() / 10.0);
         	s3.add(new Day(_daymets.get(i).getDate()), _daymets.get(i).getPrcp());
+        	
+        	_waterTable.put(_daymets.get(i).getDate().toLocaleString(), waterTableModel.getWaterLevel());
 //        	System.out.println(waterTableModel.getWaterLevel() + "," + waterTableModel.getEtModel().getEt());
         }
         
@@ -116,11 +134,20 @@ public class ChartWaterTable {
                 true,               // generate tooltips?
                 false               // generate URLs?
             );
-
-        ByteArrayOutputStream _outputStream = new ByteArrayOutputStream();
+        String _code = Long.toHexString((new Date()).getTime());
+        
+        OutputStream _outputStream = FileUtils.openOutputStream(new File(this.tempDir, _code));
         EncoderUtil.writeBufferedImage(chart.createBufferedImage(this.width, this.height), "png", _outputStream);
-		this.stream = new ByteArrayInputStream(_outputStream.toByteArray());
+        _outputStream.close();
+        
+		JSONObject _object = new JSONObject();
+		_object.put("status", "finish");
+		_object.put("code", _code);
+		_object.put("pt", this.pt);
+		_object.put("water", _waterTable);
 
+		this.stream = new ByteArrayInputStream(_object.toString().getBytes());
+        
 		return "success";
 	}
 

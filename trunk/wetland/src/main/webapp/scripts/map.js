@@ -144,3 +144,62 @@ function calculateWaterTable(){
 	dojo.byId('imgWaterTable').src = _url;
 	//dojo.byId('imgWaterTable').src = 'chartWaterTable.do?pt=' + pt.toShortString();
 }
+
+function calculateWaterTable2(){
+	dijit.byId('btnCalculateWaterTable').setDisabled(true);
+	dijit.byId('btnCalculateWaterTable').setLabel('Calculating...');
+	
+	var _processTip = dojo.byId('processTip');
+	_processTip.innerHTML = 'calculating water table ...';
+	
+	var _content = {};
+	
+	_content['pt'] = dojo.byId('txtLocation').innerHTML;
+	if(dojo.byId('txtAlbedo').value != ''){
+		_content['waterTableModel.etModel.albedo'] = dojo.byId('txtAlbedo').value;
+	}
+	if(dojo.byId('txtWindSpeed').value != ''){
+		_content['waterTableModel.etModel.windSpeed'] = dojo.byId('txtWindSpeed').value;
+	}
+	if(dojo.byId('txtCatchmentArea').value != ''){
+		_content['waterTableModel.catchmentArea'] = dojo.byId('txtCatchmentArea').value;
+	}
+	if(dojo.byId('txtSaturationPrcp').value != ''){
+		_content['waterTableModel.saturationPrcp'] = dojo.byId('txtSaturationPrcp').value;
+	}
+	if(dojo.byId('txtCoefficient').value != ''){
+		_content['waterTableModel.etModel.coefficient'] = dojo.byId('txtCoefficient').value;
+	}
+	if(dojo.byId('txtSpillPoint').value != ''){
+		_content['waterTableModel.spillPoint'] = dojo.byId('txtSpillPoint').value;
+	}
+	if(dojo.byId('startDate').value != ''){
+		_content['startDate'] = dojo.byId('startDate').value;
+	}
+	if(dojo.byId('endDate').value != ''){
+		_content['endDate'] = dojo.byId('endDate').value;
+	}
+	if(dojo.byId('txtDayMetReader').value != ''){
+		_content['waterTableModel.dayMetReader.url'] = dojo.byId('txtDayMetReader').value;
+	}
+	_content['time'] = (new Date()).getTime();
+	
+	dojo.xhrGet({ //
+        url: "chartWaterTable.do", 
+        handleAs: "json",
+        content: _content,
+        timeout: 60000,
+        load: function(response, ioArgs) {
+        	alert(response.status);
+        	if(response.status == 'finish'){
+        		dojo.byId('imgWaterTable').src = "imageStream.do?code=" + response.code;
+        	}
+
+        	_processTip.innerHTML = 'finished';
+        },
+        error: function(response, ioArgs) { //
+			console.error("HTTP status code: ", ioArgs.xhr.status); //
+			_processTip.innerHTML = 'error';
+		}
+	});
+}
