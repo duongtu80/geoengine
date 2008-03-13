@@ -1,16 +1,6 @@
 package cn.geodata.models.data.parsers;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
-
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-
-import cn.geodata.models.geoprocessing.ProcessesDocument;
-import cn.geodata.models.geoprocessing.ProcessesType;
 
 import junit.framework.TestCase;
 

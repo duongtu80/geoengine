@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.geodata.models.ProcessingFactory;
+import cn.geodata.models.geoprocessing.ModelType;
 import cn.geodata.models.geoprocessing.ProcessType;
 
 /**
@@ -16,22 +17,22 @@ public class ProcessingLibray {
 	private static ProcessingLibray instance;
 	
 	private Map<String, ProcessingFactory> models;
-	private Map<String, ProcessType> metadata;
+	private Map<String, ModelType> metadata;
 	
 	private ProcessingLibray(Map<String, String> params) {
 		this.models = new HashMap<String, ProcessingFactory>();
-		this.metadata = new HashMap<String, ProcessType>();
+		this.metadata = new HashMap<String, ModelType>();
 		
 		List<ProcessingFactory> _list = new ProcessingFactoryFinder().loadModelFactories(params);
 		for(ProcessingFactory _m : _list){
-			for(ProcessType _p : _m.getMetadata().getProcessArray()){
-				models.put(_p.getId(), _m);
-				metadata.put(_p.getId(), _p);
-			}
+			ModelType _modelMetadata = _m.getMetadata();
+			
+			models.put(_modelMetadata.getId(), _m);
+			metadata.put(_modelMetadata.getId(), _modelMetadata);
 		}
 	}
 	
-	public Map<String, ProcessType> getMetadata() {
+	public Map<String, ModelType> getMetadata() {
 		return metadata;
 	}
 
@@ -53,5 +54,14 @@ public class ProcessingLibray {
 	 */
 	public Map<String, ProcessingFactory> getModelFactories() {
 		return models;
+	}
+	
+	public ProcessType findProcessMetadata(ModelType model, String procId){
+		for(ProcessType _p : model.getProcessArray()){
+			if(_p.getId().equalsIgnoreCase(procId)){
+				return _p;
+			}
+		}
+		return null;
 	}
 }

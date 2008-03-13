@@ -3,9 +3,9 @@ package cn.geodata.models;
 import java.io.IOException;
 import java.util.Map;
 
-import cn.geodata.models.geoprocessing.ProcessesType;
+import cn.geodata.models.geoprocessing.ModelType;
 
 public interface ProcessingFactory extends org.geotools.factory.Factory {
-	ProcessesType getMetadata();
+	ModelType getMetadata();
 	Processing createProcessing(String identify, Map<String, String> params) throws IOException;
 }
