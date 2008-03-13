@@ -260,9 +260,9 @@ public class GeoJSON {
 	 * @throws IOException
 	 */
 	public FeatureCollection parseFeatureCollection(JSONObject obj) throws IllegalAttributeException, IOException{
-		FeatureType _featureType = this.parseFeatureType(obj.getJSONArray("members"));
+		FeatureType _featureType = this.parseFeatureType(obj.getJSONArray("features"));
 		
-		JSONArray _members = obj.getJSONArray("members");
+		JSONArray _members = obj.getJSONArray("features");
 		FeatureCollection _featureCollection = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
 		for (int i = 0; i < _members.length(); i++) {
 			_featureCollection.add(this.parseFeature(_featureType, _members.getJSONObject(i)));
@@ -553,7 +553,7 @@ public class GeoJSON {
 		
 		JSONObject _type = new JSONObject();
 		_type.put("type", "FeatureCollection");
-		_type.put("members", JSONArray.fromObject(_f.toArray()));
+		_type.put("features", JSONArray.fromObject(_f.toArray()));
 		
 		return _type;
 	}
