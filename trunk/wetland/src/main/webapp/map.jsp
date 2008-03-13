@@ -64,26 +64,37 @@
 					</div>
 					<div class="blockTitle">ET Model Parameters</div>
 					<div class="textBlock">
-						Albedo <input type="text" id='txtAlbedo' value="0.08" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+						Albedo <input type="text" id='txtAlbedo' value="0.08" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 50px;" />
+						Wind Speed <input type="text" id='txtWindSpeed' value="1" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 50px;" />
 					</div>
 					<div class="textBlock">
-						Wind Speed <input type="text" id='txtWindSpeed' value="1" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
-					</div>
-					<div class="textBlock">
-						Coefficient <input type="text" id='txtCoefficient' value="1.2" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+						Coefficient <input type="text" id='txtCoefficient' value="1.2" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 50px;" />
 					</div>
 					<div class="blockTitle">WaterTable Model Parameters</div>
 					<div class="textBlock">
-						Spill Point <input type="text" id='txtSpillPoint' value="3" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+						Spill Point <input type="text" id='txtSpillPoint' value="3" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 40px;" />
+						Catchment Area <input type="text" id='txtCatchmentArea' value="3" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 40px;" />
 					</div>
 					<div class="textBlock">
-						Catchment Area <input type="text" id='txtCatchmentArea' value="3" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+						Saturation Prcp <input type="text" id='txtSaturationPrcp' value="0.003" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 50px;" />
 					</div>
 					<div class="textBlock">
-						Saturation Prcp <input type="text" id='txtSaturationPrcp' value="0.003" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 100px;" />
+						<button id='btnCalculateWaterTable' dojoType="dijit.form.Button" onclick="calculateWaterTable2();" disabled='true'>Calculate</button>
 					</div>
-					<div style="padding-top: 10px; padding-left: 5px;">
-						<button id='btnCalculateWaterTable' dojoType="dijit.form.Button" onclick="calculateWaterTable();" disabled='true'>Calculate</button>
+					<div class="blockTitle">Water Calculate</div>
+					<div class="textBlock">
+						<span style="width: 50px;padding: 1px;">WPS:</span>
+						<input type="text" dojoType="dijit.form.TextBox" id="modelUrl" value="http://<%=request.getServerName() %>:<%=request.getServerPort() %>/web/wps" style="width:200px;" />
+					</div>
+					<div class="textBlock">
+						Date <input type="text" id="txtCurrentDate" dojoType="dijit.form.DateTextBox" trim="true" style="width: 80px;" onchange="searchWaterTable();"/>
+						Water table <input type="text" id="txtWaterTable" dojoType="dijit.form.NumberTextBox" style="width: 50px;"></input>
+					</div>
+					<div class="textBlock">
+						<button id="btnGoAdd" dojoType="dijit.form.Button" onclick="waterRegionSet();">Calculate</button>
+						<button id="btnGoAnimate" dojoType="dijit.form.Button" onclick="waterRegionAnimateStart();">Start</button>
+					</div>
+					<div id="divWaterRegion" style="visibility: hidden;">
 					</div>
 				</td>
 			</tr>

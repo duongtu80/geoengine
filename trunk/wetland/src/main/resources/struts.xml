@@ -48,6 +48,14 @@
   				<param name="bufferSize">1024</param>
     		</result>
     	</action>
+    	<action name="waterRegion" class="waterRegion">
+    		<result type="stream">
+    			<param name="contentType">text/xml</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="water.xml"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
 <!-- 
     	<global-results>
     		<result name="Exception">/error.jsp</result>

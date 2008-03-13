@@ -5,10 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
@@ -19,6 +22,7 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import cn.geodata.models.wetland.Catchment;
 import cn.geodata.models.wetland.DayMet;
 import cn.geodata.models.wetland.DayMetReader;
 import cn.geodata.models.wetland.WaterTableModel;
@@ -101,22 +105,37 @@ public class ChartWaterTable {
 		
 		waterTableModel.setWaterLevel(0);
 
-		JSONObject _waterTable = new JSONObject();
-
+		JSONArray _waterTableArray = new JSONArray();
+		JSONArray _dateTimeArray = new JSONArray();
+		
         TimeSeries s1 = new TimeSeries("WaterTable (m)", Day.class);
         TimeSeries s2 = new TimeSeries("ET (cm)", Day.class);
         TimeSeries s3 = new TimeSeries("Prep (cm)", Day.class);
         for(int i=0;i<_daymets.size();i++){
         	waterTableModel.setDayMet(_daymets.get(i));
         	waterTableModel.calculate();
-
-        	s1.add(new Day(_daymets.get(i).getDate()), waterTableModel.getWaterLevel());
-        	s2.add(new Day(_daymets.get(i).getDate()), waterTableModel.getEtModel().getEt() / 10.0);
-        	s3.add(new Day(_daymets.get(i).getDate()), _daymets.get(i).getPrcp());
         	
-        	_waterTable.put(_daymets.get(i).getDate().toLocaleString(), waterTableModel.getWaterLevel());
+        	Date _date = _daymets.get(i).getDate();
+        	Day _day = new Day(_date);
+
+        	double _waterLevel = waterTableModel.getWaterLevel();
+        	if(_waterLevel < 0)
+        		_waterLevel = 0;
+        	
+        	s1.add(_day, _waterLevel);
+        	s2.add(_day, waterTableModel.getEtModel().getEt() / 10.0);
+        	s3.add(_day, _daymets.get(i).getPrcp());
+  
+        	_dateTimeArray.put(_date.getTime());
+        	_waterTableArray.put(_waterLevel);
+//        	_waterTable.put(_daymets.get(i).getDate().toLocaleString(), waterTableModel.getWaterLevel());
 //        	System.out.println(waterTableModel.getWaterLevel() + "," + waterTableModel.getEtModel().getEt());
         }
+        
+		JSONObject _dataObj = new JSONObject();
+		_dataObj.put("water", _waterTableArray);
+		_dataObj.put("date", _dateTimeArray);
+		_dataObj.put("size", _waterTableArray.length());
         
 //        System.out.println(_daymets.get(0).getX() + "," + _daymets.get(0).getY());
         
@@ -144,7 +163,8 @@ public class ChartWaterTable {
 		_object.put("status", "finish");
 		_object.put("code", _code);
 		_object.put("pt", this.pt);
-		_object.put("water", _waterTable);
+		_object.put("data", _dataObj);
+		
 
 		this.stream = new ByteArrayInputStream(_object.toString().getBytes());
         
