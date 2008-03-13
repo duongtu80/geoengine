@@ -7,16 +7,16 @@ import java.util.logging.Logger;
 
 import cn.geodata.models.AbstractProcessingFactory;
 import cn.geodata.models.Processing;
-import cn.geodata.models.geoprocessing.ProcessesDocument;
-import cn.geodata.models.geoprocessing.ProcessesType;
+import cn.geodata.models.geoprocessing.ModelDocument;
+import cn.geodata.models.geoprocessing.ModelType;
 
 public class SwampCitiesFactory extends AbstractProcessingFactory {
 	private static Logger log = Logger.getAnonymousLogger();
-	private ProcessesType metadata;
+	private ModelType metadata;
 	
 	public SwampCitiesFactory() {
 		try {
-			this.metadata = ProcessesDocument.Factory.parse(this.getClass().getResourceAsStream("/META-INF/metadata/swampModel.xml")).getProcesses();
+			this.metadata = ModelDocument.Factory.parse(this.getClass().getResourceAsStream("/META-INF/metadata/swampMetadata.xml")).getModel();
 		}
 		catch (Exception e) {
 			log.log(Level.SEVERE, "Failed to parse the metadata", e);
@@ -24,7 +24,7 @@ public class SwampCitiesFactory extends AbstractProcessingFactory {
 	}
 	
 	@Override
-	public ProcessesType getMetadata() {
+	public ModelType getMetadata() {
 		return this.metadata;
 	}
 	

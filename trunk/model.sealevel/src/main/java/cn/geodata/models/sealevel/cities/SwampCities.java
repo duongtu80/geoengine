@@ -38,8 +38,8 @@ public class SwampCities extends AbstractProcessing {
 	public void execute() throws Exception {
 //		log.info("Start model");
 //		
-		double _rise = (Double)this.getInputs().get("rise");
-		FeatureCollection _cities = (FeatureCollection) this.getInputs().get("cities");
+		double _rise = (Double)this.getInputs().get("Rise");
+		FeatureCollection _cities = (FeatureCollection) this.getInputs().get("Cities");
 		
 		FeatureType _ft = this.createFeatureType();
 		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<geo:model xmlns:geo="http://www.geodata.cn/models/geoprocessing"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.geodata.cn/models/geoprocessing ../../../../../../geoprocess/src/main/resources/conf/schema/geomodel/processingMeta.xsd ">
+	<geo:id>Swamp</geo:id>
+	<geo:title>Sea Level Rising Model</geo:title>
+	<geo:process>
+		<geo:id>Cities</geo:id>
+		<geo:title>Swamp cities</geo:title>
+		<geo:tags>swamp</geo:tags>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>Rise</geo:id>
+				<geo:title>Sea level rise</geo:title>
+				<geo:describe>Sea level rise</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Cities</geo:id>
+				<geo:title>Cities</geo:title>
+				<geo:describe>Cities</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>Swamp</geo:id>
+				<geo:title>Swampped cities</geo:title>
+				<geo:describe>Swampped cities</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+	<geo:process>
+		<geo:id>Report</geo:id>
+		<geo:title>Swamp report</geo:title>
+		<geo:tags>swamp</geo:tags>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>CityId</geo:id>
+				<geo:title>City id</geo:title>
+				<geo:describe>City id</geo:describe>
+				<geo:category>string</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Cities</geo:id>
+				<geo:title>Cities</geo:title>
+				<geo:describe>Cities</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>Report</geo:id>
+				<geo:title>Swamp report</geo:title>
+				<geo:describe>Swamp report</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+</geo:model>
