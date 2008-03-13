@@ -314,7 +314,13 @@ public class ComplexParsers {
 		ComplexValueType _value = ComplexValueType.Factory.newInstance();
 		_value.setFormat(_mime.toString());
 		
-		InputStream _stream = _parser.encode(val, _mime, new HashMap<String, Object>());
+		InputStream _stream = null;
+		if(val == null){
+			_stream = new ByteArrayInputStream(new byte[0]);
+		}
+		else{
+			_stream = _parser.encode(val, _mime, new HashMap<String, Object>());
+		}
 		
 		return new ComplexStream(_mime, Arrays.asList(new DataCategory[] {_category}), _stream);
 	}
@@ -323,7 +329,7 @@ public class ComplexParsers {
 	public ComplexValueType encodeComplex(ComplexStream stream) throws IOException {
 		ComplexValueType _value = ComplexValueType.Factory.newInstance();
 		
-		_value.setEncoding(stream.getMime().toString());		
+		_value.setFormat(stream.getMime().toString());		
 		Document _doc = _value.getDomNode().getOwnerDocument();
 		
 		try {
