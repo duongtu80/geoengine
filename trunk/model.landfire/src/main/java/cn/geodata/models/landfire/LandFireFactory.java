@@ -9,17 +9,17 @@ import org.apache.xmlbeans.XmlException;
 
 import cn.geodata.models.AbstractProcessingFactory;
 import cn.geodata.models.Processing;
-import cn.geodata.models.geoprocessing.ProcessesDocument;
-import cn.geodata.models.geoprocessing.ProcessesType;
+import cn.geodata.models.geoprocessing.ModelDocument;
+import cn.geodata.models.geoprocessing.ModelType;
 
 public class LandFireFactory extends AbstractProcessingFactory {
 	private static Logger log = Logger.getAnonymousLogger();
 	
-	private ProcessesType metadata;
+	private ModelType metadata;
 	
 	public LandFireFactory(){
 		try {
-			this.metadata = ProcessesDocument.Factory.parse(LandFireFactory.class.getResourceAsStream("/META-INF/metadata/landfireModel.xml")).getProcesses();
+			this.metadata = ModelDocument.Factory.parse(LandFireFactory.class.getResourceAsStream("/META-INF/metadata/landfireModel.xml")).getModel();
 		} catch (XmlException e) {
 			log.log(Level.SEVERE, "Failed to load the metadata for Landfire models", e);
 		} catch (IOException e) {
@@ -38,7 +38,7 @@ public class LandFireFactory extends AbstractProcessingFactory {
 	}
 
 	@Override
-	public ProcessesType getMetadata() {
+	public ModelType getMetadata() {
 		return this.metadata;
 	}
 
