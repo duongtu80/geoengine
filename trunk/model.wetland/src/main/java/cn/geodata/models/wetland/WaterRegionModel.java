@@ -19,12 +19,20 @@ public class WaterRegionModel {
 	private static Logger log = Logger.getAnonymousLogger();
 	
 	private EnviRasterReader reader;
-	private Catchment catchment;
+//	private Catchment catchment;
 	private float waterLevel;
-	private String wetlandTag;
 	private MultiPolygon waterRegion;
+	private MultiPolygon catchment;
 	private GeometryFactory factory;
 	
+	public MultiPolygon getCatchment() {
+		return catchment;
+	}
+
+	public void setCatchment(MultiPolygon catchment) {
+		this.catchment = catchment;
+	}
+
 	public WaterRegionModel(){
 		this.factory = new GeometryFactory();
 	}
@@ -35,28 +43,16 @@ public class WaterRegionModel {
 	public void setReader(EnviRasterReader reader) {
 		this.reader = reader;
 	}
-	public Catchment getCatchment() {
-		return catchment;
-	}
-	public void setCatchment(Catchment catchment) {
-		this.catchment = catchment;
-	}
 	public float getWaterLevel() {
 		return waterLevel;
 	}
 	public void setWaterLevel(float waterLevel) {
 		this.waterLevel = waterLevel;
 	}
-	public String getWetlandTag() {
-		return wetlandTag;
-	}
-	public void setWetlandTag(String wetlandTag) {
-		this.wetlandTag = wetlandTag;
-	}
 	
 	public MultiPolygon calculate() throws NumberFormatException, Exception{
-		MultiPolygon _polygon = this.catchment.findCatchmentByTag(this.wetlandTag);
-		
+//		MultiPolygon _polygon = this.catchment.findCatchmentByTag(this.wetlandTag);
+//		
 		if(this.waterLevel <= 0){
 			return null;
 		}
@@ -69,7 +65,8 @@ public class WaterRegionModel {
 		_extent.setMaxX(this.reader.getColCount());
 		_extent.setMaxY(this.reader.getRowCount());
 		
-		Envelope _env2 = _polygon.getEnvelopeInternal();
+		Envelope _env2 = this.catchment.getEnvelopeInternal();
+		log.info("ENV:" + _env2.toString());
 		
 		if(_env.getMinX() < _env2.getMinX()){
 			_extent.setMinX((int) Math.floor((_env2.getMinX() - _env.getMinX()) / this.getReader().getCellSize()));
@@ -85,15 +82,15 @@ public class WaterRegionModel {
 		}
 		log.info("Extent:" + _extent.toString());
 		
-		WetlandDemPixel[] _range = this.getPixelRange(_polygon, _extent);
+		WetlandDemPixel[] _range = this.getPixelRange(this.catchment, _extent);
 		log.info("Range:" + _range[0].toString() + " - " + _range[1].toString());
 		
 		if(_range[0].getVal() + this.waterLevel >= _range[1].getVal()){
 			log.warning("Over float");
-			this.waterRegion = _polygon;
+			this.waterRegion = this.catchment;
 		}
 		else{
-			this.waterRegion = this.generateBoundary(_polygon, _extent, _range[0].getVal() + this.waterLevel);
+			this.waterRegion = this.generateBoundary(this.catchment, _extent, _range[0].getVal() + this.waterLevel);
 		}
 		
 		return waterRegion;
@@ -409,6 +406,9 @@ public class WaterRegionModel {
 							return true;
 						}
 					}
+				}
+				else{
+					return true;
 				}
 			}
 		}

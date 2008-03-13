@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<geo:model xmlns:geo="http://www.geodata.cn/models/geoprocessing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<geo:id>Wetland</geo:id>
+	<geo:title>Wetland</geo:title>
+	<geo:process>
+		<geo:id>WaterRegion</geo:id>
+		<geo:title>Water Region</geo:title>
+		<geo:tags>water</geo:tags>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>WetlandCode</geo:id>
+				<geo:title>Wetland Code</geo:title>
+				<geo:describe>Wetland Code</geo:describe>
+				<geo:category>string</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Catchment</geo:id>
+				<geo:title>Catchment</geo:title>
+				<geo:describe>Catchment</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>CodeField</geo:id>
+				<geo:title>CodeField</geo:title>
+				<geo:describe>CodeField</geo:describe>
+				<geo:category>string</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>WaterLevel</geo:id>
+				<geo:title>WaterLevel</geo:title>
+				<geo:describe>WaterLevel</geo:describe>
+				<geo:category>float</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>WaterRegion</geo:id>
+				<geo:title>Water Region</geo:title>
+				<geo:describe>Water Region</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+</geo:model>

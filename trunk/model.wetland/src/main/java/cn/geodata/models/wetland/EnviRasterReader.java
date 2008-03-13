@@ -1,10 +1,10 @@
 package cn.geodata.models.wetland;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.io.InputStream;
 import java.math.BigInteger;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
 
@@ -31,12 +31,12 @@ public class EnviRasterReader {
 	private long bufferPos;
 	private int bufferLen;
 	
-	private File input;
+	private URL body;
 	private Map<String, String> params;
 	
-	public EnviRasterReader(File input, int bufferSize) throws IOException{
-		this.input = input;
-		this.params = this.readHeader(new File(input.getAbsolutePath() + ".hdr"));
+	public EnviRasterReader(URL body, URL header, int bufferSize) throws IOException{
+		this.body = body;
+		this.params = this.readHeader(header);
 		
 		this.rowCount = Integer.parseInt(this.params.get("lines"));
 		this.colCount = Integer.parseInt(this.params.get("samples"));
@@ -138,7 +138,7 @@ public class EnviRasterReader {
 	}
 
 	public void initBuffer(long pos) throws IOException{
-		FileInputStream _stream = FileUtils.openInputStream(this.input);
+		InputStream _stream = this.body.openStream();
 		try{
 			long _pos = pos;// - this.buffer.length / 2;
 			if(_pos < 0)
@@ -204,9 +204,9 @@ public class EnviRasterReader {
 		}
 	}
 	
-	protected Map<String, String> readHeader(File input) throws IOException{
+	protected Map<String, String> readHeader(URL input) throws IOException{
 		Map<String, String> _params = new HashMap<String, String>();
-		List<String> _list = FileUtils.readLines(input);
+		List<String> _list = IOUtils.readLines(input.openStream());
 		
 		Pattern _p1 = Pattern.compile("\\s*([^=]+)=\\s*\\{\\s*(.*)");
 		Pattern _p2 = Pattern.compile("\\s*([^=]+)=\\s*(.*)");
@@ -266,10 +266,6 @@ public class EnviRasterReader {
 
 	public double getCellSize() {
 		return cellSize;
-	}
-
-	public File getInput() {
-		return input;
 	}
 
 	public Map<String, String> getParams() {
