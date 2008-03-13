@@ -21,7 +21,7 @@ public class GetCapabilitiesOpTest extends TestCase {
 		DescribeProcessOp _de = new DescribeProcessOp();
 		
 		DescribeProcessDocument _doc = DescribeProcessDocument.Factory.newInstance();
-		_doc.addNewDescribeProcess().addNewIdentifier().setStringValue("swamp.cities");
+		_doc.addNewDescribeProcess().addNewIdentifier().setStringValue("Swamp.Cities");
 		
 		log.info(_de.execute(_doc).xmlText());
 	}

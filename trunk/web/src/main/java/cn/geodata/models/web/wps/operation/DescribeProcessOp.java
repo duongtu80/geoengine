@@ -1,6 +1,7 @@
 package cn.geodata.models.web.wps.operation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import javax.activation.MimeType;
@@ -24,6 +25,7 @@ import org.apache.xmlbeans.XmlObject;
 import cn.geodata.models.category.data.DataCategories;
 import cn.geodata.models.category.data.DataCategory;
 import cn.geodata.models.data.DataParser;
+import cn.geodata.models.geoprocessing.ModelType;
 import cn.geodata.models.geoprocessing.ProcessType;
 import cn.geodata.models.geoprocessing.ValueType;
 import cn.geodata.models.util.ProcessingLibray;
@@ -38,8 +40,11 @@ public class DescribeProcessOp extends WpsOperation {
 
 		ArrayList<ProcessDescriptionType> _process = new ArrayList<ProcessDescriptionType>();
 		for(CodeType _codeType : _input.getDescribeProcess().getIdentifierArray()){
-			ProcessType _proc = _lib.getMetadata().get(_codeType.getStringValue());
-			_process.add(this.createWpsProcessDesc(_proc));
+			String[] _parts = _codeType.getStringValue().split("\\.");
+			log.info(Arrays.toString(_parts));
+			
+			ModelType _model = _lib.getMetadata().get(_parts[0]);
+			_process.add(this.createWpsProcessDesc(_model, _lib.findProcessMetadata(_model, _parts[1])));
 		}
 		
 		ProcessDescriptionsDocument _doc = ProcessDescriptionsDocument.Factory.newInstance();
@@ -50,10 +55,10 @@ public class DescribeProcessOp extends WpsOperation {
 		return _doc;
 	}
 	
-	public ProcessDescriptionType createWpsProcessDesc(ProcessType p){
+	public ProcessDescriptionType createWpsProcessDesc(ModelType model, ProcessType p){
 		ProcessDescriptionType _p = ProcessDescriptionType.Factory.newInstance();
 		
-		_p.addNewIdentifier().setStringValue(p.getId());
+		_p.addNewIdentifier().setStringValue(model.getId() + "." + p.getId());
 		_p.setTitle(p.getTitle());
 		_p.setAbstract(p.getDescribe());
 		

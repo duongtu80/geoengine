@@ -25,6 +25,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.xmlbeans.XmlObject;
 
+import cn.geodata.models.geoprocessing.ModelType;
 import cn.geodata.models.geoprocessing.ProcessType;
 import cn.geodata.models.util.ProcessingLibray;
 import cn.geodata.models.web.util.Util;
@@ -42,17 +43,17 @@ public class GetCapabilitiesOp extends WpsOperation {
 		//ProcessOfferings element
 		ProcessOfferings _processOfferings = _capabilities.addNewProcessOfferings();
 		
-		Map<String, ProcessType> _metadata = ProcessingLibray.createInstance().getMetadata();
-		for(String _title : _metadata.keySet()){
-			log.info("Add processing:" + _title);
+		Map<String, ModelType> _metadata = ProcessingLibray.createInstance().getMetadata();
+		for(String _modelKey : _metadata.keySet()){
+			ModelType _modelMetadata = _metadata.get(_modelKey);
+			for(ProcessType _proc: _modelMetadata.getProcessArray()){
+				ProcessBriefType _processBrief = _processOfferings.addNewProcess();
+				_processBrief.addNewIdentifier().setStringValue(_modelKey + "." + _proc.getId());
+				
+				_processBrief.setTitle(_proc.getTitle());
+				_processBrief.setAbstract(_proc.getDescribe());
 
-			ProcessType _proc = _metadata.get(_title);
-			
-			ProcessBriefType _processBrief = _processOfferings.addNewProcess();
-			_processBrief.addNewIdentifier().setStringValue(_proc.getId());
-			
-			_processBrief.setTitle(_proc.getTitle());
-			_processBrief.setAbstract(_proc.getDescribe());
+			}
 		}
 		
 		return _doc;
