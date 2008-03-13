@@ -3,6 +3,7 @@ package cn.geodata.models.wps.client;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -18,6 +19,9 @@ import net.opengeospatial.wps.ExecuteResponseDocument;
 import net.opengeospatial.wps.IOValueType;
 import net.opengeospatial.wps.InputDescriptionType;
 import net.opengeospatial.wps.LiteralValueType;
+import net.opengeospatial.wps.OutputDefinitionType;
+import net.opengeospatial.wps.OutputDefinitionsType;
+import net.opengeospatial.wps.OutputDescriptionType;
 import net.opengeospatial.wps.ProcessDescriptionType;
 import net.opengeospatial.wps.ExecuteDocument.Execute;
 import net.opengeospatial.wps.IOValueType.ComplexValueReference;
@@ -39,7 +43,20 @@ public class WpsProcess extends WpsObject {
 	private ProcessDescriptionType metadata;
 	private ExecuteResponseDocument response;
 	private MimeType complexMime; 
+	private Map<String, MimeType> outputFormat;
 	
+	public WpsProcess(){
+		this.outputFormat = new HashMap<String, MimeType>();
+	}
+	
+	public Map<String, MimeType> getOutputFormat() {
+		return outputFormat;
+	}
+
+	public void setOutputFormat(Map<String, MimeType> outputFormat) {
+		this.outputFormat = outputFormat;
+	}
+
 	public ProcessDescriptionType getMetadata() {
 		return metadata;
 	}
@@ -131,6 +148,17 @@ public class WpsProcess extends WpsObject {
 			}
 		}
 		_inputsType.setInputArray(_inputs.toArray(new IOValueType[0]));
+		
+		OutputDefinitionsType _outputsType = _execute.addNewOutputDefinitions();
+		for(OutputDescriptionType _outputMetadata : this.metadata.getProcessOutputs().getOutputArray()){
+			if(outputFormat.containsKey(_outputMetadata.getIdentifier().getStringValue())){
+				OutputDefinitionType _output = _outputsType.addNewOutput();
+				
+				_output.setIdentifier(_outputMetadata.getIdentifier());
+				_output.setTitle(_outputMetadata.getTitle());
+				_output.setFormat(outputFormat.get(_outputMetadata.getIdentifier().getStringValue()).toString());
+			}
+		}
 		
 		log.info("Request" + _requestDoc.toString());
 		
