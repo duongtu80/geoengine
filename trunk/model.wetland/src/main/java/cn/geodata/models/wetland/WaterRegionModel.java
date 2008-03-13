@@ -230,7 +230,8 @@ public class WaterRegionModel {
 		}
 		else{
 			log.warning("No polygon has been generated.");
-			throw new NullPointerException("Failed to create water region");
+			return null;
+//			throw new NullPointerException("Failed to create water region");
 		}
 	}
 	

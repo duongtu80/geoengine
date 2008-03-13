@@ -38,9 +38,10 @@ public class WaterRegionProcessing extends AbstractProcessing {
 		MultiPolygon _water = _model.calculate();
 		
 		FeatureCollection _fs = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
-		FeatureType _ft = this.createFeatureType();
-		
-		_fs.add(_ft.create(new Object[] {_water, _waterLevel, _wetlandCode}));
+		if(_water != null){
+			FeatureType _ft = this.createFeatureType();
+			_fs.add(_ft.create(new Object[] {_water, _waterLevel, _wetlandCode}));
+		}
 		
 		this.getOutputs().put("WaterRegion", _fs);
 	}

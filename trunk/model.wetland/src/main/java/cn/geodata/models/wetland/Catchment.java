@@ -1,6 +1,7 @@
 package cn.geodata.models.wetland;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.logging.Logger;
 
 import org.geotools.data.FeatureSource;
@@ -84,7 +85,7 @@ public class Catchment {
 		this.fieldName = fieldName;
 	}
 	
-	public Feature findWetland(Point pt) throws IOException{
+	public Feature findWetland(Point pt) throws IOException {
 		FilterFactory2 _factory = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
 		FeatureSource _featureSource = this.getEnvi().getFeatureSource();
 		FeatureIterator _it = _featureSource.getFeatures(_factory.contains(_factory.property(_featureSource.getSchema().getDefaultGeometry().getLocalName()), _factory.literal(pt))).features();
@@ -96,7 +97,8 @@ public class Catchment {
 			}
 			
 			log.info("not found feature:" + pt);
-			throw new NullPointerException("Not found the Catchement");
+			return null;
+//			throw new NullPointerException("Not found the Catchement");
 		}
 		finally{
 			_it.close();
