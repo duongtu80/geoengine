@@ -100,8 +100,8 @@ public class WaterRegionModel {
 		WetlandDemPixel _min = null;
 		WetlandDemPixel _max = null;
 		
-//		FileOutputStream _stream = new FileOutputStream(new File("d:/temp/ttt1.txt"));
-//		_stream.write(("X,Y,V\n").getBytes());
+		FileOutputStream _stream = new FileOutputStream(new File("d:/temp/ttt1.txt"));
+		_stream.write(("X,Y,V\n").getBytes());
 		double _y = this.reader.getEnvelope().getMaxY() - this.getReader().getCellSize() * extent.getMinY() - this.getReader().getCellSize() / 2;
 		for(int _row = extent.getMinY();_row <= extent.getMaxY();_row++){
 			double _x = this.reader.getEnvelope().getMinX() + this.getReader().getCellSize() * extent.getMinX() + this.getReader().getCellSize() / 2;
@@ -119,14 +119,14 @@ public class WaterRegionModel {
 						_max = new WetlandDemPixel(_row, _col, _val, _x, _y, false);
 					}
 					
-//					_stream.write((_x + "," + _y + "," + _val + "\n").getBytes());
+					_stream.write((_x + "," + _y + "," + _val + "\n").getBytes());
 				}
 				_x += this.getReader().getCellSize();
 			}
 			
 			_y -= this.getReader().getCellSize();
 		}
-//		_stream.close();
+		_stream.close();
 		
 		return new WetlandDemPixel[]{_min, _max};
 	}
@@ -134,6 +134,8 @@ public class WaterRegionModel {
 	private MultiPolygon generateBoundary(MultiPolygon polygon, Extent extent, float evl) throws IOException{
 		ArrayList<WetlandDemPixel> _list = new ArrayList<WetlandDemPixel>();
 		
+		FileOutputStream _stream = new FileOutputStream(new File("d:/temp/ttt2.txt"));
+		_stream.write(("X,Y,V\n").getBytes());
 		double _y = this.reader.getEnvelope().getMaxY() - this.getReader().getCellSize() * extent.getMinY() - this.getReader().getCellSize() / 2;
 		for(int _row = extent.getMinY();_row <= extent.getMaxY();_row++){
 			double _x = this.reader.getEnvelope().getMinX() + this.getReader().getCellSize() * extent.getMinX() + this.getReader().getCellSize() / 2;
@@ -146,6 +148,7 @@ public class WaterRegionModel {
 //					}
 					if(_val <= evl && isBoundary(_col, _row, polygon, _val, evl)){
 						_list.add(new WetlandDemPixel(_row, _col, _val, _x, _y, true));
+						_stream.write((_x + "," + _y + "," + _val + "\n").getBytes());
 					}
 					
 				}
@@ -154,8 +157,7 @@ public class WaterRegionModel {
 			
 			_y -= this.getReader().getCellSize();
 		}
-		
-		
+		_stream.close();
 		
 //		orginzieBoundary(_list);
 		
@@ -191,7 +193,7 @@ public class WaterRegionModel {
 //			WetlandDemPixel[] _ns = popNeighborPixels(_list, _startPt, -1);
 			if(this.createPointArray(_line, _list, _startPt, _n.get(0), _n.get(1))){
 				if(_line.size() > 2){
-					FileOutputStream _stream = new FileOutputStream(new File("d:/temp/ttt3.txt"));
+					_stream = new FileOutputStream(new File("d:/temp/ttt3.txt"));
 					_stream.write(("X,Y,V\n").getBytes());
 					
 					for(int i=0;i<_line.size();i++){
