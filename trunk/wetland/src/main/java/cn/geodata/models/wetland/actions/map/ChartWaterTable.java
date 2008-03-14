@@ -119,8 +119,11 @@ public class ChartWaterTable {
         	Day _day = new Day(_date);
 
         	double _waterLevel = waterTableModel.getWaterLevel();
-        	if(_waterLevel < 0)
+        	if(_waterLevel <= 0)
         		_waterLevel = 0;
+        	else{
+            	_waterLevel = Math.round(_waterLevel * 100) / 100.0;
+        	}
         	
         	s1.add(_day, _waterLevel);
         	s2.add(_day, waterTableModel.getEtModel().getEt() / 10.0);

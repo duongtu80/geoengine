@@ -88,7 +88,7 @@
 					</div>
 					<div class="textBlock">
 						Date <input type="text" id="txtCurrentDate" dojoType="dijit.form.DateTextBox" trim="true" style="width: 80px;" onchange="searchWaterTable();"/>
-						Water table <input type="text" id="txtWaterTable" dojoType="dijit.form.NumberTextBox" style="width: 50px;"></input>
+						Water table <input type="text" id="txtWaterTable" dojoType="dijit.form.NumberTextBox" trim="true" style="width: 50px;"></input>
 					</div>
 					<div class="textBlock">
 						<button id="btnGoAdd" dojoType="dijit.form.Button" onclick="waterRegionSet();">Calculate</button>
