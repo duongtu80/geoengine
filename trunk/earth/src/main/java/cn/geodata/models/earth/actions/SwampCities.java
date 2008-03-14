@@ -53,7 +53,7 @@ public class SwampCities {
 		WpsService _service = new WpsService(new URI(this.modelUrl));
 		_service.connect();
 		
-		WpsProcess _proc = _service.getWpsProcess("swamp.cities");
+		WpsProcess _proc = _service.getWpsProcess("Swamp.Cities");
 		
 		org.apache.xml.utils.URI _citiesUrl = new org.apache.xml.utils.URI(this.dataUrl);
 		_citiesUrl.setQueryString("service=WFS&request=GetFeature&typename=unep:cities&version=1.0.0");

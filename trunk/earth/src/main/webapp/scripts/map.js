@@ -74,7 +74,7 @@ function search(){
 		return;
 	}
 	
-	if(modelsList.item.id != 'swamp.cities'){
+	if(modelsList.item.id != 'Swamp.Cities'){
 		alert('Only supports Swamp Cities model');
 		return;
 	}
