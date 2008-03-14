@@ -94,9 +94,11 @@ public class ComplexParsers {
 	
 	public List<MimeType> getMimes4Category(DataCategory category) {
 		List<MimeType> _list = new ArrayList<MimeType>();
-		for(ComplexParser _p : this.parsers){
-			if(_p.getCategories().contains(category)){
-				_list.addAll(_p.getMimes());
+		if(this.parsers != null){
+			for(ComplexParser _p : this.parsers){
+				if(_p.getCategories().contains(category)){
+					_list.addAll(_p.getMimes());
+				}
 			}
 		}
 		
