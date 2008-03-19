@@ -19,7 +19,6 @@ import cn.geodata.models.gml.UnsupportedType;
 public class FeatureCollectionDef extends AbstractParser {
 	private static Logger log = ParserUtil.getLogger();
 
-	@Override
 	public boolean canEncode(Object obj) {
 		if (obj instanceof FeatureCollection) {
 			return true;
@@ -27,7 +26,6 @@ public class FeatureCollectionDef extends AbstractParser {
 		return false;
 	}
 
-	@Override
 	public boolean canParse(Element ele) {
 		if((ele.getNamespace().equals(this.config.getUriGML()) || (ele.getNamespace().equals(this.config.getUriWFS()) ))
 				&& ele.getName().equals("FeatureCollection")
@@ -37,7 +35,6 @@ public class FeatureCollectionDef extends AbstractParser {
 		return false;
 	}
 
-	@Override
 	public Element encode(Object obj) throws IOException {
 		if(this.canEncode(obj) == false){
 			throw new UnsupportedType(obj.toString());
@@ -62,7 +59,6 @@ public class FeatureCollectionDef extends AbstractParser {
 		return _ele;
 	}
 
-	@Override
 	public Object parse(Element ele) throws IOException {
 		if(this.canParse(ele) == false){
 			throw new UnsupportedType("Element " + ele.getName());

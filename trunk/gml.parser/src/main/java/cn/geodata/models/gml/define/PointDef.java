@@ -15,7 +15,6 @@ import com.vividsolutions.jts.geom.Point;
 public class PointDef extends AbstractParser {
 	private static Logger log = ParserUtil.getLogger();
 	
-	@Override
 	public boolean canEncode(Object obj) {
 		if (obj instanceof Point) {
 			return true;
@@ -23,7 +22,6 @@ public class PointDef extends AbstractParser {
 		return false;
 	}
 
-	@Override
 	public boolean canParse(Element ele) {
 		if(ele.getNamespace().equals(this.config.getUriGML())
 				&& ele.getName().equals("Point")
@@ -33,7 +31,6 @@ public class PointDef extends AbstractParser {
 		return false;
 	}
 
-	@Override
 	public Element encode(Object obj) throws IOException {
 		if(this.canEncode(obj) == false){
 			throw new UnsupportedType(obj.toString());
@@ -50,7 +47,6 @@ public class PointDef extends AbstractParser {
 		return _ele;
 	}
 
-	@Override
 	public Object parse(Element ele) throws IOException {
 		if(this.canParse(ele) == false){
 			throw new UnsupportedType("Element " + ele.getName());

@@ -6,7 +6,6 @@ import cn.geodata.models.AbstractProcessing;
 
 public class CollectSampleAgent extends AbstractProcessing {
 
-	@Override
 	public void execute() throws Exception {
 //		String _datasetId = (String) this.getInputs().get("datasetId");
 //		Integer _maxCount = (Integer) this.getInputs().get("maxCount");

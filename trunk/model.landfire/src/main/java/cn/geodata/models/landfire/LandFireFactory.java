@@ -26,7 +26,7 @@ public class LandFireFactory extends AbstractProcessingFactory {
 			log.log(Level.SEVERE, "Failed to load the metadata for Landfire models", e);
 		}
 	}
-	@Override
+
 	public Processing createProcessing(String identify,
 			Map<String, String> params) throws IOException {
 		if(identify.equals("landfire.samples")){
@@ -37,12 +37,10 @@ public class LandFireFactory extends AbstractProcessingFactory {
 		}
 	}
 
-	@Override
 	public ModelType getMetadata() {
 		return this.metadata;
 	}
 
-	@Override
 	public Map getImplementationHints() {
 		return null;
 	}

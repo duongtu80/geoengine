@@ -17,12 +17,10 @@ public abstract class AbstractParser implements Parser {
 		this.config = config;
 	}
 	
-	@Override
 	public ParserFinder getParserFinder() {
 		return this.finder;
 	}
 	
-	@Override
 	public void setParserFinder(ParserFinder finder) {
 		this.finder = finder;
 	}
