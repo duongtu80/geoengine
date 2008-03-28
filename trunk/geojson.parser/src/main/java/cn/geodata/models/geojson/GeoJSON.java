@@ -332,9 +332,9 @@ public class GeoJSON {
 		try {
 			return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType((AttributeType[])_attributes.toArray(new AttributeType[0]), "geometry");
 		} catch (FactoryRegistryException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		} catch (SchemaException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		}
 	}
 	
