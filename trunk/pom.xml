@@ -52,5 +52,6 @@
     <module>web</module>
     <module>earth</module>
     <module>wetland</module>
+    <module>wps</module>
   </modules>
 </project>
