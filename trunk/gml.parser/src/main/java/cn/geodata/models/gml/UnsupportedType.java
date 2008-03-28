@@ -15,10 +15,10 @@ public class UnsupportedType extends IOException {
 	}
 	
 	public UnsupportedType(Throwable err){
-		super(err);
+		super(err.getMessage());
 	}
 
 	public UnsupportedType(String message, Throwable err){
-		super(message, err);
+		super(message);
 	}
 }

@@ -152,7 +152,7 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 			}
 			return featureType.create(_list.toArray(), _id);
 		} catch (IllegalAttributeException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		}
 	}
 	
@@ -186,11 +186,11 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 		try {
 			return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType((AttributeType[])_attributes.toArray(new AttributeType[0]), _ele.getName(), new URI(_ele.getNamespace().getURI()));
 		} catch (FactoryRegistryException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		} catch (SchemaException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		} catch (URISyntaxException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		}
 	}
 	
