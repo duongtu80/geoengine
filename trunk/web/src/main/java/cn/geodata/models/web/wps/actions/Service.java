@@ -101,7 +101,6 @@ public class Service implements ServletRequestAware {
 	
 	protected HttpServletRequest servletRequest;
 
-	@Override
 	public void setServletRequest(HttpServletRequest servletRequest) {
 		this.servletRequest = servletRequest;
 	}

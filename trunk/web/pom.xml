@@ -76,5 +76,7 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
+  <properties>
+        <netbeans.hint.deploy.server>J2EE</netbeans.hint.deploy.server>
+    </properties>
 </project>
-
