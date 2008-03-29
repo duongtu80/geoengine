@@ -22,18 +22,15 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class GMLReferenceParser implements ReferenceParser, ReferenceEncoder {
 
-	@Override
 	public FeatureCollection parseFeatureCollection(IOValueType.ComplexValueReference type)
 			throws IOException {
 		return (FeatureCollection) this.parse(type);
 	}
 
-	@Override
 	public Geometry parseGeometry(ComplexValueType type) throws IOException {
 		return (Geometry) this.parse(type);
 	}
 
-	@Override
 	public Object parse(XmlObject type) throws IOException {
 		IOValueType.ComplexValueReference _type = (ComplexValueReference) type;
 		
@@ -53,12 +50,10 @@ public class GMLReferenceParser implements ReferenceParser, ReferenceEncoder {
 		}
 	}
 
-	@Override
 	public XmlObject encode(Object obj) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public ComplexValueReference encodeUrl(String url, String format, String encoding, String schema) throws IOException {
 		IOValueType.ComplexValueReference _type = IOValueType.ComplexValueReference.Factory.newInstance();
 		
@@ -74,9 +69,8 @@ public class GMLReferenceParser implements ReferenceParser, ReferenceEncoder {
 		}
 
 		return _type;
-}
+	}
 
-	@Override
 	public boolean canParse(XmlObject type) {
 		if (type instanceof IOValueType.ComplexValueReference) {
 			IOValueType.ComplexValueReference _type = (IOValueType.ComplexValueReference) type;
@@ -87,7 +81,6 @@ public class GMLReferenceParser implements ReferenceParser, ReferenceEncoder {
 		return false;
 	}
 
-	@Override
 	public boolean canEncode(Object obj) {
 		//ComplexReference type can't be encoded by default parameters
 		return false;

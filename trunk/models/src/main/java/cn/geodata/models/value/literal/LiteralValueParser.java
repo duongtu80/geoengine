@@ -17,7 +17,6 @@ public class LiteralValueParser implements LiteralParser, LiteralEncoder {
 	Map<String, Encoder> encoders;
 	Map<String, Parser> parsers;
 	
-	@Override
 	public Object parse(XmlObject type) throws IOException {
 		for(Parser _p : this.parsers.values()){
 			if(_p.canParse(type)){
@@ -28,7 +27,6 @@ public class LiteralValueParser implements LiteralParser, LiteralEncoder {
 		throw new UnsupportedOperationException();		
 	}
 
-	@Override
 	public XmlObject encode(Object obj) throws IOException {
 		for(Encoder _e : this.encoders.values()){
 			if(_e.canEncode(obj)){
@@ -39,57 +37,46 @@ public class LiteralValueParser implements LiteralParser, LiteralEncoder {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public double parseLiteralDouble(LiteralValueType type) throws IOException {
 		return (Double)this.parse(type);
 	}
 
-	@Override
 	public float parseLiteralFloat(LiteralValueType type) throws IOException {
 		return (Float)this.parse(type);
 	}
 
-	@Override
 	public int parseLiteralInt(LiteralValueType type) throws IOException {
 		return (Integer)this.parse(type);
 	}
 
-	@Override
 	public long parseLiteralLong(LiteralValueType type) throws IOException {
 		return (Long)this.parse(type);
 	}
 
-	@Override
 	public String parseLiteralString(LiteralValueType type) throws IOException {
 		return (String)this.parse(type);
 	}
 
-	@Override
 	public LiteralValueType encodeLiteral(int val) throws IOException {
 		return (LiteralValueType)this.encode(val);
 	}
 
-	@Override
 	public LiteralValueType encodeLiteral(long val) throws IOException {
 		return (LiteralValueType)this.encode(val);
 	}
 
-	@Override
 	public LiteralValueType encodeLiteral(float val) throws IOException {
 		return (LiteralValueType)this.encode(val);
 	}
 
-	@Override
 	public LiteralValueType encodeLiteral(double val) throws IOException {
 		return (LiteralValueType)this.encode(val);
 	}
 	
-	@Override
 	public LiteralValueType encodeLiteral(String val) throws IOException {
 		return (LiteralValueType)this.encode(val);
 	}
 
-	@Override
 	public boolean canParse(XmlObject type) {
 		for(Parser _p : this.parsers.values()){
 			if(_p.canParse(type)){
@@ -99,7 +86,6 @@ public class LiteralValueParser implements LiteralParser, LiteralEncoder {
 		return false;
 	}
 
-	@Override
 	public boolean canEncode(Object obj) {
 		for(Encoder _e : this.encoders.values()){
 			if(_e.canEncode(obj)){

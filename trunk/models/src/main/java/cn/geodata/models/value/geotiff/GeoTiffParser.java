@@ -22,18 +22,15 @@ import com.vividsolutions.jts.geom.Geometry;
 public class GeoTiffParser implements ComplexParser, ComplexEncoder {
 	private static Logger log = Logger.getAnonymousLogger();
 
-	@Override
 	public FeatureCollection parseFeatureCollection(ComplexValueType type)
 			throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public Geometry parseGeometry(ComplexValueType type) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public boolean canParse(XmlObject type) {
 		if (type instanceof ComplexValueType) {
 			ComplexValueType _type = (ComplexValueType) type;
@@ -44,7 +41,6 @@ public class GeoTiffParser implements ComplexParser, ComplexEncoder {
 		return false;
 	}
 
-	@Override
 	public Object parse(XmlObject type) throws IOException {
 		ComplexValueType _type = (ComplexValueType) type;
 		
@@ -71,18 +67,15 @@ public class GeoTiffParser implements ComplexParser, ComplexEncoder {
 //		return _reader.read(null);
 	}
 
-	@Override
 	public ComplexValueType encodeFeatureCollection(FeatureCollection fs)
 			throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public ComplexValueType encodeGeometry(Geometry geom) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public boolean canEncode(Object obj) {
 		if(obj instanceof File){
 			File _f = (File) obj;
@@ -97,7 +90,6 @@ public class GeoTiffParser implements ComplexParser, ComplexEncoder {
 //		return false;
 	}
 
-	@Override
 	public XmlObject encode(Object obj) throws IOException {
 		File _f = (File) obj;
 		

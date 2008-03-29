@@ -34,7 +34,6 @@ import cn.geodata.models.data.Utilities;
 public class GeoTiffComplexParser implements ComplexParser {
 	private static Logger log = Utilities.getLogger();
 
-	@Override
 	public List<DataCategory> getCategories() {
 		DataCategories _c = DataCategories.getInstance();
 		
@@ -44,7 +43,6 @@ public class GeoTiffComplexParser implements ComplexParser {
 		return _list;
 	}
 
-	@Override
 	public List<MimeType> getMimes() {
 		try {
 			return Arrays.asList(new MimeType[]{new MimeType("image/tiff"), new MimeType("geotiff")});
@@ -54,7 +52,6 @@ public class GeoTiffComplexParser implements ComplexParser {
 		}
 	}
 
-	@Override
 	public Object parse(InputStream stream, MimeType mime,
 			Map<String, Object> params) throws IOException {
 		File _file = cn.geodata.models.data.Utilities.createTempFile();
@@ -65,7 +62,6 @@ public class GeoTiffComplexParser implements ComplexParser {
 				Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE)).read(null);
 	}
 
-	@Override
 	public InputStream encode(Object obj, MimeType mime,
 			Map<String, Object> params) throws IOException {
 		File _file = cn.geodata.models.data.Utilities.createTempFile();

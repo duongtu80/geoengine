@@ -23,7 +23,6 @@ public class WetLandFactory extends AbstractProcessingFactory {
 		}
 	}
 
-	@Override
 	public Processing createProcessing(String identify,
 			Map<String, String> params) throws IOException {
 		if(identify.equalsIgnoreCase("WaterRegion")){
@@ -34,12 +33,10 @@ public class WetLandFactory extends AbstractProcessingFactory {
 		}
 	}
 
-	@Override
 	public ModelType getMetadata() {
 		return metadata;
 	}
-
-	@Override
+	
 	public Map getImplementationHints() {
 		return null;
 	}

@@ -34,7 +34,6 @@ public class GmlComplexParser implements ComplexParser {
 		this.finder = ParserUtil.createParserFinder();
 	}
 	
-	@Override
 	public List<DataCategory> getCategories() {
 		DataCategories _c = DataCategories.getInstance();
 		
@@ -50,7 +49,6 @@ public class GmlComplexParser implements ComplexParser {
 		return _list;
 	}
 
-	@Override
 	public List<MimeType> getMimes() {
 		try {
 			return Arrays.asList(new MimeType[]{new MimeType("text/xml"), new MimeType("text/gml")});
@@ -60,7 +58,6 @@ public class GmlComplexParser implements ComplexParser {
 		}
 	}
 
-	@Override
 	public Object parse(InputStream stream, MimeType mime, Map<String, Object> params) throws IOException {
 		try {
 			return this.finder.parse((new SAXBuilder()).build(stream).getRootElement());
@@ -70,7 +67,6 @@ public class GmlComplexParser implements ComplexParser {
 		}
 	}
 
-	@Override
 	public InputStream encode(Object obj, MimeType mime, Map<String, Object> params) throws IOException {
 		Element _ele = finder.encode(obj);
 		XMLOutputter _outputter = new XMLOutputter();

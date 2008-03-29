@@ -23,17 +23,14 @@ public class SwampCitiesFactory extends AbstractProcessingFactory {
 		}
 	}
 	
-	@Override
 	public ModelType getMetadata() {
 		return this.metadata;
 	}
 	
-	@Override
 	public Map getImplementationHints() {
 		return null;
 	}
 
-	@Override
 	public Processing createProcessing(String identify, Map<String, String> params)
 			throws IOException {
 		if(identify.equalsIgnoreCase("swamp.report")){

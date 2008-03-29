@@ -34,7 +34,6 @@ public class GeoJsonComplexParser implements ComplexParser {
 		this.parser = new GeoJSON();
 	}
 	
-	@Override
 	public List<DataCategory> getCategories() {
 		DataCategories _c = DataCategories.getInstance();
 		
@@ -50,7 +49,6 @@ public class GeoJsonComplexParser implements ComplexParser {
 		return _list;
 	}
 
-	@Override
 	public List<MimeType> getMimes() {
 		try {
 			return Arrays.asList(new MimeType[]{new MimeType("text/json"), new MimeType("text/geojson")});
@@ -60,7 +58,6 @@ public class GeoJsonComplexParser implements ComplexParser {
 		}
 	}
 
-	@Override
 	public Object parse(InputStream stream, MimeType mime,
 			Map<String, Object> params) throws IOException {
 		try {
@@ -71,7 +68,6 @@ public class GeoJsonComplexParser implements ComplexParser {
 		}
 	}
 
-	@Override
 	public InputStream encode(Object obj, MimeType mime,
 			Map<String, Object> params) throws IOException {
 		JSONObject _ele = this.parser.encode(obj);

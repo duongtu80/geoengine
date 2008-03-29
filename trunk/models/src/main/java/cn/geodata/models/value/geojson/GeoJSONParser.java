@@ -40,29 +40,24 @@ public class GeoJSONParser implements ComplexParser, ComplexEncoder {
 		this.geoJson = new GeoJSON();
 	}
 
-	@Override
 	public FeatureCollection parseFeatureCollection(ComplexValueType type)
 			throws IOException {
 		return (FeatureCollection) this.parse(type);
 	}
 
-	@Override
 	public ComplexValueType encodeFeatureCollection(FeatureCollection fs)
 			throws IOException {
 		return (ComplexValueType) this.encode(fs);
 	}
 
-	@Override
 	public Geometry parseGeometry(ComplexValueType type) throws IOException {
 		return (Geometry) this.parse(type);
 	}
 
-	@Override
 	public ComplexValueType encodeGeometry(Geometry geom) throws IOException {
 		return (ComplexValueType) this.encode(geom);
 	}
 
-	@Override
 	public Object parse(XmlObject type) throws IOException {
 		ComplexValueType _type = (ComplexValueType) type;
 
@@ -90,7 +85,6 @@ public class GeoJSONParser implements ComplexParser, ComplexEncoder {
 		}
 	}
 
-	@Override
 	public XmlObject encode(Object obj) throws IOException {
 		ComplexValueType _type = ComplexValueType.Factory.newInstance();
 
@@ -103,7 +97,6 @@ public class GeoJSONParser implements ComplexParser, ComplexEncoder {
 		return _type;
 	}
 
-	@Override
 	public boolean canParse(XmlObject type) {
 		if (type instanceof ComplexValueType) {
 			ComplexValueType _type = (ComplexValueType) type;
@@ -114,7 +107,6 @@ public class GeoJSONParser implements ComplexParser, ComplexEncoder {
 		return false;
 	}
 
-	@Override
 	public boolean canEncode(Object obj) {
 		return false;
 	}

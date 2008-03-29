@@ -35,7 +35,6 @@ public class GeoNamespaceContext implements NamespaceContext {
 		return this.map;
 	}
 	
-	@Override
 	public String getNamespaceURI(String prefix) {
 		if(this.map.containsKey(prefix)){
 			return this.map.get(prefix);
@@ -45,7 +44,6 @@ public class GeoNamespaceContext implements NamespaceContext {
 		}
 	}
 
-	@Override
 	public String getPrefix(String namespaceURI) {
 		if(this.map.containsValue(namespaceURI)){
 			for (String _key : this.map.keySet()) {
@@ -57,7 +55,6 @@ public class GeoNamespaceContext implements NamespaceContext {
 		return "";
 	}
 
-	@Override
 	public Iterator getPrefixes(String namespaceURI) {
 		return this.map.keySet().iterator();
 	}

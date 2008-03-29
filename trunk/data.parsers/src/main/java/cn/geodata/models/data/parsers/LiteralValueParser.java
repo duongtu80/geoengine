@@ -14,7 +14,6 @@ import cn.geodata.models.data.Utilities;
 public class LiteralValueParser implements LiteralParser {
 	private static Logger log = Utilities.getLogger();
 	
-	@Override
 	public String encode(Object obj, DataCategory category,
 			Map<String, Object> params) throws IOException {
 		if(category.isInstance(obj) == false){
@@ -25,7 +24,6 @@ public class LiteralValueParser implements LiteralParser {
 		return obj.toString();
 	}
 
-	@Override
 	public List<DataCategory> getCategories() {
 		DataCategories _categories = DataCategories.getInstance();
 		
@@ -40,7 +38,6 @@ public class LiteralValueParser implements LiteralParser {
 		return _list;
 	}
 
-	@Override
 	public Object parse(String txt, DataCategory category,
 			Map<String, Object> params) throws IOException {
 		

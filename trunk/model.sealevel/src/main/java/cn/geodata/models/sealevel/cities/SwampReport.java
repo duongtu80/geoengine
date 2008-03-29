@@ -9,7 +9,6 @@ import org.geotools.feature.FeatureIterator;
 import cn.geodata.models.AbstractProcessing;
 
 public class SwampReport extends AbstractProcessing {
-	@Override
 	public void execute() throws Exception {
 		String _rise = (String)this.getInputs().get("cityId");
 		FeatureCollection _cities = (FeatureCollection) this.getInputs().get("cities");

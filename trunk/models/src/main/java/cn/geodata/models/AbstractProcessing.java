@@ -23,22 +23,18 @@ public abstract class AbstractProcessing implements Processing, ParameterAware,
 	protected Map<String, Object> inputs;
 	protected Map<String, Object> outputs;
 
-	@Override
 	public Map<String, Object> getInputs() {
 		return this.inputs;
 	}
 
-	@Override
 	public Map<String, Object> getOutputs() {
 		return this.outputs;
 	}
 
-	@Override
 	public void setInputs(Map<String, Object> inputs) {
 		this.inputs = inputs;
 	}
 
-	@Override
 	public void setOutputs(Map<String, Object> outputs) {
 		this.outputs = outputs;
 	}
@@ -63,17 +59,14 @@ public abstract class AbstractProcessing implements Processing, ParameterAware,
 //		this.rawOutputs = rawOutputs;
 //	}
 //
-	@Override
 	public void setMetadata(ProcessType metadata) {
 		this.metadata = metadata;
 	}
 
-	@Override
 	public void setInputDefinitions(Map<String, ValueType> inputDefinitions) {
 		this.inputDefinitions = inputDefinitions;
 	}
 
-	@Override
 	public void setOutputDefinitions(Map<String, ValueType> outputDefinitions) {
 		this.outputDefinitions = outputDefinitions;
 	}

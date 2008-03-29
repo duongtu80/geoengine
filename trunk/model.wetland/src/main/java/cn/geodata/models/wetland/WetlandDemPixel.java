@@ -19,7 +19,6 @@ public class WetlandDemPixel implements Comparable<WetlandDemPixel> {
 		this.angle = angle;
 	}
 
-	@Override
 	public boolean equals(Object arg0) {
 		if (arg0 instanceof WetlandDemPixel) {
 			WetlandDemPixel _obj = (WetlandDemPixel) arg0;
@@ -30,7 +29,6 @@ public class WetlandDemPixel implements Comparable<WetlandDemPixel> {
 		return false;
 	}
 
-	@Override
 	public String toString() {
 		return this.val + "(" + this.row + "," + this.col + ")";
 	}
@@ -89,7 +87,6 @@ public class WetlandDemPixel implements Comparable<WetlandDemPixel> {
 		this.reader = reader;
 	}
 
-	@Override
 	public int compareTo(WetlandDemPixel o) {
 		return (int) Math.signum(this.getRank() - o.getRank());
 	}

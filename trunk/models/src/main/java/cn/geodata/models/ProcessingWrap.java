@@ -120,7 +120,6 @@ public class ProcessingWrap implements Runnable {
 		this.metadata = metadata;
 	}
 
-	@Override
 	public void run() {
 		try{
 			this.status = new ProcessAccepted();

@@ -34,7 +34,6 @@ public class SwampCities extends AbstractProcessing {
 		return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType(_attrs, "cities", new URI("http://www.unep.org"));
 	}
 	
-	@Override
 	public void execute() throws Exception {
 //		log.info("Start model");
 //		

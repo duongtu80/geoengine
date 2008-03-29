@@ -12,6 +12,7 @@
   <name>Earth WebApp</name>
   <url>http://maven.apache.org</url>
   <build>
+        <finalName>/earth</finalName>
     <plugins>
       <plugin>
         <inherited>true</inherited>
@@ -30,6 +31,16 @@
           </execution>
         </executions>
       </plugin>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-eclipse-plugin</artifactId>
+		<configuration>
+			<projectNameTemplate>[artifactId]</projectNameTemplate>
+			<wtpmanifest>true</wtpmanifest>
+			<wtpapplication>true</wtpapplication>
+			<wtpversion>2.0</wtpversion>
+		</configuration>
+	</plugin>
     </plugins>
   </build>
   <dependencies>
@@ -56,4 +67,3 @@
     </dependency>
   </dependencies>
 </project>
-
