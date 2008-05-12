@@ -38,7 +38,7 @@
 			<projectNameTemplate>[artifactId]</projectNameTemplate>
 			<wtpmanifest>true</wtpmanifest>
 			<wtpapplication>true</wtpapplication>
-			<wtpversion>2.0</wtpversion>
+			<wtpversion>1.5</wtpversion>
 		</configuration>
 	</plugin>
     </plugins>

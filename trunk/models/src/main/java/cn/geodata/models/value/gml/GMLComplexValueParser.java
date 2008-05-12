@@ -68,7 +68,7 @@ public class GMLComplexValueParser implements ComplexParser, ComplexEncoder {
 		try {
 			_outputDoc = (new DOMOutputter()).output(_doc);
 		} catch (JDOMException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		}
 		
 		ComplexValueType _type = ComplexValueType.Factory.newInstance();

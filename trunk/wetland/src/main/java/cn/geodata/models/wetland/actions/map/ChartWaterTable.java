@@ -37,8 +37,8 @@ public class ChartWaterTable {
 	private int width;
 	private int height;
 	private WaterTableModel waterTableModel;
-	private Date startDate;
-	private Date endDate;
+	private long startDate;
+	private long endDate;
 	private DayMetReader dayMetReader;
 	private String tempDir;
 	
@@ -57,20 +57,20 @@ public class ChartWaterTable {
 	public void setDayMetReader(DayMetReader dayMetReader) {
 		this.dayMetReader = dayMetReader;
 	}
-
-	public Date getStartDate() {
+	
+	public long getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(long startDate) {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	public long getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(long endDate) {
 		this.endDate = endDate;
 	}
 
@@ -91,13 +91,16 @@ public class ChartWaterTable {
 			throw new ArrayIndexOutOfBoundsException(_parts.length);
 		}
 		
-		System.out.println("StartDate:" + startDate.toString());
-		System.out.println("EndDate:" + endDate.toString());
+		Date _startDate = new Date(this.startDate);
+		Date _endDate = new Date(this.endDate);
+		
+		System.out.println("StartDate:" + _startDate.toString());
+		System.out.println("EndDate:" + _endDate.toString());
 
 		GeometryFactory _factory = new GeometryFactory();
 		Point _pt = _factory.createPoint(new Coordinate(Double.parseDouble(_parts[0]), Double.parseDouble(_parts[1])));
 		
-		ArrayList<DayMet> _daymets = dayMetReader.read(this.startDate, this.endDate, _pt.getX(), _pt.getY());
+		ArrayList<DayMet> _daymets = dayMetReader.read(_startDate, _endDate, _pt.getX(), _pt.getY());
 		
 		String _xAxisTitle= null; //"Date";
 		String _yAxisTitle= "Waterlevel";

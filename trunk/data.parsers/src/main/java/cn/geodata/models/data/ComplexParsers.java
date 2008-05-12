@@ -345,13 +345,13 @@ public class ComplexParsers {
 			}
 		} catch (DOMException e) {
 			log.log(Level.SEVERE, "DOM exception", e);
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		} catch (MimeTypeParseException e) {
 			log.log(Level.SEVERE, "MimeType exception", e);
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		} catch (SAXException e) {
 			log.log(Level.SEVERE, "SAX exception", e);
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		}
 		
 		return _value;

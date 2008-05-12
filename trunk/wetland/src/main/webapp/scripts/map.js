@@ -183,16 +183,18 @@ function calculateWaterTable2(){
 		_content['waterTableModel.spillPoint'] = dojo.byId('txtSpillPoint').value;
 	}
 	if(dojo.byId('startDate').value != ''){
-		_content['startDate'] = dojo.byId('startDate').value;
+		_content['startDate'] = dijit.byId('startDate').value.getTime();
 	}
 	if(dojo.byId('endDate').value != ''){
-		_content['endDate'] = dojo.byId('endDate').value;
+		_content['endDate'] = dijit.byId('endDate').value.getTime();
 	}
 	if(dojo.byId('txtDayMetReader').value != ''){
 		_content['waterTableModel.dayMetReader.url'] = dojo.byId('txtDayMetReader').value;
 	}
 	_content['time'] = (new Date()).getTime();
 	
+//	alert(_content['startDate'] + '|' + _content['endDate']);
+
 	dojo.xhrGet({ //
         url: "chartWaterTable.do", 
         handleAs: "json",
@@ -209,7 +211,8 @@ function calculateWaterTable2(){
         		if(wetlandData.size > 0){
 					var _d = new Date();
 					_d.setTime(wetlandData.date[0]);
-					dojo.byId('txtCurrentDate').value = (_d.getMonth() + 1)  + '/' +  _d.getDate() + '/' + _d.getYear();
+					dijit.byId('txtCurrentDate').setValue(_d);
+//					dojo.byId('txtCurrentDate').value = (_d.getMonth() + 1)  + '/' +  _d.getDate() + '/' + _d.getYear();
 					
         			goData(0);
         		}
@@ -416,8 +419,10 @@ function searchWaterTable(){
 		alert('No water table records');
 	}
 	
-	var _d = new Date();
-	_d.setTime(Date.parse(dojo.byId("txtCurrentDate").value));
+	var _d = dijit.byId("txtCurrentDate").getValue();
+//	alert(_d);
+//	var _d = new Date();
+//	_d.setTime(Date.parse(dojo.byId("txtCurrentDate").value));
 //	alert(_d.parse(dojo.byId("txtCurrentDate").value));
 	for(var i=0;i<wetlandData.size;i++){
 		var _v = new Date();

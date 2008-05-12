@@ -53,5 +53,7 @@
     <module>earth</module>
     <module>wetland</module>
     <module>wps</module>
+    <module>model.glacier</module>
+    <module>glacier</module>
   </modules>
 </project>

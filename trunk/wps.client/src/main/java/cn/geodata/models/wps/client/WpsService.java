@@ -161,7 +161,7 @@ public class WpsService extends WpsObject {
 					_process.setComplexMime(new MimeType("text/xml"));
 				} catch (MimeTypeParseException e) {
 					log.log(Level.WARNING, "Failed to create MIME", e);
-					throw new IOException(e);
+					throw new IOException(e.getMessage());
 				}
 				_process.setExecute(this.findPostUri("Execute"));
 				_process.setMetadata(this.describeProcess(key));
@@ -195,7 +195,7 @@ public class WpsService extends WpsObject {
 			throw new IOException("Failed to find pos uri for operation " + op);
 		} catch (URISyntaxException e) {
 			log.log(Level.WARNING, "Failed to get uri", e);
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		}
 	}
 	

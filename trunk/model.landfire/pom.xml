@@ -46,17 +46,17 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt2-epsg-hsql</artifactId>
-			<version>2.4-SNAPSHOT</version>
+			<version>2.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt2-shapefile</artifactId>
-			<version>2.4-SNAPSHOT</version>
+			<version>2.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt2-geotiff</artifactId>
-			<version>2.4-SNAPSHOT</version>
+			<version>2.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-configuration</groupId>

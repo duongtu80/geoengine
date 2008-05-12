@@ -11,10 +11,10 @@
 	@IMPORT url("css/map.css");
 </style>
 <style type="text/css">
-    @import "http://o.aolcdn.com/dojo/1.0.2/dijit/themes/tundra/tundra.css";
-    @import "http://o.aolcdn.com/dojo/1.0.2/dojo/dojo.css"
+    @import "http://o.aolcdn.com/dojo/1.1.0/dijit/themes/tundra/tundra.css";
+    @import "http://o.aolcdn.com/dojo/1.1.0/dojo/dojo.css"
 </style>
-<script type="text/javascript" src="http://o.aolcdn.com/dojo/1.0.2/dojo/dojo.xd.js"
+<script type="text/javascript" src="http://o.aolcdn.com/dojo/1.1.0/dojo/dojo.xd.js"
             djConfig="parseOnLoad: true"></script>
 
 <script type="text/javascript">
@@ -62,6 +62,7 @@
 						Date <input type="text" id='startDate' value="1990-01-01" dojoType='dijit.form.DateTextBox' trim="true" style="width: 100px;" /> -
 						<input type="text" id='endDate' value="1999-12-31" dojoType='dijit.form.DateTextBox' trim="true" style="width: 100px;" />
 					</div>
+					<!-- constraints="{datePattern:'M/d/yy'}"  -->
 					<div class="blockTitle">ET Model Parameters</div>
 					<div class="textBlock">
 						Albedo <input type="text" id='txtAlbedo' value="0.08" dojoType='dijit.form.NumberTextBox' trim='true' required='true' style="width: 50px;" />

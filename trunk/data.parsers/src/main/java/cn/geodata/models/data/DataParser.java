@@ -180,7 +180,7 @@ public class DataParser {
 			return _value;
 		} catch (MimeTypeParseException e) {
 			log.log(Level.SEVERE, "failed to parse MIME", e);
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		}
 	}
 

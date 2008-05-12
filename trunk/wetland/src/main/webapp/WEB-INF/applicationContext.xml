@@ -2,14 +2,14 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
 	<bean id="mapMap" class="cn.geodata.models.wetland.actions.map.Map">
-		<property name="wetlandWMS" value="http://152.61.40.52:58080/geoserver/wms?"></property>
+		<property name="wetlandWMS" value="http://192.168.17.108:58080/geoserver/wms?"></property>
 		<property name="wetlandLayers" value="wet:catchment"></property>
 	</bean>
 	<bean id="mapChart" class="cn.geodata.models.wetland.actions.map.Chart">
 		<property name="catchment" ref="catchment" />
 	</bean>
 	<bean id="geoEnvironment" class="cn.geodata.models.wetland.GeoEnvironment">
-		<property name="geoserver" value="D:/mfeng/save/java/wps/service/wetland/tomcat-6.0.16" />
+		<property name="geoserver" value="O:\tank\save\java\geoengine\server\data\apache-tomcat-6.0.16" />
 		<property name="wetland" value="webapps/geoserver/data/data/wetland/catchment.shp" />
 	</bean>
 	<bean id="chartManager" class="cn.geodata.models.wetland.actions.map.ChartManager">
@@ -54,6 +54,6 @@
 		<property name="url" value="http://www.daymet.org/getRawData.do?lon=%f&amp;lat=%f"></property>
 	</bean>
 	<bean id="waterRegion" class="cn.geodata.models.wetland.actions.map.WaterRegion">
-		<property name="modelURL" value="http://152.61.40.52:8080/web/wps"></property>
+		<property name="modelURL" value="http://127.0.0.1:59080/web/wps"></property>
 	</bean>
 </beans>

@@ -2,7 +2,7 @@
 <services>
 	<global>
 		<host>127.0.0.1</host>
-		<port>8080</port>
+		<port>59080</port>
 	</global>
 	<identification>
 		<title>Geo-spatial model sharing</title>

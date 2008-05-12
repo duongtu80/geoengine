@@ -40,7 +40,7 @@ public class GMLReferenceParser implements ReferenceParser, ReferenceEncoder {
 			try {
 				_doc = _builder.build(new URL(_type.getReference()));
 			} catch (JDOMException e) {
-				throw new IOException(e);
+				throw new IOException(e.getMessage());
 			}
 			
 			return ParserUtil.createParserFinder().parse(_doc.getRootElement());

@@ -126,7 +126,7 @@ public class DataCategories {
 				return new MimeType("geotiff");
 			} catch (MimeTypeParseException e) {
 				log.log(Level.WARNING, "Failed to create MIME geotiff", e);
-				throw new IOException(e);
+				throw new IOException(e.getMessage());
 			}
 		}
 		else{
@@ -134,7 +134,7 @@ public class DataCategories {
 				return new MimeType("text/xml");
 			} catch (MimeTypeParseException e) {
 				log.log(Level.WARNING, "Failed to create MIME text/xml", e);
-				throw new IOException(e);
+				throw new IOException(e.getMessage());
 			}
 		}
 	}
