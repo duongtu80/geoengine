@@ -22,7 +22,7 @@
    dojo.require("dijit.form.DateTextBox");
    dojo.require("dijit.form.NumberTextBox");
    dojo.require("dijit.form.Button");
-   dojo.require("dijit.form.ComboBox");
+   dojo.require("dijit.form.CheckBox");
    dojo.require("dijit.Dialog");
    dojo.require("dojo.data.ItemFileWriteStore");
    dojo.require("dojo.data.ItemFileReadStore");
@@ -55,7 +55,7 @@
 								<div class="viewItem"><button dojoType="dijit.form.Button" onclick="invokeTemperatureModel();"> 计算 </button></div>
 								<div id="temperateurePointSelectTip" dojoType="dijit.Dialog" title="提示" execute="temperaturePointSelectTip();">
 									<div>请用鼠标在地图上选择目标位置</div>
-									<div><input id="temperaturePointSelectTipCheck" dojotype="dijit.form.CheckBox" value="on" type="checkbox" /><label>下次不再提示</label></div>
+									<div><input id="temperaturePointSelectTipCheck" dojoType="dijit.form.CheckBox" value="on" type="checkbox" /><label>下次不再提示</label></div>
 									<div><button dojoType="dijit.form.Button" type="submit">确定</button></div>
 								</div>
 							</div>
