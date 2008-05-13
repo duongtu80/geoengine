@@ -16,7 +16,7 @@ public class IceDDFModel {
 	private InterpolateModel model;
 	
 	public IceDDFModel(){
-		this.filePath = "/glacier/data/catchment/ddf_ice.txt";
+		this.filePath = "/glacier/data/ddf_ice.txt";
 	}
 	
 	public double calculate(Point point) throws IOException {

@@ -15,27 +15,29 @@ import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.opengis.filter.FilterFactory2;
 
+import cn.geodata.models.tools.WfsFeatureSource;
+
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 
 public class CatchmentModel {
 	private static Logger log = Logger.getLogger(CatchmentModel.class.getName());
-	private String path;
+	
+	private WfsFeatureSource featureSource;
 	private String nameField;
 	
 	public CatchmentModel(){
-		this.path = "/glacier/data/catchment/catchment.shp";
-		this.nameField = "WRRNM";
+		this.nameField = "NAME";
 	}
 	
-	public CatchmentModel(String path, String nameField){
-		this.path = path;
+	public CatchmentModel(WfsFeatureSource featureSource, String nameField){
+		this.featureSource = featureSource;
 		this.nameField = nameField;
 	}
 	
 	public List<String> getCatchmentList() throws IOException {
 		List<String> _list = new ArrayList<String>();
-		FeatureCollection _fs = this.getDataStore().getFeatureSource().getFeatures();
+		FeatureCollection _fs = this.featureSource.getFeatureSource().getFeatures();
 		
 		for(Feature _f : (Feature[])_fs.toArray()){
 			String _n = (String)_f.getAttribute(this.nameField);
@@ -51,7 +53,7 @@ public class CatchmentModel {
 	}
 
 	public Feature getCatchmentFeature(String catchmentId ) throws IOException{
-		for(Feature _f : (Feature[])this.getDataStore().getFeatureSource().getFeatures().toArray()){
+		for(Feature _f : (Feature[])this.featureSource.getFeatureSource().getFeatures().toArray()){
 			String _n = (String)_f.getAttribute(this.nameField);
 			if(_n != null){
 				if(_n.trim().equals(catchmentId)){
@@ -80,14 +82,5 @@ public class CatchmentModel {
 		else{
 			return null;
 		}
-	}
-	
-	private ShapefileDataStore getDataStore() throws MalformedURLException{
-		URL _url = CatchmentModel.class.getResource(this.path);
-		log.info(_url.toString());
-		
-		ShapefileDataStore _dataStore = new ShapefileDataStore(_url, false, Charset.forName("gb2312"));
-		
-		return _dataStore;
 	}
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<geo:model xmlns:geo="http://www.geodata.cn/models/geoprocessing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<geo:id>Glacier</geo:id>
+	<geo:title>Glacier</geo:title>
+	<geo:process>
+		<geo:id>TemperatureIdw</geo:id>
+		<geo:title>Temperature IDW</geo:title>
+		<geo:tags>temperature, idw</geo:tags>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>Date</geo:id>
+				<geo:title>Date</geo:title>
+				<geo:describe>Date</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>MaxDistance</geo:id>
+				<geo:title>MaxDistance</geo:title>
+				<geo:describe>MaxDistance</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>MaxCount</geo:id>
+				<geo:title>MaxCount</geo:title>
+				<geo:describe>MaxCount</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Pow</geo:id>
+				<geo:title>Pow</geo:title>
+				<geo:describe>Pow</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Site</geo:id>
+				<geo:title>Site</geo:title>
+				<geo:describe>Site</geo:describe>
+				<geo:category>point</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>Temperature</geo:id>
+				<geo:title>Temperature</geo:title>
+				<geo:describe>Temperature</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+</geo:model>

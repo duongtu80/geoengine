@@ -3,33 +3,41 @@ package cn.geodata.models.glacier;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
+import cn.geodata.models.tools.WfsFeatureSource;
 import cn.geodata.models.tools.raster.RasterManager;
 
 public class GlacierPrepareModelTest extends TestCase {
 
 	public void testCalculate() throws Exception {
-		CatchmentModel _catchmentModel = new CatchmentModel("/glacier/data/catchment/tailang.shp", "NAME");
+		WfsFeatureSource _featureSource = new WfsFeatureSource("http://127.0.0.1:48080/geoserver/wfs", "geo:basin");
+		CatchmentModel _catchmentModel = new CatchmentModel(_featureSource, "NAME");
 
 		System.out.println(Arrays.toString(_catchmentModel.getCatchmentList().toArray()));
 		
 		RasterManager _manager = new RasterManager(new File("O:\\tank\\data\\dem\\tiff"), 0);
-		GlacierPrepareModel _model = new GlacierPrepareModel(_manager, "/glacier/data/catchment/1144G.shp");
+		GlacierPrepareModel _model = new GlacierPrepareModel(_manager, new WfsFeatureSource("http://127.0.0.1:48080/geoserver/wfs", "geo:glacier"));
 				
-		double[] _levels = new double[] {2000, 3000, 4000, 5000, 6000, 8000};
-		double _cellSize = 1.0 / 300;
+//		double[] _levels = new double[] {2000, 3000, 4000, 5000, 6000, 8000};
+		double _cellSize = 1.0 / (1200 * 4);
 		
-		List<BandInfo> _counts = _model.calculate(
+		Map<Integer, Integer> _areas = _model.calculate(
 //				_catchmentModel.getCatchmentPolygon("“¡¿Á∫”"), 
 				_catchmentModel.getCatchmentPolygon("tailang"), 
 				_cellSize,
-				_levels,
-//				null
-				new File("d:\\test39.tif")
+				null
+//				new File("d:\\test39.tif")
 			);
 		
-		System.out.println(Arrays.toString(_counts.toArray()));
+		Integer[] _keys = (Integer[]) _areas.keySet().toArray(new Integer[0]);
+		Arrays.sort(_keys);
+		
+		for(Integer _k : _keys){
+			System.out.println(_k.toString() + "\t" + _areas.get(_k).toString());
+		}
 //		Stack<Param> _stack = new Stack<Param>();
 //		
 //		Envelope2D _extent = new Envelope2D(null, 79.5, 42, 1.5, 1);

@@ -16,7 +16,7 @@ public class SnowDDFModel {
 	private String filePath;
 	
 	public SnowDDFModel(){
-		this.filePath = "/glacier/data/catchment/ddf_snow.txt";
+		this.filePath = "/glacier/data/ddf_snow.txt";
 	}
 	
 	public InterpolateModel getModel() {

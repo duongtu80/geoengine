@@ -8,9 +8,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.geotools.geometry.Envelope2D;
+import org.geotools.wms.v1_1_1.bindings._LegendURLBinding;
 
 import cn.geodata.models.tools.Utilities;
 import cn.geodata.models.tools.raster.RasterManager;
@@ -69,7 +71,23 @@ public class GlacierRunoffModel {
 		Calendar _calendar = Calendar.getInstance();
 		_calendar.setTime(startDate);
 		
-		List<BandInfo> _pixels = this.prepareModel.calculate(_catchment, cellSize, levels, null);
+		Map<Integer, Integer> _areas = this.prepareModel.calculate(_catchment, cellSize, null); 
+		List<BandInfo> _pixels = new ArrayList<BandInfo>();
+		for(int i=0;i<levels.length;i++){
+			BandInfo _band = new BandInfo();
+			_band.setBandAltitude(levels[i]);
+			
+			long _glaicerCount = 0;
+			for(Integer _k : _areas.keySet()){
+				if(_k <= levels[i]){
+					_glaicerCount += _areas.get(_k).longValue();
+				}
+			}
+			_band.setGlacierCount(_glaicerCount);
+			
+			_pixels.add(_band);
+		}
+		
 		double _pixelArea = this.projectModel.calculate(Utilities.covertEnvelope2D(new Envelope2D(null, _sitePoint.getX(), _sitePoint.getY(), cellSize, cellSize))).getArea();
 		
 		log.info(Arrays.toString(_pixels.toArray()));

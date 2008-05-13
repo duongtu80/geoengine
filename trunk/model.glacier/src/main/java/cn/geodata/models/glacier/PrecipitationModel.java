@@ -1,10 +1,13 @@
 package cn.geodata.models.glacier;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.zip.ZipFile;
 
 import org.geotools.feature.FeatureCollection;
 
@@ -83,14 +86,13 @@ public class PrecipitationModel {
 		String _fileName = String.format("cp%04d%02d.txt", date.getYear() + 1900, date.getMonth() + 1);
 		log.info("File name:" + _fileName);
 		
-		URL _url = PrecipitationModel.class.getResource(filePath + "/" + _fileName);
-		log.info("Url:" + _url);
-		log.info("Point:" + point.toText());
+		URL _url = PrecipitationModel.class.getResource("/glacier/data/precipitation.zip");
+		ZipFile _zip = new ZipFile(new File(_url.getFile()));
 		
 		Pattern _pattern = Pattern.compile("\\d+[,\\s]([\\d\\.]+)[,\\s]([\\d\\.]+)[,\\s]([\\d\\.]+)");
 		FeatureCollection _fs = null;
 		try {
-			_fs = (new TxtFeatureReader()).read("precipitation", _url.openStream(), _pattern);
+			_fs = (new TxtFeatureReader()).read("precipitation", _zip.getInputStream(_zip.getEntry(_fileName)), _pattern);
 		} catch (Exception e) {
 			throw new IOException("Failed to create feature");
 		}

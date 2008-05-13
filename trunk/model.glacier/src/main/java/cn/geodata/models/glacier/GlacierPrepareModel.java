@@ -8,10 +8,9 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Logger;
 
@@ -26,14 +25,15 @@ import org.geotools.geometry.Envelope2D;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
 
+import cn.geodata.models.tools.Utilities;
+import cn.geodata.models.tools.WfsFeatureSource;
+import cn.geodata.models.tools.raster.RasterInfo;
+import cn.geodata.models.tools.raster.RasterManager;
+
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
-
-import cn.geodata.models.tools.Utilities;
-import cn.geodata.models.tools.raster.RasterInfo;
-import cn.geodata.models.tools.raster.RasterManager;
 
 /**
  * @author tank
@@ -44,15 +44,15 @@ import cn.geodata.models.tools.raster.RasterManager;
 public class GlacierPrepareModel {
 	private static Logger log = Logger.getLogger(GlacierPrepareModel.class.getName());
 	private RasterManager rasterManager;
-	private String glacierPath;
+	private WfsFeatureSource glacierFeatureSource;
 	
 	/**
 	 * @param rasterManager DEM raster manager
 	 * @param glacierPath	Glacier shapefile path
 	 */
-	public GlacierPrepareModel(RasterManager rasterManager, String glacierPath){
+	public GlacierPrepareModel(RasterManager rasterManager, WfsFeatureSource glacierFeatureSource){
 		this.rasterManager = rasterManager;
-		this.glacierPath = glacierPath;
+		this.glacierFeatureSource = glacierFeatureSource;
 	}
 	
 	public RasterManager getRasterManager() {
@@ -70,7 +70,7 @@ public class GlacierPrepareModel {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<BandInfo> calculate(MultiPolygon catchment, double cellSize, double[] levels, File rasterFile) throws Exception{
+	public Map<Integer, Integer> calculate(MultiPolygon catchment, double cellSize, File rasterFile) throws Exception{
 		Envelope _extent = catchment.getEnvelopeInternal();
 		
 		int _colCount = (int) Math.ceil(_extent.getWidth() / cellSize);
@@ -79,29 +79,22 @@ public class GlacierPrepareModel {
 		Envelope2D _exte = new Envelope2D(null, _extent.getMinX(), _extent.getMinY(), _colCount * cellSize, _rowCount * cellSize);
 		Rectangle _rect = new Rectangle(0, 0, _colCount, _rowCount);
 		
-		List<BandInfo> _areas = new ArrayList<BandInfo>();
-		for(int i=0;i<levels.length;i++){
-			BandInfo _bandInfo = new BandInfo();
-			_bandInfo.setBandAltitude(levels[i]);
-			
-			_areas.add(_bandInfo );
-		}
-
 		WritableRaster _raster = null;
 		if(rasterFile != null){
 			SampleModel _sampleModel = new BandedSampleModel(DataBuffer.TYPE_SHORT, (int)_rect.getWidth(), (int)_rect.getHeight(), 1);
 			_raster = Raster.createWritableRaster(_sampleModel, null); //(_sampleModel, null);
 		}
-		FeatureSource _fs = new ShapefileDataStore(GlacierPrepareModel.class.getResource(this.glacierPath)).getFeatureSource();
+		FeatureSource _fs = this.glacierFeatureSource.getFeatureSource();
 
-		this.calculate(_exte, _rect, _raster, _fs , catchment, levels, _areas);
+		Map<Integer, Integer> _areas = new HashMap<Integer, Integer>();
+		this.calculate(_exte, _rect, _raster, _fs , catchment, _areas);
 		if(_raster != null)
 			Utilities.saveRaster(rasterFile, _raster, _exte);
 		
 		return _areas;
 	}
 	
-	public void calculate(Envelope2D extent, Rectangle rect, WritableRaster raster, FeatureSource fs, MultiPolygon catchment, double[] levels, List<BandInfo> _areas) throws Exception {
+	public void calculate(Envelope2D extent, Rectangle rect, WritableRaster raster, FeatureSource fs, MultiPolygon catchment, Map<Integer, Integer> areas) throws Exception {
 		FilterFactory2 _factory = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
 
 		Stack<Param> _stack = new Stack<Param>();
@@ -113,10 +106,10 @@ public class GlacierPrepareModel {
 		
 		_stack.push(_param);
 		
-		this.calculate(_factory.property(fs.getSchema().getDefaultGeometry().getLocalName()), _stack, raster, catchment, levels, _areas);
+		this.calculate(_factory.property(fs.getSchema().getDefaultGeometry().getLocalName()), _stack, raster, catchment, areas);
 	}
 	
-	public void calculate(PropertyName propertyName, Stack<Param> stack, WritableRaster raster, MultiPolygon catchment, double[] levels, List<BandInfo> _areas) throws IOException{
+	public void calculate(PropertyName propertyName, Stack<Param> stack, WritableRaster raster, MultiPolygon catchment, Map<Integer, Integer> areas) throws IOException{
 //		FilterFactory2 _factory = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
 		List<RasterInfo> _rasterList = null; 
 
@@ -161,7 +154,7 @@ public class GlacierPrepareModel {
 					double _width1Rat = _width1 / _rect.getWidth();
 					double _height1Rat = _height1 / _rect.getHeight();
 					
-					System.out.println("Rat " + _width1Rat + "," + _height1Rat);
+//					System.out.println("Rat " + _width1Rat + "," + _height1Rat);
 					
 					if(_height1 > 0){
 						if(_width1 > 0)
@@ -215,15 +208,16 @@ public class GlacierPrepareModel {
 				else{
 					double _x = _exte.getCenterX();
 					double _y = _exte.getCenterY();
-					double _v = this.rasterManager.getLocationValue(_rasterList, _x, _y);
+					Integer _v = this.rasterManager.getLocationValue(_rasterList, _x, _y);
 					
 					if(_v > 0){
-						for(int i=0;i<levels.length;i++){
-							if(_v <= levels[i]){
-								_areas.get(i).setGlacierCount(_areas.get(i).getGlacierCount() + 1);
-								break;
-							}
+						if(areas.containsKey(_v)){
+							areas.put(_v, areas.get(_v) + 1);
 						}
+						else{
+							areas.put(_v, 1);
+						}
+						
 						if(raster != null){
 							System.out.println("Set " + (int)_rect.getMinX() + "," + (int)_rect.getMinY());
 							raster.setSample((int)_rect.getMinX(), (int)_rect.getMinY(), 0, _v);
