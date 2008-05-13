@@ -11,11 +11,10 @@
 	@IMPORT url("css/map.css");
 </style>
 <style type="text/css">
-    @import "http://o.aolcdn.com/dojo/1.1.0/dijit/themes/tundra/tundra.css";
-    @import "http://o.aolcdn.com/dojo/1.1.0/dojo/dojo.css"
+    @import "/public/dojo/dijit/themes/tundra/tundra.css";
+    @import "/public/dojo/dojo/1.1.0/dojo/dojo.css"
 </style>
-<script type="text/javascript" src="http://o.aolcdn.com/dojo/1.1.0/dojo/dojo.xd.js"
-            djConfig="parseOnLoad: true"></script>
+<script type="text/javascript" src="/public/dojo/dojo/dojo.js" djConfig="parseOnLoad:true"></script>
 
 <script type="text/javascript">
    dojo.require("dojo.parser");
@@ -35,7 +34,7 @@
 	var wetlandWMS = '<s:property value="wetlandWMS"/>';
 	var wetlandLayers = '<s:property value="wetlandLayers"/>';
 </script>
-<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
+<script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>
 <script type="text/javascript" src="controls/js/Navigation.js" ></script>
 <script type="text/javascript" src="controls/js/SearchFeature.js" ></script>
 <script type="text/javascript" src="controls/js/DataViewToolbar.js" ></script>

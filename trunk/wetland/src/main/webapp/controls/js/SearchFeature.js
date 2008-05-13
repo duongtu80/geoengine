@@ -37,7 +37,17 @@ OpenLayers.Control.SearchFeature = OpenLayers.Class(OpenLayers.Control, {
  	*/
 	searchFeature: function(geometry) {
 		this.layer.removeFeatures(this.layer.features);
-		this.layer.addFeatures(new OpenLayers.Feature.Vector(geometry));
+		
+		geometry.x = geometry.x.toFixed(5);
+		geometry.y = geometry.y.toFixed(5);
+		
+		_feature = new OpenLayers.Feature.Vector(geometry);
+		_feature.style = OpenLayers.Util.extend({'fill':'black'}, OpenLayers.Feature.Vector.style['default']);
+		
+		_feature.style.pointRadius = 3;
+		_feature.style.strokeColor = '#FFCC22';
+		
+		this.layer.addFeatures(_feature);
 		changeExtentByBounds(geometry);
 	},
 

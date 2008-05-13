@@ -2,7 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
 	<bean id="mapMap" class="cn.geodata.models.wetland.actions.map.Map">
-		<property name="wetlandWMS" value="http://192.168.17.108:58080/geoserver/wms?"></property>
+		<property name="wetlandWMS" value="http://159.226.111.21:58080/geoserver/wms?"></property>
 		<property name="wetlandLayers" value="wet:catchment"></property>
 	</bean>
 	<bean id="mapChart" class="cn.geodata.models.wetland.actions.map.Chart">

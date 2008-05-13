@@ -55,6 +55,12 @@ function initMap() {
 	map.addLayer(vlayer);
 
 	waterLayer = new OpenLayers.Layer.Vector("Water");
+	waterLayer.style = OpenLayers.Util.extend({'fill':'black'}, OpenLayers.Feature.Vector.style['default']);
+	
+	waterLayer.style.pointRadius = 3;
+	waterLayer.style.strokeColor = '#3377FF';
+	waterLayer.style.fillColor = '#5599FF';
+	
 	map.addLayer(waterLayer);
 	
 	map.addControl(new OpenLayers.Control.DataViewToolbar(vlayer));
@@ -209,12 +215,12 @@ function calculateWaterTable2(){
 	        	waterlandCode = dojo.byId('txtWetland').innerHTML;
 	        	
         		if(wetlandData.size > 0){
+//        			goData(0);
 					var _d = new Date();
 					_d.setTime(wetlandData.date[0]);
+
 					dijit.byId('txtCurrentDate').setValue(_d);
 //					dojo.byId('txtCurrentDate').value = (_d.getMonth() + 1)  + '/' +  _d.getDate() + '/' + _d.getYear();
-					
-        			goData(0);
         		}
         		
 			 	dojo.byId('divWaterTableText').style.visibility = 'visible';
@@ -238,14 +244,13 @@ function goData(idx){
 		
 //		setDateWidget1('txtCurrentDate', _d);	
 //		dojo.byId('txtCurrentDate').value = (_d.getMonth() + 1)  + '/' +  _d.getDate() + '/' + _d.getYear();
-		dojo.byId('txtWaterTable').value = wetlandData.water[idx];
-		
 		wetlandIndex = idx;
-		
+		dijit.byId('txtWaterTable').setValue(wetlandData.water[idx]);
 //		dojo.byId('divWaterRegion').style.visibility = 'visible';
 //		dijit.byId('btnGoNext').setDisabled(false);
 	}
 	else{
+		dijit.byId('txtWaterTable').setValue(NaN);
 //		dojo.byId('divWaterRegion').style.visibility = 'hidden';
 //		dijit.byId('btnGoNext').setDisabled(true);
 	}
@@ -404,7 +409,8 @@ function updateWaterRegion(){
 
 		var _d = new Date();
 		_d.setTime(wetlandData.date[wetlandIndex]);
-		dojo.byId('txtCurrentDate').value = (_d.getMonth() + 1)  + '/' +  _d.getDate() + '/' + _d.getYear();
+		dijit.byId('txtCurrentDate').setValue(_d);
+//		dojo.byId('txtCurrentDate').value = (_d.getMonth() + 1)  + '/' +  _d.getDate() + '/' + _d.getYear();
 		
 		waterRegionAdd(true);
 	}
@@ -415,8 +421,9 @@ function updateWaterRegion(){
 }
 
 function searchWaterTable(){
-	if(wetlandData == null || wetlandIndex < 0){
+	if(wetlandData == null){
 		alert('No water table records');
+		return;
 	}
 	
 	var _d = dijit.byId("txtCurrentDate").getValue();

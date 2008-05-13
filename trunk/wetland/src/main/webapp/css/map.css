@@ -2,7 +2,7 @@
 
 #map {
 	width: 700px;
-	height: 400px;
+	height: 430px;
 	border: 1px solid #AAAAAA;
 	cursor: crosshair;
 }
@@ -14,7 +14,7 @@ div.resultItem {
 
 #processTip {
 	margin-left: 5px;
-	top: 470px;
+	top: 500px;
 	line-height: 30px;
 	visibility: visible;
 	background: transparent;
