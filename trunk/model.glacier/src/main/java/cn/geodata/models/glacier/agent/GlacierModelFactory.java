@@ -29,8 +29,17 @@ public class GlacierModelFactory extends AbstractProcessingFactory {
 
 	public Processing createProcessing(String arg0, Map<String, String> arg1)
 			throws IOException {
-		if(arg0.equalsIgnoreCase("TemperatureIDW")){
+		if(arg0.equalsIgnoreCase("TemperatureIdw")){
 			return new TemperatureIdwAgent();
+		}
+		else if(arg0.equalsIgnoreCase("PrecipitationIdw")){
+			return new PrecipitationIdwAgent();
+		}
+		else if(arg0.equalsIgnoreCase("SnowDdfIdw")){
+			return new SnowDdfIdwAgent();
+		}
+		else if(arg0.equalsIgnoreCase("IceDdfIdw")){
+			return new IceDdfIdwAgent();
 		}
 		else{
 			log.severe("Unkown process name:" + arg0);

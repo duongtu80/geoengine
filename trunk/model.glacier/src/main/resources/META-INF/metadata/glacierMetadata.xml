@@ -11,7 +11,7 @@
 				<geo:id>Date</geo:id>
 				<geo:title>Date</geo:title>
 				<geo:describe>Date</geo:describe>
-				<geo:category>int</geo:category>
+				<geo:category>long</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>MaxDistance</geo:id>
@@ -43,6 +43,129 @@
 				<geo:id>Temperature</geo:id>
 				<geo:title>Temperature</geo:title>
 				<geo:describe>Temperature</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+	<geo:process>
+		<geo:id>PrecipitationIdw</geo:id>
+		<geo:title>Precipitation IDW</geo:title>
+		<geo:tags>precipitation, idw</geo:tags>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>Date</geo:id>
+				<geo:title>Date</geo:title>
+				<geo:describe>Date</geo:describe>
+				<geo:category>long</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>MaxDistance</geo:id>
+				<geo:title>MaxDistance</geo:title>
+				<geo:describe>MaxDistance</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>MaxCount</geo:id>
+				<geo:title>MaxCount</geo:title>
+				<geo:describe>MaxCount</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Pow</geo:id>
+				<geo:title>Pow</geo:title>
+				<geo:describe>Pow</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Site</geo:id>
+				<geo:title>Site</geo:title>
+				<geo:describe>Site</geo:describe>
+				<geo:category>point</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>Precipitation</geo:id>
+				<geo:title>Precipitation</geo:title>
+				<geo:describe>Precipitation</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+	<geo:process>
+		<geo:id>SnowDdfIdw</geo:id>
+		<geo:title>SnowDDF IDW</geo:title>
+		<geo:tags>snow, ddf, idw</geo:tags>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>MaxDistance</geo:id>
+				<geo:title>MaxDistance</geo:title>
+				<geo:describe>MaxDistance</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>MaxCount</geo:id>
+				<geo:title>MaxCount</geo:title>
+				<geo:describe>MaxCount</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Pow</geo:id>
+				<geo:title>Pow</geo:title>
+				<geo:describe>Pow</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Site</geo:id>
+				<geo:title>Site</geo:title>
+				<geo:describe>Site</geo:describe>
+				<geo:category>point</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>SnowDdf</geo:id>
+				<geo:title>SnowDdf</geo:title>
+				<geo:describe>SnowDdf</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+	<geo:process>
+		<geo:id>IceDdfIdw</geo:id>
+		<geo:title>IceDDF IDW</geo:title>
+		<geo:tags>Ice, ddf, idw</geo:tags>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>MaxDistance</geo:id>
+				<geo:title>MaxDistance</geo:title>
+				<geo:describe>MaxDistance</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>MaxCount</geo:id>
+				<geo:title>MaxCount</geo:title>
+				<geo:describe>MaxCount</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Pow</geo:id>
+				<geo:title>Pow</geo:title>
+				<geo:describe>Pow</geo:describe>
+				<geo:category>int</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Site</geo:id>
+				<geo:title>Site</geo:title>
+				<geo:describe>Site</geo:describe>
+				<geo:category>point</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>IceDdf</geo:id>
+				<geo:title>IceDdf</geo:title>
+				<geo:describe>IceDdf</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:output>
 		</geo:outputs>

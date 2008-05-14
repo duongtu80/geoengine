@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.geotools.feature.FeatureCollection;
 
 import com.vividsolutions.jts.geom.Point;
@@ -16,7 +18,6 @@ public class TemperatureModel {
 	private Logger log = Logger.getLogger(TemperatureModel.class.getName());
 	
 	private InterpolateModel model;
-	private String filePath;
 
 	public InterpolateModel getModel() {
 		return model;
@@ -26,33 +27,37 @@ public class TemperatureModel {
 		this.model = model;
 	}
 
-	public String getFilePath() {
-		return filePath;
-	}
-
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
-
 	public TemperatureModel(){
-		this.filePath = "/glacier/data/temperature";
 	}
 	
 	public double calculate(Date date, Point point) throws Exception{
 		String _fileName = String.format("t%04d%02d.txt", date.getYear() + 1900, date.getMonth() + 1);
 		log.info("File name:" + _fileName);
 		
-		URL _url = PrecipitationModel.class.getResource("/glacier/data/temperature.zip");
-		ZipFile _zip = new ZipFile(new File(_url.getFile()));
+		File _tmp = File.createTempFile("temperature", ".zip");
+		File _file = new File(_tmp.getParentFile(), "temperature.zip");
+		_tmp.delete();
 		
-		Pattern _pattern = Pattern.compile("\\d+[,\\s]([\\d\\.]+)[,\\s]([\\d\\.]+)[,\\s]([\\d\\.]+)");
-		FeatureCollection _fs = null;
-		try {
-			_fs = (new TxtFeatureReader()).read("temperature", _zip.getInputStream(_zip.getEntry(_fileName)), _pattern);
-		} catch (Exception e) {
-			throw new IOException("Failed to create feature");
+		if(_file.exists() == false || _file.length() > 0){
+			IOUtils.copy(PrecipitationModel.class.getResourceAsStream("/glacier/data/temperature.zip"), FileUtils.openOutputStream(_file));
 		}
 		
-		return this.model.calculate(_fs, "val", point);
+		ZipFile _zip = new ZipFile(_file);
+		try{
+			Pattern _pattern = Pattern.compile("\\d+[,\\s]([\\d\\.]+)[,\\s]([\\d\\.]+)[,\\s]([\\d\\.]+)");
+			FeatureCollection _fs = null;
+			try {
+				_fs = (new TxtFeatureReader()).read("temperature", _zip.getInputStream(_zip.getEntry(_fileName)), _pattern);
+			} catch (Exception e) {
+				throw new IOException("没有找到该日期的站点数据");
+			}
+			
+			return this.model.calculate(_fs, "val", point);
+		}
+		finally{
+			if(_zip != null){
+				_zip.close();
+			}
+		}
 	}
 }
