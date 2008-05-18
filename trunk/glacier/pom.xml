@@ -39,5 +39,35 @@
 			<artifactId>struts2-spring-plugin</artifactId>
 			<version>2.0.9</version>
 		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt2-epsg-hsql</artifactId>
+			<version>2.4.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt2-shapefile</artifactId>
+			<version>2.4.2</version>
+		</dependency>
+		<dependency>
+			<groupId>jfreechart</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.geodata.models</groupId>
+			<artifactId>ge-wps.client</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.geodata.models</groupId>
+			<artifactId>ge-model.glacier</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

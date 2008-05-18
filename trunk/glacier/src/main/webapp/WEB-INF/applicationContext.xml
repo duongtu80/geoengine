@@ -3,4 +3,12 @@
 <beans>
 	<bean id="mapMap" class="cn.geodata.models.glacier.actions.map.Map">
 	</bean>
+	<bean id="temperatureIdw" class="cn.geodata.models.glacier.actions.models.TemperatureIdw">
+	</bean>
+	<bean id="loadDataset" class="cn.geodata.models.glacier.actions.map.LoadDataset">
+		<property name="wfsUrl" value="http://127.0.0.1:48080/geoserver/wfs"></property>
+	</bean>
+	<bean id="chartStream" class="cn.geodata.models.glacier.actions.models.ChartStream">
+		<property name="tempDir" value="/tmp"></property>
+	</bean>
 </beans>

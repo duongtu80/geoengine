@@ -12,5 +12,47 @@
     	<action name="map" class="mapMap">
     		<result>/map.jsp</result>
     	</action>
+    	<action name="loadDataset" class="loadDataset">
+    		<result type="stream">
+    			<param name="contentType">text/xml</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="text.xml"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="wfsDatasets" class="cn.geodata.models.glacier.actions.map.WfsDataset">
+    		<result type="stream">
+    			<param name="contentType">text/json-comment-filtered</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    </package>
+    <package name="model" extends="struts-default" namespace="/model">
+    	<action name="chartStream" class="chartStream">
+    		<result type="stream">
+    			<param name="contentType">image/png</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.png"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="listWpsModel" class="cn.geodata.models.glacier.actions.models.ListWpsModel">
+    		<result type="stream">
+    			<param name="contentType">text/json-comment-filtered</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="temperatureIdw" class="temperatureIdw">
+    		<result type="stream">
+    			<param name="contentType">text/json-comment-filtered</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
     </package>
 </struts>
