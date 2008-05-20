@@ -64,16 +64,19 @@ public class LineStringDef extends AbstractParser {
 		
 		ArrayList<Coordinate> _list = new ArrayList<Coordinate>();
 		Element _posList = ele.getChild("posList", this.config.getUriGML());
-		int _count = Integer.parseInt(_posList.getAttributeValue("dimension"));
+		int _count = 2;
+		if(_posList.getAttributeValue("dimension") != null && _posList.getAttributeValue("dimension").length() > 0){
+			_count = Integer.parseInt(_posList.getAttributeValue("dimension"));
+		}
 		
 		String[] _items = _posList.getTextTrim().split("\\s+");
 		for (int i = 0; i < _items.length / _count; i++) {
-			double _x = Double.parseDouble(_items[0]);
-			double _y = Double.parseDouble(_items[1]);
+			double _x = Double.parseDouble(_items[i * _count + 0]);
+			double _y = Double.parseDouble(_items[i * _count + 1]);
 
 			double _z = 0;
-			if(_items.length > 2){
-				_z = Double.parseDouble(_items[2]);
+			if(_count == 3){
+				_z = Double.parseDouble(_items[i * _count + 2]);
 			}
 			
 			_list.add(new Coordinate(_x, _y, _z));

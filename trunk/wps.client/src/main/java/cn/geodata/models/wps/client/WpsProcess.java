@@ -111,6 +111,37 @@ public class WpsProcess extends WpsObject {
 		throw new NullPointerException("Not found the requst input parameter");
 	}
 
+	/**
+	 * 
+	 * Execute process by given input parameters and output parameters to given category.
+	 * 
+	 * @param inputs
+	 * @param outputTypes
+	 * @return
+	 * @throws IOException
+	 */
+	public List<Object> execute(Object[] inputs, DataCategory[] outputTypes) throws IOException {
+		Map<String, Object> _inputs = new HashMap<String, Object>();
+		
+		InputDescriptionType[] _inputTypes = this.metadata.getDataInputs().getInputArray();
+		for(int i=0;i<inputs.length;i++){
+			if(inputs[i] != null){
+				_inputs.put(_inputTypes[i].getIdentifier().getStringValue(), inputs[i]);
+			}
+		}
+		
+		this.execute(_inputs);
+		
+		
+		IOValueType[] _outputTypes = this.response.getExecuteResponse().getProcessOutputs().getOutputArray();
+		List<Object> _outputs = new ArrayList<Object>();
+		for(int i=0;i<outputTypes.length;i++){
+			_outputs.add(DataParser.getInstance().parse(outputTypes[i], _outputTypes[i]));
+		}
+		
+		return _outputs;
+	}
+	
 	public void execute(Map<String, Object> inputs) throws IOException{
 		ExecuteDocument _requestDoc = ExecuteDocument.Factory.newInstance();
 		
@@ -233,4 +264,6 @@ public class WpsProcess extends WpsObject {
 		
 		return _ref;
 	}
+	
+	
 }

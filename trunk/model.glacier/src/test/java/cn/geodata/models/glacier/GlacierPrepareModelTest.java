@@ -1,6 +1,8 @@
 package cn.geodata.models.glacier;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -11,21 +13,32 @@ import cn.geodata.models.tools.WfsFeatureSource;
 import cn.geodata.models.tools.raster.RasterManager;
 
 public class GlacierPrepareModelTest extends TestCase {
+	public void testTest1() throws Exception {
+		SnowDDFModel _model = new SnowDDFModel();
+		for(Field _f : _model.getClass().getDeclaredFields()){
+			System.out.println(_f.getName() + "\t" + _f.getType().getName());
+			for(Annotation _a : _f.getAnnotations()){
+				System.out.println("\t" + _a.annotationType().getName());
+			}
+		}
+	}
 
-	public void testCalculate() throws Exception {
+	public void atestCalculate() throws Exception {
 		WfsFeatureSource _featureSource = new WfsFeatureSource("http://127.0.0.1:48080/geoserver/wfs", "geo:basin");
 		CatchmentModel _catchmentModel = new CatchmentModel(_featureSource, "NAME");
 
 		System.out.println(Arrays.toString(_catchmentModel.getCatchmentList().toArray()));
 		
 		RasterManager _manager = new RasterManager(new File("O:\\tank\\data\\dem\\tiff"), 0);
-		GlacierPrepareModel _model = new GlacierPrepareModel(_manager, new WfsFeatureSource("http://127.0.0.1:48080/geoserver/wfs", "geo:glacier"));
+		
+		new WfsFeatureSource("http://127.0.0.1:48080/geoserver/wfs", "geo:glacier");
+		
+		GlacierPrepareModel _model = new GlacierPrepareModel(_manager, null);
 				
 //		double[] _levels = new double[] {2000, 3000, 4000, 5000, 6000, 8000};
 		double _cellSize = 1.0 / (1200 * 4);
 		
 		Map<Integer, Integer> _areas = _model.calculate(
-//				_catchmentModel.getCatchmentPolygon("ÒÁÀçºÓ"), 
 				_catchmentModel.getCatchmentPolygon("tailang"), 
 				_cellSize,
 				null
@@ -43,7 +56,7 @@ public class GlacierPrepareModelTest extends TestCase {
 //		Envelope2D _extent = new Envelope2D(null, 79.5, 42, 1.5, 1);
 //		Rectangle _rect = new Rectangle(0, 0, 1800 * 2, 1200 * 2);
 //		
-//		ShapefileDataStore _dataStore = new ShapefileDataStore(new URL("file://o:/tank/doc/2-ÏîÄ¿/3.º®ºµËù/data/geographic/glacier_g.shp"));
+//		ShapefileDataStore _dataStore = new ShapefileDataStore(new URL("file://o:/tank/doc/2-ï¿½ï¿½Ä¿/3.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/data/geographic/glacier_g.shp"));
 //		FeatureSource _featureSource = _dataStore.getFeatureSource();
 //
 //		SampleModel _sampleModel = new BandedSampleModel(DataBuffer.TYPE_SHORT, (int)_rect.getWidth(), (int)_rect.getHeight(), 1);

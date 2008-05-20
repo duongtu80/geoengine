@@ -17,18 +17,23 @@
 <script type="text/javascript" src="/public/dojo/dojo/dojo.js" djConfig="parseOnLoad:true"></script>
 
 <script type="text/javascript">
-   dojo.require("dojo.parser");
-   dojo.require("dijit.form.TextBox");
-   dojo.require("dijit.form.DateTextBox");
-   dojo.require("dijit.form.NumberTextBox");
-   dojo.require("dijit.form.Button");
-   dojo.require("dijit.form.ComboBox");
-   dojo.require("dijit.form.CheckBox");
-   dojo.require("dijit.Dialog");
-   dojo.require("dojo.data.ItemFileWriteStore");
-   dojo.require("dojo.data.ItemFileReadStore");
-   dojo.require("dijit.layout.ContentPane");
-   dojo.require("dijit.layout.TabContainer");
+	dojo.require("dojo.parser");
+	dojo.require("dijit.form.TextBox");
+	dojo.require("dijit.form.DateTextBox");
+	dojo.require("dijit.form.NumberTextBox");
+	dojo.require("dijit.form.ValidationTextBox");
+	dojo.require("dijit.form.Button");
+	dojo.require("dijit.form.ComboBox");
+	dojo.require("dijit.form.CheckBox");
+	dojo.require("dijit.Dialog");
+	dojo.require("dojo.data.ItemFileReadStore");
+	dojo.require("dijit.layout.ContentPane");
+	dojo.require("dijit.layout.TabContainer");
+</script>
+
+<script type="text/javascript">
+	var wmsMapUrl = '<s:property value="wmsMapUrl"/>';
+	var wmsLayerName = '<s:property value="wmsLayerName"/>';
 </script>
 
 <script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>
@@ -44,14 +49,13 @@
 			<tr>
 				<td id="leftPanel">
 					<div id="map">
-						<div id="processTip">ready</div>
+						<div id="progressPanel" class="progressReady"><div id="progressText">Ready</div></div>
 					</div>
 				</td>
 				<td id="rightPanel">
 					<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
-						<div class="viewItem"><div class="viewTitle">日期</div><div id="startYear" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="1980"></div>-<div id="endYear" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="1990"></div></div>
-						<div class="viewItem"><div class="viewTitle">流域</div><div style="float: left;"><input id="listCatchment" dojoType="dijit.form.ComboBox" style="width: 150px;" onchange="glacier.selectBasin();"></input></div><div><img src="images/setting.png" onclick="glacier.selectWfsDataSource('listCatchment');"/></div></div>
-						<div class="viewItem"><div class="viewTitle">目标坐标</div><div style="float: left;"><div id="pointX" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div>-<div id="pointY" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div></div><div><img src="images/setting.png" onclick="glacier.pointSelect();"/></div></div>
+						<div class="viewItem"><div class="viewTitle">日期</div><div id="startYear" dojoType="dijit.form.ValidationTextBox" regExp="\d{4}" invalidMessage="年份介于1960年至2000年" style="width: 70px;" value="1980"></div>-<div id="endYear" dojoType="dijit.form.ValidationTextBox" regExp="\d{4}" invalidMessage="年份介于1960年至2000年" style="width: 70px;" value="1990"></div></div>
+						<div class="viewItem"><div class="viewTitle">流域</div><div><input id="listCatchment" jsId='listCatchment' dojoType="dijit.form.ComboBox" style="width: 150px;" onchange="glacier.selectBasin();"></input></div></div>
 					</div>
 					<button dojoType="dijit.form.Button" onclick="glacier.selectWpsModel();">加载模型</button>
 					<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
@@ -76,31 +80,11 @@
 							<div class="viewItem"><button dojoType="dijit.form.Button" onclick="glacier.modelSetting('modelRunoff');">修改参数</button><button dojoType="dijit.form.Button" onclick="glacier.modelExecute('modelRunoff');">运行</button></div>
 						</div>
 					</div>
-<!-- 				
-					<div id="mainTabContainer" dojoType="dijit.layout.TabContainer" style="width:276px;height:350px">
-						<div id="temperatureModel" dojoType="dijit.layout.ContentPane" title="气温">
-							<div class="blockBody">
-								<div class="viewItem"><div class="viewTitle">指数:</div><div id="temperaturePow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
-								<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="temperatureMaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>
-								<div class="viewItem"><div class="viewTitle">搜索半径:</div><div id="temperatureMaxDistance" dojoType="dijit.form.NumberTextBox" style="width: 90px;"></div> (置空忽略该参数)</div>
-								<div class="viewItem"><button dojoType="dijit.form.Button" onclick="glacier.temperatureModel.execute();"> 计算 </button></div>
-								<div id="pointSelectTip" dojoType="dijit.Dialog" title="提示" execute="glacier.pointSelectTip();">
-									<div style="line-height: 25px;">请用鼠标在地图上选择目标位置</div>
-									<div style="line-height: 25px; font-size: 12px; color: #666666;"><input id="pointSelectTipCheck" dojoType="dijit.form.CheckBox" value="on" type="checkbox" /><label>下次不再提示</label></div>
-									<div style="line-height: 25px;"><button dojoType="dijit.form.Button" type="submit">确定</button></div>
-								</div>
-							</div>
-						</div>
-						<div id="precipitationModel" dojoType="dijit.layout.ContentPane" title="降水">
-							Once upon a time there was a dear little girl who was loved by
-							every one who looked at her, but most of all by her grandmother,
-							and there was nothing that she would not have given to the child.
-						</div>
-					</div>
- -->
 				</td>
 			</tr>
 			</table>
+			<div id="resultPanel">
+			</div>
 		</div>
 		<jsp:include page="inc/tail.jsp"></jsp:include>
 	</div>
@@ -112,11 +96,11 @@
 		<div style="line-height: 25px;"><button dojoType="dijit.form.Button" type="submit">确定</button></div>
 	</div>
 	<div id="dlgLoadWpsModel" dojoType="dijit.Dialog" title="加载模型服务" execute="glacier.loadWpsModel();">
-		<div class="viewItem"><div class="viewTitle">模型服务:</div><div id="txtWpsService" dojoType="dijit.form.TextBox" style="width: 500px;" value="http://127.0.0.1:59080/web/wps"></div></div>
+		<div class="viewItem"><div class="viewTitle">模型服务:</div><div id="txtWpsService" dojoType="dijit.form.TextBox" style="width: 300px;" value="http://127.0.0.1:59080/web/wps"></div></div>
 		<div style="line-height: 25px;"><button dojoType="dijit.form.Button" type="submit">确定</button></div>
 	</div>
 	
-	<div id="Setting.Glacier.TemperatureIdw" dojoType="dijit.Dialog" title="气温反距离插值参数" execute="glacier.models['Glacier.TemperatureIdw'].saveSetting();">
+	<div id="Setting.Glacier.TemperatureIdw" dojoType="dijit.Dialog" title="气温反距离插值参数" execute="glacier.saveSetting('Glacier.TemperatureIdw');">
 		<div class="blockBody">
 			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.TemperatureIdw.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
 			<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="Glacier.TemperatureIdw.MaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>
@@ -124,7 +108,7 @@
 			<div class="viewItem"><button dojoType="dijit.form.Button" type="submit">保存</button></div>
 		</div>
 	</div>
-	<div id="Setting.Glacier.PrecipitationIdw" dojoType="dijit.Dialog" title="降水反距离插值参数" execute="glacier.models['Glacier.PrecipitationIdw'].saveSetting();">
+	<div id="Setting.Glacier.PrecipitationIdw" dojoType="dijit.Dialog" title="降水反距离插值参数" execute="glacier.saveSetting('Glacier.PrecipitationIdw');">
 		<div class="blockBody">
 			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.PrecipitationIdw.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
 			<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="Glacier.PrecipitationIdw.MaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>
@@ -132,23 +116,23 @@
 			<div class="viewItem"><button dojoType="dijit.form.Button" type="submit">保存</button></div>
 		</div>
 	</div>
-	<div id="Setting.Glacier.SnowDdf" dojoType="dijit.Dialog" title="雪度日因子反距离插值参数" execute="glacier.models['Glacier.SnowDdf'].saveSetting();">
+	<div id="Setting.Glacier.SnowDdfIdw" dojoType="dijit.Dialog" title="雪度日因子反距离插值参数" execute="glacier.saveSetting('Glacier.SnowDdfIdw');">
 		<div class="blockBody">
-			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.SnowDdf.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
-			<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="Glacier.SnowDdf.MaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>
-			<div class="viewItem"><div class="viewTitle">搜索半径:</div><div id="Glacier.SnowDdf.MaxDistance" dojoType="dijit.form.NumberTextBox" style="width: 90px;"></div> (置空忽略该参数)</div>
+			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.SnowDdfIdw.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
+			<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="Glacier.SnowDdfIdw.MaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>
+			<div class="viewItem"><div class="viewTitle">搜索半径:</div><div id="Glacier.SnowDdfIdw.MaxDistance" dojoType="dijit.form.NumberTextBox" style="width: 90px;"></div> (置空忽略该参数)</div>
 			<div class="viewItem"><button dojoType="dijit.form.Button" type="submit">保存</button></div>
 		</div>
 	</div>
-	<div id="Setting.Glacier.IceDdf" dojoType="dijit.Dialog" title="冰度日因子反距离插值参数" execute="glacier.models['Glacier.IceDdf'].saveSetting();">
+	<div id="Setting.Glacier.IceDdfIdw" dojoType="dijit.Dialog" title="冰度日因子反距离插值参数" execute="glacier.saveSetting('Glacier.IceDdfIdw');">
 		<div class="blockBody">
-			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.IceDdf.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
-			<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="Glacier.IceDdf.MaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>
-			<div class="viewItem"><div class="viewTitle">搜索半径:</div><div id="Glacier.IceDdf.MaxDistance" dojoType="dijit.form.NumberTextBox" style="width: 90px;"></div> (置空忽略该参数)</div>
+			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.IceDdfIdw.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
+			<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="Glacier.IceDdfIdw.MaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>
+			<div class="viewItem"><div class="viewTitle">搜索半径:</div><div id="Glacier.IceDdfIdw.MaxDistance" dojoType="dijit.form.NumberTextBox" style="width: 90px;"></div> (置空忽略该参数)</div>
 			<div class="viewItem"><button dojoType="dijit.form.Button" type="submit">保存</button></div>
 		</div>
 	</div>
-	<div id="Setting.Glacier.Runoff" dojoType="dijit.Dialog" title="冰川径流模型参数" execute="glacier.models['Glacier.Runoff'].saveSetting();">
+	<div id="Setting.Glacier.Runoff" dojoType="dijit.Dialog" title="冰川径流模型参数" execute="glacier.saveSetting('Glacier.Runoff');">
 		<div class="blockBody">
 			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.Runoff.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
 			<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="Glacier.Runoff.MaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>

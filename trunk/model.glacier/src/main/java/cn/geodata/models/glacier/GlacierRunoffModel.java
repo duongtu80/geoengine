@@ -11,11 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.geotools.coverage.Category;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.wms.v1_1_1.bindings._LegendURLBinding;
 
+import cn.geodata.models.category.data.DataCategories;
+import cn.geodata.models.category.data.DataCategory;
 import cn.geodata.models.tools.Utilities;
 import cn.geodata.models.tools.raster.RasterManager;
+import cn.geodata.models.wps.client.WpsProcess;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
@@ -24,11 +28,17 @@ public class GlacierRunoffModel {
 	private Logger log = Logger.getLogger(GlacierRunoffModel.class.getName());
 
 	private RasterManager demModel;
-	private TemperatureModel temperatureModel;
-	private PrecipitationModel precipitationModel;
-	private SnowDDFModel snowDDFModel;
-	private IceDDFModel iceDDFModel;
-	private CatchmentModel catchmentModel;
+	
+//	private TemperatureModel temperatureModel;
+//	private PrecipitationModel precipitationModel;
+//	private SnowDDFModel snowDDFModel;
+//	private IceDDFModel iceDDFModel;
+
+	private WpsProcess temperatureModel;
+	private WpsProcess precipitationModel;
+	private WpsProcess snowDdfModel;
+	private WpsProcess iceDdfModel;
+	
 	private GlacierPrepareModel prepareModel;
 	private ProjectTransformModel projectModel;
 	
@@ -41,10 +51,7 @@ public class GlacierRunoffModel {
 	private double temperatureGrad;
 	private double precipitationGrad;
 	
-	public List<ObjectMonth> calculate(Date startDate, Date endDate, String catchmentId) throws Exception {
-		if(catchmentId == null || catchmentId.length() == 0){
-			throw new NullPointerException("No valid catchment id");
-		}
+	public List<ObjectMonth> calculate(Date startDate, Date endDate, MultiPolygon catchment) throws Exception {
 		if(levels == null || levels.length == 0){
 			throw new NullPointerException("No valid levels");
 		}
@@ -52,16 +59,14 @@ public class GlacierRunoffModel {
 			throw new IOException("No valid cellsize");
 		}
 		
-		MultiPolygon _catchment = this.catchmentModel.getCatchmentPolygon(catchmentId);
-		
-		Point _sitePoint = _catchment.getCentroid();
+		Point _sitePoint = catchment.getCentroid();
 		log.info("Centeroid point:" + _sitePoint.toText());
 		
 		double _siteDem = demModel.getLocationValue(_sitePoint.getX(), _sitePoint.getY());
 		
 		//Calculate ddfs
-		double _snowDDF = this.snowDDFModel.calculate(_sitePoint);
-		double _iceDDF = this.iceDDFModel.calculate(_sitePoint);
+		double _snowDDF = (Double)this.snowDdfModel.execute(new Object[]{0, 0, 2, _sitePoint}, new DataCategory[]{DataCategories.getInstance().findCategory("double")}).get(0);
+		double _iceDDF = (Double)this.iceDdfModel.execute(new Object[]{0, 0, 2, _sitePoint}, new DataCategory[]{DataCategories.getInstance().findCategory("double")}).get(0);
 		
 		log.info("Snow DDF:" + _snowDDF);
 		log.info("Ice DDF:" + _iceDDF);
@@ -71,7 +76,7 @@ public class GlacierRunoffModel {
 		Calendar _calendar = Calendar.getInstance();
 		_calendar.setTime(startDate);
 		
-		Map<Integer, Integer> _areas = this.prepareModel.calculate(_catchment, cellSize, null); 
+		Map<Integer, Integer> _areas = this.prepareModel.calculate(catchment, cellSize, null); 
 		List<BandInfo> _pixels = new ArrayList<BandInfo>();
 		for(int i=0;i<levels.length;i++){
 			BandInfo _band = new BandInfo();
@@ -98,10 +103,12 @@ public class GlacierRunoffModel {
 			log.info("Date:" + _format.format(_calendar.getTime()));
 			
 			//Calculate precipitation temperature values
-			double _prec = this.precipitationModel.calculate(_calendar.getTime(), _sitePoint);
+			
+			
+			double _prec = (Double)this.precipitationModel.execute(new Object[]{_calendar.getTime().getTime(), 0, 0, 2, _sitePoint}, new DataCategory[]{DataCategories.getInstance().findCategory("double")}).get(0);
 			log.info("Precipitation:" + _prec);
 			
-			double _temp = this.temperatureModel.calculate(_calendar.getTime(), _sitePoint);
+			double _temp = (Double)this.temperatureModel.execute(new Object[]{_calendar.getTime().getTime(), 0, 0, 2, _sitePoint}, new DataCategory[]{DataCategories.getInstance().findCategory("double")}).get(0);
 			log.info("Temperature:" + _temp);
 			
 //			double _accuml = 0;
@@ -218,46 +225,6 @@ public class GlacierRunoffModel {
 		this.demModel = demModel;
 	}
 
-	public TemperatureModel getTemperatureModel() {
-		return temperatureModel;
-	}
-
-	public void setTemperatureModel(TemperatureModel temperatureModel) {
-		this.temperatureModel = temperatureModel;
-	}
-
-	public PrecipitationModel getPrecipitationModel() {
-		return precipitationModel;
-	}
-
-	public void setPrecipitationModel(PrecipitationModel precipitationModel) {
-		this.precipitationModel = precipitationModel;
-	}
-
-	public SnowDDFModel getSnowDDFModel() {
-		return snowDDFModel;
-	}
-
-	public void setSnowDDFModel(SnowDDFModel snowDDFModel) {
-		this.snowDDFModel = snowDDFModel;
-	}
-
-	public IceDDFModel getIceDDFModel() {
-		return iceDDFModel;
-	}
-
-	public void setIceDDFModel(IceDDFModel iceDDFModel) {
-		this.iceDDFModel = iceDDFModel;
-	}
-
-	public CatchmentModel getCatchmentModel() {
-		return catchmentModel;
-	}
-
-	public void setCatchmentModel(CatchmentModel catchmentModel) {
-		this.catchmentModel = catchmentModel;
-	}
-
 	public GlacierPrepareModel getPrepareModel() {
 		return prepareModel;
 	}
@@ -304,5 +271,53 @@ public class GlacierRunoffModel {
 
 	public void setCellSize(double cellSize) {
 		this.cellSize = cellSize;
+	}
+
+	public void setTemperatureModel(WpsProcess temperatureModel) {
+		this.temperatureModel = temperatureModel;
+	}
+
+	public void setPrecipitationModel(WpsProcess precipitationModel) {
+		this.precipitationModel = precipitationModel;
+	}
+
+	public void setSnowDdfModel(WpsProcess snowDdfModel) {
+		this.snowDdfModel = snowDdfModel;
+	}
+
+	public void setIceDdfModel(WpsProcess iceDdfModel) {
+		this.iceDdfModel = iceDdfModel;
+	}
+
+	public void setTemperatureGrad(double temperatureGrad) {
+		this.temperatureGrad = temperatureGrad;
+	}
+
+	public void setPrecipitationGrad(double precipitationGrad) {
+		this.precipitationGrad = precipitationGrad;
+	}
+
+	public WpsProcess getTemperatureModel() {
+		return temperatureModel;
+	}
+
+	public WpsProcess getPrecipitationModel() {
+		return precipitationModel;
+	}
+
+	public WpsProcess getSnowDdfModel() {
+		return snowDdfModel;
+	}
+
+	public WpsProcess getIceDdfModel() {
+		return iceDdfModel;
+	}
+
+	public double getTemperatureGrad() {
+		return temperatureGrad;
+	}
+
+	public double getPrecipitationGrad() {
+		return precipitationGrad;
 	}
 }

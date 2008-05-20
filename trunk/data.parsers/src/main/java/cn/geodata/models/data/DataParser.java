@@ -152,13 +152,15 @@ public class DataParser {
 			}
 		}
 
-		MimeType _mime;
+		MimeType _mime = null;
 		try {
-			//Find the default output MIME type
-			_mime = _categories.getDefaultMime(_category);
-
-			if(request != null && request.getFormat() != null && request.getFormat().length() > 0){
-				_mime = new MimeType(request.getFormat());
+			if(_category.getLiteral() == false){
+				//Find the default output MIME type
+				_mime = _categories.getDefaultMime(_category);
+	
+				if(request != null && request.getFormat() != null && request.getFormat().length() > 0){
+					_mime = new MimeType(request.getFormat());
+				}
 			}
 
 			IOValueType _value = this.createOutputParameterNode(type);

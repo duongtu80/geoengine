@@ -44,15 +44,15 @@ import com.vividsolutions.jts.geom.Polygon;
 public class GlacierPrepareModel {
 	private static Logger log = Logger.getLogger(GlacierPrepareModel.class.getName());
 	private RasterManager rasterManager;
-	private WfsFeatureSource glacierFeatureSource;
+	private FeatureCollection glaciers;
 	
 	/**
 	 * @param rasterManager DEM raster manager
 	 * @param glacierPath	Glacier shapefile path
 	 */
-	public GlacierPrepareModel(RasterManager rasterManager, WfsFeatureSource glacierFeatureSource){
+	public GlacierPrepareModel(RasterManager rasterManager, FeatureCollection glaciers){
 		this.rasterManager = rasterManager;
-		this.glacierFeatureSource = glacierFeatureSource;
+		this.glaciers = glaciers;
 	}
 	
 	public RasterManager getRasterManager() {
@@ -84,17 +84,16 @@ public class GlacierPrepareModel {
 			SampleModel _sampleModel = new BandedSampleModel(DataBuffer.TYPE_SHORT, (int)_rect.getWidth(), (int)_rect.getHeight(), 1);
 			_raster = Raster.createWritableRaster(_sampleModel, null); //(_sampleModel, null);
 		}
-		FeatureSource _fs = this.glacierFeatureSource.getFeatureSource();
 
 		Map<Integer, Integer> _areas = new HashMap<Integer, Integer>();
-		this.calculate(_exte, _rect, _raster, _fs , catchment, _areas);
+		this.calculate(_exte, _rect, _raster, this.glaciers , catchment, _areas);
 		if(_raster != null)
 			Utilities.saveRaster(rasterFile, _raster, _exte);
 		
 		return _areas;
 	}
 	
-	public void calculate(Envelope2D extent, Rectangle rect, WritableRaster raster, FeatureSource fs, MultiPolygon catchment, Map<Integer, Integer> areas) throws Exception {
+	public void calculate(Envelope2D extent, Rectangle rect, WritableRaster raster, FeatureCollection fs, MultiPolygon catchment, Map<Integer, Integer> areas) throws Exception {
 		FilterFactory2 _factory = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
 
 		Stack<Param> _stack = new Stack<Param>();
@@ -102,7 +101,7 @@ public class GlacierPrepareModel {
 		
 		_param.setExtent(extent);
 		_param.setRect(rect);
-		_param.setFs(fs.getFeatures());
+		_param.setFs(glaciers);
 		
 		_stack.push(_param);
 		

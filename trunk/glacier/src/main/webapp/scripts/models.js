@@ -5,7 +5,7 @@ function GlacierModel (map){
 					function() {
 						
 					}, 
-					function(params) {
+					function(context, params) {
 						if(!isNaN(dijit.byId('Glacier.TemperatureIdw.Pow').getValue())){
 							params['pow'] = dijit.byId('Glacier.TemperatureIdw.Pow').getValue();
 						}
@@ -18,26 +18,110 @@ function GlacierModel (map){
 							params['maxDistance'] = dijit.byId('Glacier.TemperatureIdw.MaxDistance').getValue();
 						}
 						
+						glacier.progressBar.pushProgress('模型计算');
 						dojo.xhrGet({ //
 					        url: "model/temperatureIdw.do", 
 					        handleAs: "json",
 					        content: params,
 					        timeout: 60000,
 					        load: function(response, ioArgs) {
-					        	alert(response);
-					        },
+					        	(new ModelResult()).addResultChartPanel(context, params, response);
+					   			glacier.progressBar.popProgress();
+					        }
 						});
 					}
 				),
 			'Glacier.PrecipitationIdw': new WpsModel ('Glacier.PrecipitationIdw', dijit.byId('Setting.Glacier.PrecipitationIdw'),
 					function() {
-						alert('valid ' + this.id);
+						
 					}, 
-					function() {
-						alert('execute ' + this.id);
+					function(context, params) {
+						if(!isNaN(dijit.byId('Glacier.PrecipitationIdw.Pow').getValue())){
+							params['pow'] = dijit.byId('Glacier.PrecipitationIdw.Pow').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.PrecipitationIdw.MaxCount').getValue())){
+							params['maxCount'] = dijit.byId('Glacier.PrecipitationIdw.MaxCount').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.PrecipitationIdw.MaxDistance').getValue())){
+							params['maxDistance'] = dijit.byId('Glacier.PrecipitationIdw.MaxDistance').getValue();
+						}
+						
+						glacier.progressBar.pushProgress('模型计算');
+						dojo.xhrGet({ //
+					        url: "model/precipitationIdw.do", 
+					        handleAs: "json",
+					        content: params,
+					        timeout: 60000,
+					        load: function(response, ioArgs) {
+					        	(new ModelResult()).addResultChartPanel(context, params, response);
+					   			glacier.progressBar.popProgress();
+					        }
+						});
 					}
 				),
-		};
+			'Glacier.SnowDdfIdw': new WpsModel ('Glacier.SnowDdfIdw', dijit.byId('Setting.Glacier.SnowDdfIdw'),
+					function() {
+						
+					}, 
+					function(context, params) {
+						if(!isNaN(dijit.byId('Glacier.SnowDdfIdw.Pow').getValue())){
+							params['pow'] = dijit.byId('Glacier.SnowDdfIdw.Pow').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.SnowDdfIdw.MaxCount').getValue())){
+							params['maxCount'] = dijit.byId('Glacier.SnowDdfIdw.MaxCount').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.SnowDdfIdw.MaxDistance').getValue())){
+							params['maxDistance'] = dijit.byId('Glacier.SnowDdfIdw.MaxDistance').getValue();
+						}
+						
+						glacier.progressBar.pushProgress('模型计算');
+						dojo.xhrGet({ //
+					        url: "model/snowDdfIdw.do", 
+					        handleAs: "json",
+					        content: params,
+					        timeout: 60000,
+					        load: function(response, ioArgs) {
+					        	(new ModelResult()).addResultTextPanel(context, params, response);
+					   			glacier.progressBar.popProgress();
+					        }
+						});
+					}
+				),
+			'Glacier.IceDdfIdw': new WpsModel ('Glacier.IceDdfIdw', dijit.byId('Setting.Glacier.IceDdfIdw'),
+					function() {
+						
+					}, 
+					function(context, params) {
+						if(!isNaN(dijit.byId('Glacier.IceDdfIdw.Pow').getValue())){
+							params['pow'] = dijit.byId('Glacier.IceDdfIdw.Pow').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.IceDdfIdw.MaxCount').getValue())){
+							params['maxCount'] = dijit.byId('Glacier.IceDdfIdw.MaxCount').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.IceDdfIdw.MaxDistance').getValue())){
+							params['maxDistance'] = dijit.byId('Glacier.IceDdfIdw.MaxDistance').getValue();
+						}
+						
+						glacier.progressBar.pushProgress('模型计算');
+						dojo.xhrGet({ //
+					        url: "model/iceDdfIdw.do", 
+					        handleAs: "json",
+					        content: params,
+					        timeout: 60000,
+					        load: function(response, ioArgs) {
+					        	(new ModelResult()).addResultTextPanel(context, params, response);
+					   			glacier.progressBar.popProgress();
+					        }
+						});
+					}
+				)
+			};
 
 
 	this.map = map;
@@ -141,18 +225,28 @@ function GlacierModel (map){
 	this.changeModel = function (modelId) {
 //		alert(dijit.byId(modelId).getValue());
 	}
+	
+	this.getItemFromCombox = function (com) {
+		if(com.getValue() == null){
+			return null;
+		}
+		
+		if(com.item != null){
+			return com.item;
+		}
+		
+		return com.store._getItemByIdentity(com.getValue());
+	}
 
-	this.modelSetting = function (modelId) {
-		this.models[dijit.byId(modelId).item.id].dialog.show();
-//		dijit.byId('Setting.' + dijit.byId(modelId).item.id).show();
-//		alert(dijit.byId(modelId).item.id);
+	this.modelSetting = function (modelVal) {
+		this.models[this.getItemFromCombox(dijit.byId(modelVal)).id].dialog.show();
 	}
 	
 	this.saveSetting = function (modelId) {
-		this.models[dijit.byId(modelId).item.id].dialog.show();
+		this.models[modelId].saveSetting()
 	}
 	
-	this.modelExecute = function (modelId) {
+	this.modelExecute = function (modelVal) {
 		var _startYear = dijit.byId('startYear').getValue();
 		var _endYear = dijit.byId('endYear').getValue();
 		var _basin = dijit.byId('listCatchment').getValue();
@@ -173,18 +267,21 @@ function GlacierModel (map){
 			alert('没有选择目标流域');
 			return;
 		}
+		
+		var _item = this.getItemFromCombox(dijit.byId(modelVal));
 		var _centerPt = this.basinLayer.selectedFeatures[0].geometry.getBounds().getCenterLonLat();
-		var _model = this.models[dijit.byId(modelId).item.id];
+		var _model = this.models[_item.id];
 		var _params = {
 				'startYear': _startYear,
 				'endYear': _endYear,
 				'x': _centerPt.lon,
 				'y': _centerPt.lat,
-				'modelUrl': dijit.byId(modelId).item.url,
+				'basin': _basin,
+				'modelUrl': _item.url,
 				'modelId': _model.id
 			};
 		
-		_model.execute(_params);
+		_model.execute(_item, _params);
 	}
 	
 	this.loadWpsModel = function (){
@@ -196,14 +293,22 @@ function GlacierModel (map){
 	        	},
 	        timeout: 60000,
 	        load: function(response, ioArgs) {
-	        	glacier.initModelList(response, 'temperature', 'modelTemperature');
-	        	glacier.initModelList(response, 'precipitation', 'modelPrecipitation');
-	        	glacier.initModelList(response, 'snow', 'modelSnowDdf');
-	        	glacier.initModelList(response, 'ice', 'modelIceDdf');
-	        	glacier.initModelList(response, 'runoff', 'modelRunoff');
+	        	try{
+	        		glacier.progressBar.pushProgress('加载模型列表');
+	        		
+		        	glacier.initModelList(response, 'temperature', 'modelTemperature');
+		        	glacier.initModelList(response, 'precipitation', 'modelPrecipitation');
+		        	glacier.initModelList(response, 'snow', 'modelSnowDdf');
+		        	glacier.initModelList(response, 'ice', 'modelIceDdf');
+		        	glacier.initModelList(response, 'runoff', 'modelRunoff');
+		        }
+		        finally{
+		        	glacier.progressBar.popProgress();
+		        }
 	        },
-//	        error: function(response, ioArgs) { //
-//			}
+	        error: function(response, ioArgs) { //
+	        	alert('模型加载失败');
+			}
 		});
 	}
 	
@@ -216,7 +321,7 @@ function GlacierModel (map){
 			}
 		}
 		
-		var _store = new dojo.data.ItemFileReadStore({data: {items: _items}});
+		var _store = new dojo.data.ItemFileReadStore({data: {'items': _items, 'identifier': 'name'}});
 		dijit.byId(id).store = _store;
 		
 		if(_items.length > 0){
@@ -290,4 +395,58 @@ function WpsModel (id, dialog, saveSetting , execute) {
 	this.execute = execute;
 }
 
+function ModelResult() {
+   	this.panelDiv = document.createElement('div');
+
+	this.closeResult = function() {
+		if(confirm('确定关闭该结果吗?') == true){
+			dojo.byId('resultPanel').removeChild(this.parentNode.parentNode.parentNode);
+		}
+	}
+	
+	this.createTitlePanel = function(context, params){
+     	var _closeImg = document.createElement('img');
+     	_closeImg.src = 'images/close.png';
+     	_closeImg.onclick = this.closeResult;
+     	_closeImg.className = 'closeImg';
+     	
+       	var _closeDiv = document.createElement("div");
+       	_closeDiv.appendChild(_closeImg);
+       	_closeDiv.style["textAlign"] = 'right';
+       	
+       	var _titleDiv = document.createElement('div');
+       	_titleDiv.className = 'titleText';
+       	_titleDiv.innerHTML = context['name'] + ":" + params['basin'];
+       	
+       	var _titlePanel = document.createElement('div');
+       	_titlePanel.appendChild(_titleDiv);
+       	_titlePanel.appendChild(_closeDiv);
+       	_titlePanel.className = 'titlePanel';
+       	
+       	return _titlePanel;
+	}
+	
+	this.addResultChartPanel = function(context, params, r){
+     	var _newImg = document.createElement("img");
+     	_newImg.src = "model/chartStream.do?code=" + r.code;
+     	
+     	this.panelDiv.appendChild(this.createTitlePanel(context, params));
+     	this.panelDiv.appendChild(_newImg);
+     	this.panelDiv.className = 'resultPanel';
+     	
+     	dojo.byId('resultPanel').appendChild(this.panelDiv);
+	};
+
+	this.addResultTextPanel = function(context, params, r){
+     	var _txtDiv = document.createElement("div");
+     	_txtDiv.className = 'textPanel';
+     	_txtDiv.innerHTML = params['basin'] + ':' + r['val'];
+     	
+     	this.panelDiv.appendChild(this.createTitlePanel(context, params));
+     	this.panelDiv.appendChild(_txtDiv);
+     	this.panelDiv.className = 'resultPanel';
+     	
+     	dojo.byId('resultPanel').appendChild(this.panelDiv);
+	};
+}
 

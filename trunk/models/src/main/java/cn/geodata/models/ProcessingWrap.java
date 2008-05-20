@@ -196,6 +196,10 @@ public class ProcessingWrap implements Runnable {
 			
 			DataParser _dataParser = DataParser.getInstance();
 			for(String _key : _outputs.keySet()){
+				if(this.outputDefinitions.get(_key) == null){
+					throw new NullPointerException("Failed to find definition for parameter " + _key);
+				}
+				
 				_outputParams.add(_dataParser.encode(this.outputDefinitions.get(_key), findOutputRequest(_key), _outputs.get(_key), this.store));
 			}
 		}

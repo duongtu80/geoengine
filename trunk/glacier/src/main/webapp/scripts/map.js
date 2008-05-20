@@ -34,11 +34,13 @@ function initMap() {
                 controls: [new OpenLayers.Control.MouseDefaults(), new OpenLayers.Control.PanZoomBar()]
 	          };
 
+	var _progressBar = new ProgressBar(); 
+	
 	OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
 	OpenLayers.Util.onImageLoadErrorColor = "transparent";
 
 	map = new OpenLayers.Map('map', options);
-	layer = new OpenLayers.Layer.WMS("Country", "http://127.0.0.1/tilecache/tilecache.py", {layers: "glacier.background", transparent: false}, {isBaseLayer: true});
+	layer = new OpenLayers.Layer.WMS("Country", wmsMapUrl, {layers: wmsLayerName, transparent: false}, {isBaseLayer: true});
 
 	var siteLayer = new OpenLayers.Layer.Vector("Site");
 
@@ -76,7 +78,16 @@ function initMap() {
 			}
 			
 			var _store = new dojo.data.ItemFileReadStore({data: {items: _items}});
-			dijit.byId('listCatchment').store = _store;
+			
+			listCatchment.store = _store;
+//			alert(listCatchment);
+//			dijit.byId('listCatchment').store = _store;
+
+			_progressBar.popProgress();
+		});
+	
+	basinLayer.events.register('loadstart', basinLayer, function(fs){
+			_progressBar.pushProgress('加载流域数据图层');
 		});
 
 	map.addLayer(layer);
@@ -89,4 +100,30 @@ function initMap() {
 	glacier = new GlacierModel(map);
 	glacier.siteLayer = siteLayer;
 	glacier.basinLayer = basinLayer;
+	glacier.progressBar = _progressBar;
+}
+
+function ProgressBar() {
+	this.queue = [];
+	this.messagePanel = dojo.byId('progressPanel');
+	this.messageDiv = dojo.byId('progressText');
+	
+	this.pushProgress = function(p){
+		if(this.queue.length > 0){
+			alert('上次任务还在执行中');
+			return;
+		}
+		
+		this.queue.push(p);
+		this.messageDiv.innerHTML = p + ' ...';
+		this.messagePanel.className = 'progressRunning';
+	};
+	
+	this.popProgress = function(){
+		if(this.queue.length > 0){
+			this.queue.pop();
+			this.messagePanel.className = 'progressReady';
+			this.messageDiv.innerHTML = 'Ready';
+		}
+	};
 }

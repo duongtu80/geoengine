@@ -73,8 +73,8 @@ public class DataCategories {
 		if (instance == null) {
 			instance = new DataCategories();
 
-			instance.addCategory(new DataCategory("feature", "Feature",
-					"Feature", Feature.class, false, null));
+//			instance.addCategory(new DataCategory("feature", "Feature",
+//					"Feature", Feature.class, false, null));
 			instance.addCategory(new DataCategory("featureCollection",
 					"Feature Collection", "Feature Collection",
 					FeatureCollection.class, false, null));

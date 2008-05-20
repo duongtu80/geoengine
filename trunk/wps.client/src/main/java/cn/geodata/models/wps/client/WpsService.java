@@ -154,7 +154,7 @@ public class WpsService extends WpsObject {
 	 */
 	public WpsProcess getWpsProcess(String key) throws IOException{
 		for(ProcessBriefType _proc : this.metadata.getCapabilities().getProcessOfferings().getProcessArray()){
-			if(_proc.getIdentifier().getStringValue().equals(key)){
+			if(_proc.getIdentifier().getStringValue().equalsIgnoreCase(key)){
 				WpsProcess _process = new WpsProcess();
 				
 				try {

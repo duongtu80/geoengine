@@ -13,6 +13,7 @@ public class SnowDDFModel {
 	private Logger log = Logger.getLogger(SnowDDFModel.class.getName());
 
 	private InterpolateModel model;
+	
 	private String filePath;
 	
 	public SnowDDFModel(){

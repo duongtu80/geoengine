@@ -65,7 +65,7 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 		Namespace _namespace = Namespace.getNamespace(_featureType.getNamespace().toString());
 //		log.info("Feature namespace " + _featureType.getNamespace().toString());
 		
-		Element _ele = new Element(_featureType.getTypeName(), _namespace);
+		Element _ele = new Element(_featureType.getTypeName().replace(":", "_"), _namespace);
 		_ele.setAttribute("id", _feature.getID());
 		
 		for(int i=0;i<_featureType.getAttributeCount();i++){

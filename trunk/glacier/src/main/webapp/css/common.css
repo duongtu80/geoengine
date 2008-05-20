@@ -72,3 +72,30 @@ td.cellBody {
 	border: 1px solid #888888;
 	line-height: 20px;
 }
+
+div.resultPanel {
+	border: 1px solid #AAAAFF;
+	margin: 1px;
+	background-color: #F0F0FF
+}
+
+.closeImg {
+	cursor: pointer;
+}
+
+.titlePanel{
+	background-color: #BBBBCC;
+	padding: 1px;
+}
+
+.titleText{
+	float: left;
+	font-size: 11px;
+	color: #111155;
+}
+
+.textPanel {
+	padding: 5px 2px 2px 2px;
+	font-size: 13px;
+	color: #111111;
+}

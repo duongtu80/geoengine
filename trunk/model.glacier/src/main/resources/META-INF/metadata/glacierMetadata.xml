@@ -134,7 +134,7 @@
 	<geo:process>
 		<geo:id>IceDdfIdw</geo:id>
 		<geo:title>IceDDF IDW</geo:title>
-		<geo:tags>Ice, ddf, idw</geo:tags>
+		<geo:tags>ice, ddf, idw</geo:tags>
 		<geo:inputs>
 			<geo:input>
 				<geo:id>MaxDistance</geo:id>
@@ -167,6 +167,87 @@
 				<geo:title>IceDdf</geo:title>
 				<geo:describe>IceDdf</geo:describe>
 				<geo:category>double</geo:category>
+			</geo:output>
+		</geo:outputs>
+	</geo:process>
+	<geo:process>
+		<geo:id>Runoff</geo:id>
+		<geo:title>Runoff</geo:title>
+		<geo:tags>runoff</geo:tags>
+		<geo:inputs>
+			<geo:input>
+				<geo:id>TemperatureModelUrl</geo:id>
+				<geo:title>TemperatureModelUrl</geo:title>
+				<geo:describe>TemperatureModelUrl</geo:describe>
+				<geo:category>string</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>PrecipitationModelUrl</geo:id>
+				<geo:title>PrecipitationModelUrl</geo:title>
+				<geo:describe>PrecipitationModelUrl</geo:describe>
+				<geo:category>string</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>SnowDdfModelUrl</geo:id>
+				<geo:title>SnowDdfModelUrl</geo:title>
+				<geo:describe>SnowDdfModelUrl</geo:describe>
+				<geo:category>string</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>IceDdfModelUrl</geo:id>
+				<geo:title>IceDdfModelUrl</geo:title>
+				<geo:describe>IceDdfModelUrl</geo:describe>
+				<geo:category>string</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Catchment</geo:id>
+				<geo:title>Catchment</geo:title>
+				<geo:describe>Catchment</geo:describe>
+				<geo:category>multiPolygon</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>Glacier</geo:id>
+				<geo:title>Glacier</geo:title>
+				<geo:describe>Glacier</geo:describe>
+				<geo:category>featureCollection</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>StartDate</geo:id>
+				<geo:title>StartDate</geo:title>
+				<geo:describe>StartDate</geo:describe>
+				<geo:category>long</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>EndDate</geo:id>
+				<geo:title>EndDate</geo:title>
+				<geo:describe>EndDate</geo:describe>
+				<geo:category>long</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>CellSize</geo:id>
+				<geo:title>CellSize</geo:title>
+				<geo:describe>CellSize</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>RainCritical</geo:id>
+				<geo:title>RainCritical</geo:title>
+				<geo:describe>RainCritical</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:input>
+			<geo:input>
+				<geo:id>SnowCritical</geo:id>
+				<geo:title>SnowCritical</geo:title>
+				<geo:describe>SnowCritical</geo:describe>
+				<geo:category>double</geo:category>
+			</geo:input>
+		</geo:inputs>
+		<geo:outputs>
+			<geo:output>
+				<geo:id>Runoff</geo:id>
+				<geo:title>Runoff</geo:title>
+				<geo:describe>Runoff</geo:describe>
+				<geo:category>string</geo:category>
 			</geo:output>
 		</geo:outputs>
 	</geo:process>

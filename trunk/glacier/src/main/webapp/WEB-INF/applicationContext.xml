@@ -2,8 +2,20 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
 	<bean id="mapMap" class="cn.geodata.models.glacier.actions.map.Map">
+		<property name="wmsMapUrl" value="http://127.0.0.1/tilecache/tilecache.py"></property>
+		<property name="wmsLayerName" value="glacier.background"></property>
+	</bean>
+	<bean id="chartOutputter" class="cn.geodata.models.glacier.actions.models.ChartOutputter">
 	</bean>
 	<bean id="temperatureIdw" class="cn.geodata.models.glacier.actions.models.TemperatureIdw">
+		<property name="chart" ref="chartOutputter"></property>
+	</bean>
+	<bean id="precipitationIdw" class="cn.geodata.models.glacier.actions.models.PrecipitationIdw">
+		<property name="chart" ref="chartOutputter"></property>
+	</bean>
+	<bean id="snowDdfIdw" class="cn.geodata.models.glacier.actions.models.SnowDdfIdw">
+	</bean>
+	<bean id="iceDdfIdw" class="cn.geodata.models.glacier.actions.models.IceDdfIdw">
 	</bean>
 	<bean id="loadDataset" class="cn.geodata.models.glacier.actions.map.LoadDataset">
 		<property name="wfsUrl" value="http://127.0.0.1:48080/geoserver/wfs"></property>
