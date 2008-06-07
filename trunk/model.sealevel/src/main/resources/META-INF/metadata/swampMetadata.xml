@@ -3,57 +3,57 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.geodata.cn/models/geoprocessing ../../../../../../geoprocess/src/main/resources/conf/schema/geomodel/processingMeta.xsd ">
 	<geo:id>Swamp</geo:id>
-	<geo:title>Sea Level Rising Model</geo:title>
+	<geo:title>海平面上升模型</geo:title>
 	<geo:process>
 		<geo:id>Cities</geo:id>
-		<geo:title>Swamp cities</geo:title>
-		<geo:tags>swamp</geo:tags>
+		<geo:title>提取受影响城市</geo:title>
+		<geo:tags>swamp, city</geo:tags>
 		<geo:inputs>
 			<geo:input>
 				<geo:id>Rise</geo:id>
-				<geo:title>Sea level rise</geo:title>
-				<geo:describe>Sea level rise</geo:describe>
+				<geo:title>海平面上升高度</geo:title>
+				<geo:describe>与2000年全球海平面高度相比较的海平面相对上升高度</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Cities</geo:id>
-				<geo:title>Cities</geo:title>
-				<geo:describe>Cities</geo:describe>
+				<geo:title>主要城市</geo:title>
+				<geo:describe>全球主要城市分布数据集</geo:describe>
 				<geo:category>featureCollection</geo:category>
 			</geo:input>
 		</geo:inputs>
 		<geo:outputs>
 			<geo:output>
 				<geo:id>Swamp</geo:id>
-				<geo:title>Swampped cities</geo:title>
-				<geo:describe>Swampped cities</geo:describe>
+				<geo:title>受影响城市</geo:title>
+				<geo:describe>海平面上升后的受影响城市</geo:describe>
 				<geo:category>featureCollection</geo:category>
 			</geo:output>
 		</geo:outputs>
 	</geo:process>
 	<geo:process>
 		<geo:id>Report</geo:id>
-		<geo:title>Swamp report</geo:title>
+		<geo:title>受灾分析</geo:title>
 		<geo:tags>swamp</geo:tags>
 		<geo:inputs>
 			<geo:input>
 				<geo:id>CityId</geo:id>
-				<geo:title>City id</geo:title>
-				<geo:describe>City id</geo:describe>
+				<geo:title>城市</geo:title>
+				<geo:describe>城市的代码</geo:describe>
 				<geo:category>string</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Cities</geo:id>
-				<geo:title>Cities</geo:title>
-				<geo:describe>Cities</geo:describe>
+				<geo:title>主要城市</geo:title>
+				<geo:describe>全球主要城市分布数据集</geo:describe>
 				<geo:category>featureCollection</geo:category>
 			</geo:input>
 		</geo:inputs>
 		<geo:outputs>
 			<geo:output>
 				<geo:id>Report</geo:id>
-				<geo:title>Swamp report</geo:title>
-				<geo:describe>Swamp report</geo:describe>
+				<geo:title>分析结果</geo:title>
+				<geo:describe>海平面上升后对该城市的影响分析结果</geo:describe>
 				<geo:category>featureCollection</geo:category>
 			</geo:output>
 		</geo:outputs>
