@@ -38,7 +38,7 @@ public class ListWpsModel {
 			_list.put(_proc);
 		}
 		
-		this.stream = new ByteArrayInputStream(_list.toString().getBytes());
+		this.stream = new ByteArrayInputStream(_list.toString().getBytes("UTF-8"));
 		
 		return "success";
 	}
