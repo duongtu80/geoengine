@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Date;
 
 import cn.geodata.models.AbstractProcessing;
+import cn.geodata.models.GeoInput;
 import cn.geodata.models.glacier.InvertDistanceWeightModel;
 import cn.geodata.models.glacier.TemperatureModelEx;
 import cn.geodata.models.tools.raster.RasterManager;
@@ -51,7 +52,7 @@ public class TemperatureIdwExAgent extends AbstractProcessing {
 		this.date = date;
 	}
 
-	@GeoProcessing2(id="test", title="eeee", description="eeeerere")
+	@GeoInput(title="MaxDistance")
 	public void setMaxDistance(double maxDistance) {
 		this.maxDistance = maxDistance;
 	}

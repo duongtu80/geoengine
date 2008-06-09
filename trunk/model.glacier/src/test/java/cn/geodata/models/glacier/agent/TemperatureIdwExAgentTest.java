@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.geodata.models.AbstractProcessing;
+import cn.geodata.models.GeoInput;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -60,8 +61,8 @@ public class TemperatureIdwExAgentTest extends TestCase {
 		
 		System.out.println(_m.getAnnotations().length);
 		for(Annotation _a : _m.getAnnotations()){
-			GeoProcessing2 _g = (GeoProcessing2) _a;
-			System.out.println(_g.id() + "," + _g.title());
+			GeoInput _g = (GeoInput) _a;
+			System.out.println(_g.title() + "," + _g.keywords());
 		}
 	}
 }
