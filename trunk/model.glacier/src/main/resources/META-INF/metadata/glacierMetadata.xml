@@ -1,180 +1,181 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <geo:model xmlns:geo="http://www.geodata.cn/models/geoprocessing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<geo:id>Glacier</geo:id>
-	<geo:title>Glacier</geo:title>
+	<geo:title>冰川模型</geo:title>
 	<geo:process>
 		<geo:id>TemperatureIdw</geo:id>
-		<geo:title>Temperature IDW</geo:title>
+		<geo:title>气温反距离加权</geo:title>
 		<geo:tags>temperature, idw</geo:tags>
 		<geo:inputs>
 			<geo:input>
 				<geo:id>Date</geo:id>
-				<geo:title>Date</geo:title>
-				<geo:describe>Date</geo:describe>
+				<geo:title>日期</geo:title>
+				<geo:describe>日期</geo:describe>
 				<geo:category>long</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>MaxDistance</geo:id>
-				<geo:title>MaxDistance</geo:title>
-				<geo:describe>MaxDistance</geo:describe>
+				<geo:title>最大搜索距离</geo:title>
+				<geo:describe>最大搜索距离</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>MaxCount</geo:id>
-				<geo:title>MaxCount</geo:title>
-				<geo:describe>MaxCount</geo:describe>
+				<geo:title>最大个数</geo:title>
+				<geo:describe>最大个数</geo:describe>
 				<geo:category>int</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Pow</geo:id>
-				<geo:title>Pow</geo:title>
-				<geo:describe>Pow</geo:describe>
+				<geo:title>幂值</geo:title>
+				<geo:describe>幂值</geo:describe>
 				<geo:category>int</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Site</geo:id>
-				<geo:title>Site</geo:title>
-				<geo:describe>Site</geo:describe>
+				<geo:title>目标位置</geo:title>
+				<geo:describe>目标位置</geo:describe>
 				<geo:category>point</geo:category>
 			</geo:input>
 		</geo:inputs>
 		<geo:outputs>
 			<geo:output>
 				<geo:id>Temperature</geo:id>
-				<geo:title>Temperature</geo:title>
-				<geo:describe>Temperature</geo:describe>
+				<geo:title>气温</geo:title>
+				<geo:describe>气温</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:output>
 		</geo:outputs>
 	</geo:process>
 	<geo:process>
 		<geo:id>PrecipitationIdw</geo:id>
-		<geo:title>Precipitation IDW</geo:title>
+		<geo:title>降水反距离加权</geo:title>
 		<geo:tags>precipitation, idw</geo:tags>
 		<geo:inputs>
 			<geo:input>
 				<geo:id>Date</geo:id>
-				<geo:title>Date</geo:title>
-				<geo:describe>Date</geo:describe>
+				<geo:title>日期</geo:title>
+				<geo:describe>日期</geo:describe>
 				<geo:category>long</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>MaxDistance</geo:id>
-				<geo:title>MaxDistance</geo:title>
-				<geo:describe>MaxDistance</geo:describe>
+				<geo:title>最大搜索距离</geo:title>
+				<geo:describe>最大搜索距离</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>MaxCount</geo:id>
-				<geo:title>MaxCount</geo:title>
-				<geo:describe>MaxCount</geo:describe>
+				<geo:title>最大个数</geo:title>
+				<geo:describe>最大个数</geo:describe>
 				<geo:category>int</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Pow</geo:id>
-				<geo:title>Pow</geo:title>
-				<geo:describe>Pow</geo:describe>
+				<geo:title>幂值</geo:title>
+				<geo:describe>幂值</geo:describe>
 				<geo:category>int</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Site</geo:id>
-				<geo:title>Site</geo:title>
-				<geo:describe>Site</geo:describe>
+				<geo:title>目标位置</geo:title>
+				<geo:describe>目标位置</geo:describe>
 				<geo:category>point</geo:category>
 			</geo:input>
 		</geo:inputs>
 		<geo:outputs>
 			<geo:output>
 				<geo:id>Precipitation</geo:id>
-				<geo:title>Precipitation</geo:title>
-				<geo:describe>Precipitation</geo:describe>
+				<geo:title>降水</geo:title>
+				<geo:describe>降水</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:output>
 		</geo:outputs>
 	</geo:process>
 	<geo:process>
 		<geo:id>SnowDdfIdw</geo:id>
-		<geo:title>SnowDDF IDW</geo:title>
+		<geo:title>雪度日因子反距离加权</geo:title>
 		<geo:tags>snow, ddf, idw</geo:tags>
 		<geo:inputs>
 			<geo:input>
 				<geo:id>MaxDistance</geo:id>
-				<geo:title>MaxDistance</geo:title>
-				<geo:describe>MaxDistance</geo:describe>
+				<geo:title>最大搜索距离</geo:title>
+				<geo:describe>最大搜索距离</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>MaxCount</geo:id>
-				<geo:title>MaxCount</geo:title>
-				<geo:describe>MaxCount</geo:describe>
+				<geo:title>最大个数</geo:title>
+				<geo:describe>最大个数</geo:describe>
 				<geo:category>int</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Pow</geo:id>
-				<geo:title>Pow</geo:title>
-				<geo:describe>Pow</geo:describe>
+				<geo:title>幂值</geo:title>
+				<geo:describe>幂值</geo:describe>
 				<geo:category>int</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Site</geo:id>
-				<geo:title>Site</geo:title>
-				<geo:describe>Site</geo:describe>
+				<geo:title>目标位置</geo:title>
+				<geo:describe>目标位置</geo:describe>
 				<geo:category>point</geo:category>
 			</geo:input>
 		</geo:inputs>
 		<geo:outputs>
 			<geo:output>
 				<geo:id>SnowDdf</geo:id>
-				<geo:title>SnowDdf</geo:title>
-				<geo:describe>SnowDdf</geo:describe>
+				<geo:title>雪度日因子</geo:title>
+				<geo:describe>雪度日因子</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:output>
 		</geo:outputs>
 	</geo:process>
 	<geo:process>
 		<geo:id>IceDdfIdw</geo:id>
-		<geo:title>IceDDF IDW</geo:title>
+		<geo:title>冰度日因子反距离加权</geo:title>
 		<geo:tags>ice, ddf, idw</geo:tags>
 		<geo:inputs>
 			<geo:input>
 				<geo:id>MaxDistance</geo:id>
-				<geo:title>MaxDistance</geo:title>
-				<geo:describe>MaxDistance</geo:describe>
+				<geo:title>最大搜索距离</geo:title>
+				<geo:describe>最大搜索距离</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>MaxCount</geo:id>
-				<geo:title>MaxCount</geo:title>
-				<geo:describe>MaxCount</geo:describe>
+				<geo:title>最大个数</geo:title>
+				<geo:describe>最大个数</geo:describe>
 				<geo:category>int</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Pow</geo:id>
-				<geo:title>Pow</geo:title>
-				<geo:describe>Pow</geo:describe>
+				<geo:title>幂值</geo:title>
+				<geo:describe>幂值</geo:describe>
 				<geo:category>int</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Site</geo:id>
-				<geo:title>Site</geo:title>
-				<geo:describe>Site</geo:describe>
+				<geo:title>目标位置</geo:title>
+				<geo:describe>目标位置</geo:describe>
 				<geo:category>point</geo:category>
 			</geo:input>
 		</geo:inputs>
 		<geo:outputs>
 			<geo:output>
 				<geo:id>IceDdf</geo:id>
-				<geo:title>IceDdf</geo:title>
-				<geo:describe>IceDdf</geo:describe>
+				<geo:title>冰度日因子</geo:title>
+				<geo:describe>冰度日因子</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:output>
 		</geo:outputs>
 	</geo:process>
 	<geo:process>
 		<geo:id>Runoff</geo:id>
-		<geo:title>Runoff</geo:title>
+		<geo:title>径流模型</geo:title>
 		<geo:tags>runoff</geo:tags>
 		<geo:inputs>
+<!-- 		
 			<geo:input>
 				<geo:id>TemperatureModelUrl</geo:id>
 				<geo:title>TemperatureModelUrl</geo:title>
@@ -199,54 +200,55 @@
 				<geo:describe>IceDdfModelUrl</geo:describe>
 				<geo:category>string</geo:category>
 			</geo:input>
+ -->
 			<geo:input>
 				<geo:id>Catchment</geo:id>
-				<geo:title>Catchment</geo:title>
-				<geo:describe>Catchment</geo:describe>
+				<geo:title>流域</geo:title>
+				<geo:describe>流域</geo:describe>
 				<geo:category>multiPolygon</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>Glacier</geo:id>
-				<geo:title>Glacier</geo:title>
-				<geo:describe>Glacier</geo:describe>
+				<geo:title>冰川</geo:title>
+				<geo:describe>冰川数据</geo:describe>
 				<geo:category>featureCollection</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>StartDate</geo:id>
-				<geo:title>StartDate</geo:title>
-				<geo:describe>StartDate</geo:describe>
+				<geo:title>起始日期</geo:title>
+				<geo:describe>起始日期</geo:describe>
 				<geo:category>long</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>EndDate</geo:id>
-				<geo:title>EndDate</geo:title>
-				<geo:describe>EndDate</geo:describe>
+				<geo:title>结束日期</geo:title>
+				<geo:describe>结束日期</geo:describe>
 				<geo:category>long</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>CellSize</geo:id>
-				<geo:title>CellSize</geo:title>
-				<geo:describe>CellSize</geo:describe>
+				<geo:title>网格大小</geo:title>
+				<geo:describe>网格大小</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>RainCritical</geo:id>
-				<geo:title>RainCritical</geo:title>
-				<geo:describe>RainCritical</geo:describe>
+				<geo:title>降水临界值</geo:title>
+				<geo:describe>降水临界值</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:input>
 			<geo:input>
 				<geo:id>SnowCritical</geo:id>
-				<geo:title>SnowCritical</geo:title>
-				<geo:describe>SnowCritical</geo:describe>
+				<geo:title>融雪临界值</geo:title>
+				<geo:describe>融雪临界值</geo:describe>
 				<geo:category>double</geo:category>
 			</geo:input>
 		</geo:inputs>
 		<geo:outputs>
 			<geo:output>
 				<geo:id>Runoff</geo:id>
-				<geo:title>Runoff</geo:title>
-				<geo:describe>Runoff</geo:describe>
+				<geo:title>径流值</geo:title>
+				<geo:describe>径流值</geo:describe>
 				<geo:category>string</geo:category>
 			</geo:output>
 		</geo:outputs>
