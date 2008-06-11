@@ -5,6 +5,7 @@ import java.util.Date;
 
 import cn.geodata.models.AbstractProcessing;
 import cn.geodata.models.GeoInput;
+import cn.geodata.models.GeoOutput;
 import cn.geodata.models.glacier.InvertDistanceWeightModel;
 import cn.geodata.models.glacier.TemperatureModelEx;
 import cn.geodata.models.tools.raster.RasterManager;
@@ -22,8 +23,6 @@ public class TemperatureIdwExAgent extends AbstractProcessing {
 	private double temperature;
 
 	public void execute() throws Exception {
-		this.initializeInputs();
-		
 		//Initialize idw model 
 		InvertDistanceWeightModel _idwModel = new InvertDistanceWeightModel();
 		if(maxCount > 0)
@@ -42,41 +41,45 @@ public class TemperatureIdwExAgent extends AbstractProcessing {
 		_tempModel.setGrads(this.grads);
 		_tempModel.setStand(this.stand);
 		
-		double _value = _tempModel.calculate(date, site);
-		
-		//Output
-		this.getOutputs().put("Temperature", new Double(_value));
+		this.temperature = _tempModel.calculate(date, site);
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	@GeoInput(title="日期")
+	public void setDate(long date) {
+		this.date = new Date(date);
 	}
 
-	@GeoInput(title="MaxDistance")
+	@GeoInput(title="最大距离")
 	public void setMaxDistance(double maxDistance) {
 		this.maxDistance = maxDistance;
 	}
 
+	@GeoInput(title="最大个数")
 	public void setMaxCount(int maxCount) {
 		this.maxCount = maxCount;
 	}
 
+	@GeoInput(title="目标位置")
 	public void setSite(Point site) {
 		this.site = site;
 	}
 
+	@GeoInput(title="幂值")
 	public void setPow(int pow) {
 		this.pow = pow;
 	}
 
+	@GeoInput(title="标准位置")
 	public void setStand(double stand) {
 		this.stand = stand;
 	}
 
+	@GeoInput(title="气温垂直递减率")
 	public void setGrads(double grads) {
 		this.grads = grads;
 	}
 
+	@GeoOutput(title="气温")
 	public double getTemperature() {
 		return temperature;
 	}

@@ -10,6 +10,8 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.GeoTools;
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 
@@ -65,7 +67,7 @@ public class TemperatureModelEx {
 				throw new IOException("没有找到该日期的站点数据");
 			}
 
-			FeatureCollection _f2 = null;
+			FeatureCollection _fs2 = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
 			for(Feature _f : (Feature[])_fs.toArray(new Feature[0])){
 				Point _pt = (Point) _f.getDefaultGeometry();
 				double _elv = this.demModel.getLocationValue(_pt.getX(), _pt.getY());
@@ -74,11 +76,11 @@ public class TemperatureModelEx {
 					double _val = ((Double)_f.getAttribute("val"));
 					_f.setAttribute("val", _val + (_elv - this.stand) * this.grads);
 					
-					_f2.add(_f);
+					_fs2.add(_f);
 				}
 			}
 
-			return this.idwModel.calculate(_fs, "val", point) - (_elevation - this.stand) * this.grads;
+			return this.idwModel.calculate(_fs2, "val", point) - (_elevation - this.stand) * this.grads;
 		}
 		finally{
 			if(_zip != null){

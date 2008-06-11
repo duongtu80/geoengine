@@ -3,12 +3,14 @@ package cn.geodata.models.glacier.agent;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.geodata.models.AbstractProcessing;
 import cn.geodata.models.GeoInput;
+import cn.geodata.models.ProcessingWrap;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -23,22 +25,27 @@ public class TemperatureIdwExAgentTest extends TestCase {
 		this.model = new TemperatureIdwExAgent();
 	}
 
-	public void atestExecute() throws Exception {
+	public void testExecute() throws Exception {
 		Map<String, Object> _inputs = new HashMap<String, Object>();
 
 		GeometryFactory _factory = new GeometryFactory();
 		_inputs.put("Date", new Date(80, 0, 1));
 		_inputs.put("Pow", new Integer(2));
-		_inputs.put("Site", _factory.createPoint(new Coordinate(110.2, 33.3)));
+		_inputs.put("Site", _factory.createPoint(new Coordinate(80.39, 41.85)));
 		_inputs.put("Stand", 3000.0);
-		_inputs.put("Grads", 0.78);
+		_inputs.put("Grads", 0.006);
 		
 		Map<String, Object> _outputs = new HashMap<String, Object>();
 		
 		model.setInputs(_inputs);
 		model.setOutputs(_outputs);
 		
+		ProcessingWrap.initializeInputs(this.model);
 		model.execute();
+		ProcessingWrap.initializeOutputs(this.model);
+		
+		System.out.println(model.getTemperature());
+		System.out.println(model.getOutputs().get("Temperature"));
 	}
 
 	public void atestTest1() throws Exception {
@@ -52,7 +59,7 @@ public class TemperatureIdwExAgentTest extends TestCase {
 		}
 	}
 	
-	public void testTest2() throws Exception {
+	public void atestTest2() throws Exception {
 		Method _m = TemperatureIdwExAgent.class.getMethod("setMaxDistance", double.class);
 		System.out.println(_m.getName());
 		
@@ -62,7 +69,7 @@ public class TemperatureIdwExAgentTest extends TestCase {
 		System.out.println(_m.getAnnotations().length);
 		for(Annotation _a : _m.getAnnotations()){
 			GeoInput _g = (GeoInput) _a;
-			System.out.println(_g.title() + "," + _g.keywords());
+			System.out.println(_g.title() + "," + Arrays.toString(_g.keywords()));
 		}
 	}
 }

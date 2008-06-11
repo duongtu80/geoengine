@@ -44,6 +44,9 @@ public class GlacierModelFactory extends AbstractProcessingFactory {
 		else if(arg0.equalsIgnoreCase("Runoff")){
 			return new RunoffAgent();
 		}
+		else if(arg0.equalsIgnoreCase("TemperatureIdwEx")){
+			return new TemperatureIdwExAgent();
+		}
 		else{
 			log.severe("Unkown process name:" + arg0);
 			throw new IOException("Unknow process name:" + arg0);

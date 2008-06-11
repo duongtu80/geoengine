@@ -39,6 +39,10 @@ import cn.geodata.models.wps.client.WpsService;
 import junit.framework.TestCase;
 
 public class GlacierRunoffModelTest extends TestCase {
+	public void testTest1() throws Exception {
+		
+	}
+	
 	public void atestTest3() throws Exception {
 		WFSDataStoreFactory _factory = new WFSDataStoreFactory();
 		
@@ -79,7 +83,7 @@ public class GlacierRunoffModelTest extends TestCase {
 		System.out.println(Arrays.toString("http://127.0.0.1:59080/web/wps#Glacier.TemperatureIdw".split("#", 2)));
 	}
 	
-	public void testCalculate() throws Exception {
+	public void atestCalculate() throws Exception {
 		String temperatureModelUrl = "http://127.0.0.1:59080/web/wps#Glacier.TemperatureIdw";
 		String precipitationModelUrl = "http://127.0.0.1:59080/web/wps#Glacier.PrecipitationIdw";
 		String snowDdfModelUrl = "http://127.0.0.1:59080/web/wps#Glacier.SnowDdfIdw";

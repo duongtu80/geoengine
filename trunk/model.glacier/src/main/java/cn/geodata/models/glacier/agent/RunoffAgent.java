@@ -16,10 +16,14 @@ import java.util.logging.Logger;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import cn.geodata.models.AbstractProcessing;
+import cn.geodata.models.GeoInput;
+import cn.geodata.models.GeoOutput;
+import cn.geodata.models.glacier.CatchmentModel;
 import cn.geodata.models.glacier.GlacierPrepareModel;
 import cn.geodata.models.glacier.GlacierRunoffModel;
 import cn.geodata.models.glacier.ObjectMonth;
 import cn.geodata.models.glacier.ProjectTransformModel;
+import cn.geodata.models.tools.WfsFeatureSource;
 import cn.geodata.models.tools.raster.RasterManager;
 import cn.geodata.models.wps.client.WpsProcess;
 import cn.geodata.models.wps.client.WpsService;
@@ -31,13 +35,30 @@ public class RunoffAgent extends AbstractProcessing {
 	private String precipitationModelUrl; 
 	private String snowDdfModelUrl; 
 	private String iceDdfModelUrl;
-	private com.vividsolutions.jts.geom.MultiPolygon catchment;
+	private String catchmentId;
 	private org.geotools.feature.FeatureCollection glacier;
+	private CatchmentModel catchmentModel;
+	
 	private long startDate;
 	private long endDate;
 	private double cellSize;
 	private double rainCritical;
 	private double snowCritical;
+	
+	private String runoff;
+	
+	public RunoffAgent() throws IOException {
+		this.temperatureModelUrl = "http://127.0.0.1:59080/web/wps#Glacier.TemperatureIdw";
+		this.precipitationModelUrl = "http://127.0.0.1:59080/web/wps#Glacier.PrecipitationIdw";
+		this.snowDdfModelUrl =  "http://127.0.0.1:59080/web/wps#Glacier.SnowDdfIdw";
+		this.iceDdfModelUrl = "http://127.0.0.1:59080/web/wps#Glacier.IceDdfIdw";
+
+		WfsFeatureSource _basinFs = new WfsFeatureSource("http://127.0.0.1:48080/geoserver/wfs", "geo:basin");
+		WfsFeatureSource _glacier = new WfsFeatureSource("http://127.0.0.1:48080/geoserver/wfs", "geo:glacier");
+		
+		this.catchmentModel = new CatchmentModel(_basinFs, "NAME");
+		this.glacier = _glacier.getFeatureSource().getFeatures();
+	}
 	
 	private void initializeOutputs(List<ObjectMonth> list){
 		JSONArray _list = new JSONArray();
@@ -53,12 +74,10 @@ public class RunoffAgent extends AbstractProcessing {
 		JSONObject _runoff = new JSONObject();
 		_runoff.put("runoff", _list);
 		
-		this.getOutputs().put("Runoff", _runoff.toString());
+		this.runoff = _runoff.toString();
 	}
 
 	public void execute() throws Exception{
-		this.initializeInputs();
-		
 //		log.info("" + this.catchment.getNumGeometries());
 //		log.info(this.catchment.getCentroid().getX() + "\t" + this.catchment.getCentroid().getY());
 //		log.info("Glacier count:" + this.glacier.size());
@@ -87,7 +106,7 @@ public class RunoffAgent extends AbstractProcessing {
 		_model.setRainCritical(rainCritical);
 		_model.setSnowCritical(snowCritical);
 		
-		List<ObjectMonth> _list = _model.calculate(new Date(startDate), new Date(endDate), catchment);
+		List<ObjectMonth> _list = _model.calculate(new Date(startDate), new Date(endDate), this.catchmentModel.getCatchmentPolygon(catchmentId));
 		
 		DateFormat _dateFormat = new SimpleDateFormat("yyyy-MM");
 		DecimalFormat _deciFormat = new DecimalFormat("0.00");
@@ -108,5 +127,40 @@ public class RunoffAgent extends AbstractProcessing {
 		_s.connect();
 		
 		return _s.getWpsProcess(_parts[1]);
+	}
+
+	@GeoOutput(title="径流")
+	public String getRunoff() {
+		return runoff;
+	}
+
+	@GeoInput(title="流域")
+	public void setCatchmentId(String catchmentId) {
+		this.catchmentId = catchmentId;
+	}
+
+	@GeoInput(title="起始日期")
+	public void setStartDate(long startDate) {
+		this.startDate = startDate;
+	}
+
+	@GeoInput(title="结束日期")
+	public void setEndDate(long endDate) {
+		this.endDate = endDate;
+	}
+
+	@GeoInput(title="计算单元格")
+	public void setCellSize(double cellSize) {
+		this.cellSize = cellSize;
+	}
+
+	@GeoInput(title="降雨临界")
+	public void setRainCritical(double rainCritical) {
+		this.rainCritical = rainCritical;
+	}
+
+	@GeoInput(title="降雪临界")
+	public void setSnowCritical(double snowCritical) {
+		this.snowCritical = snowCritical;
 	}
 }
