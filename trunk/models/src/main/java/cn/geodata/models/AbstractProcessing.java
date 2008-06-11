@@ -74,24 +74,4 @@ public abstract class AbstractProcessing implements Processing, ParameterAware,
 	public void setOutputDefinitions(Map<String, ValueType> outputDefinitions) {
 		this.outputDefinitions = outputDefinitions;
 	}
-
-	private Method findInputMethod(String name){
-		for(Method _m : this.getClass().getDeclaredMethods()){
-			if(("set" + name).equalsIgnoreCase(_m.getName()) && _m.getDeclaringClass().equals(AbstractProcessing.class) == false){
-				return _m;
-			}
-		}
-		
-		return null;
-	}
-	
-	protected void initializeInputs() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		for(String _key : this.getInputs().keySet()){
-			Method _m = this.findInputMethod(_key);
-			if(_m != null){
-				_m.invoke(this, this.getInputs().get(_key));
-				log.info("Set " + _key + ":" + this.getInputs().get(_key));
-			}
-		}
-	}
 }

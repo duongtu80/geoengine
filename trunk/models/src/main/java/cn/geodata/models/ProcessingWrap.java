@@ -1,6 +1,8 @@
 package cn.geodata.models;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,8 +112,9 @@ public class ProcessingWrap implements Runnable {
 			}
 			
 			ParameterAware _parameterAware = (ParameterAware) process;
-			
 			_parameterAware.setInputs(_inputs);
+			this.initializeInputs(_parameterAware);
+			
 			_parameterAware.setOutputs(_outputs);
 		}
 		
@@ -125,7 +128,9 @@ public class ProcessingWrap implements Runnable {
 			this.status = new ProcessAccepted();
 			//execute the model process
 			process.execute();
-			this.status = new ProcessSucceeded();			
+			
+			this.initializeOutputs((ParameterAware) process);
+			this.status = new ProcessSucceeded();
 		}
 		catch(ProcessingException err){
 			log.log(Level.SEVERE, "Failed to execute", err);
@@ -207,6 +212,51 @@ public class ProcessingWrap implements Runnable {
 		_outputs.setOutputArray((IOValueType[])_outputParams.toArray(new IOValueType[0]));			
 		
 		return _doc;
+	}
+	
+
+	public static Method findInputMethod(ParameterAware proc, String name){
+		for(Method _m : proc.getClass().getDeclaredMethods()){
+			if(("set" + name).equalsIgnoreCase(_m.getName()) && _m.getDeclaringClass().equals(AbstractProcessing.class) == false && _m.getAnnotation(GeoInput.class) != null){
+				return _m;
+			}
+		}
+		
+		return null;
+	}
+	
+	public static void initializeInputs(ParameterAware proc) {
+		for(String _key : proc.getInputs().keySet()){
+			Method _m = findInputMethod(proc, _key);
+			if(_m != null){
+				try {
+					_m.invoke(proc, proc.getInputs().get(_key));
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				log.info("Set " + _key + ":" + proc.getInputs().get(_key));
+			}
+		}
+	}
+	
+	public static void initializeOutputs(ParameterAware proc) {
+		for(Method _m : proc.getClass().getDeclaredMethods()){
+			if(_m.getName().startsWith("get") && _m.getAnnotation(GeoOutput.class) != null){
+				try {
+					proc.getOutputs().put(_m.getName().substring(3), _m.invoke(proc));
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	protected OutputDefinitionType findOutputRequest(String id){
