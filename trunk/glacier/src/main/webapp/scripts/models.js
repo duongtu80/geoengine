@@ -31,6 +31,44 @@ function GlacierModel (map){
 						});
 					}
 				),
+			'Glacier.TemperatureIdwEx': new WpsModel ('Glacier.TemperatureIdwEx', dijit.byId('Setting.Glacier.TemperatureIdwEx'),
+					function() {
+						
+					}, 
+					function(context, params) {
+						if(!isNaN(dijit.byId('Glacier.TemperatureIdwEx.Pow').getValue())){
+							params['pow'] = dijit.byId('Glacier.TemperatureIdwEx.Pow').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.TemperatureIdwEx.MaxCount').getValue())){
+							params['maxCount'] = dijit.byId('Glacier.TemperatureIdwEx.MaxCount').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.TemperatureIdwEx.MaxDistance').getValue())){
+							params['maxDistance'] = dijit.byId('Glacier.TemperatureIdwEx.MaxDistance').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.TemperatureIdwEx.Stand').getValue())){
+							params['stand'] = dijit.byId('Glacier.TemperatureIdwEx.Stand').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.TemperatureIdwEx.Grads').getValue())){
+							params['grads'] = dijit.byId('Glacier.TemperatureIdwEx.Grads').getValue();
+						}
+						
+						glacier.progressBar.pushProgress('模型计算');
+						dojo.xhrGet({ //
+					        url: "model/temperatureIdwEx.do", 
+					        handleAs: "json",
+					        content: params,
+					        timeout: 60000,
+					        load: function(response, ioArgs) {
+					        	(new ModelResult()).addResultChartPanel(context, params, response);
+					   			glacier.progressBar.popProgress();
+					        }
+						});
+					}
+				),
 			'Glacier.PrecipitationIdw': new WpsModel ('Glacier.PrecipitationIdw', dijit.byId('Setting.Glacier.PrecipitationIdw'),
 					function() {
 						
@@ -116,6 +154,36 @@ function GlacierModel (map){
 					        timeout: 60000,
 					        load: function(response, ioArgs) {
 					        	(new ModelResult()).addResultTextPanel(context, params, response);
+					   			glacier.progressBar.popProgress();
+					        }
+						});
+					}
+				),
+			'Glacier.Runoff': new WpsModel ('Glacier.Runoff', dijit.byId('Setting.Glacier.Runoff'),
+					function() {
+						
+					}, 
+					function(context, params) {
+						if(!isNaN(dijit.byId('Glacier.Runoff.CellSize').getValue())){
+							params['cellSize'] = dijit.byId('Glacier.Runoff.CellSize').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.Runoff.RainCritical').getValue())){
+							params['rainCritical'] = dijit.byId('Glacier.Runoff.RainCritical').getValue();
+						}
+
+						if(!isNaN(dijit.byId('Glacier.Runoff.SnowCritical').getValue())){
+							params['snowCritical'] = dijit.byId('Glacier.Runoff.SnowCritical').getValue();
+						}
+						
+						glacier.progressBar.pushProgress('模型计算');
+						dojo.xhrGet({ //
+					        url: "model/runoff.do", 
+					        handleAs: "json",
+					        content: params,
+					        timeout: 60000,
+					        load: function(response, ioArgs) {
+					        	(new ModelResult()).addResultChartPanel(context, params, response);
 					   			glacier.progressBar.popProgress();
 					        }
 						});

@@ -108,6 +108,16 @@
 			<div class="viewItem"><button dojoType="dijit.form.Button" type="submit">保存</button></div>
 		</div>
 	</div>
+	<div id="Setting.Glacier.TemperatureIdwEx" dojoType="dijit.Dialog" title="气温修正反距离插值参数" execute="glacier.saveSetting('Glacier.TemperatureIdwEx');">
+		<div class="blockBody">
+			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.TemperatureIdwEx.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
+			<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="Glacier.TemperatureIdwEx.MaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>
+			<div class="viewItem"><div class="viewTitle">搜索半径:</div><div id="Glacier.TemperatureIdwEx.MaxDistance" dojoType="dijit.form.NumberTextBox" style="width: 90px;"></div> (置空忽略该参数)</div>
+			<div class="viewItem"><div class="viewTitle">标准高程:</div><div id="Glacier.TemperatureIdwEx.Stand" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="3000"></div>m</div>
+			<div class="viewItem"><div class="viewTitle">垂直递减率:</div><div id="Glacier.TemperatureIdwEx.Grads" dojoType="dijit.form.NumberTextBox" style="width: 90px;" value="0.006"></div>°C/m</div>
+			<div class="viewItem"><button dojoType="dijit.form.Button" type="submit">保存</button></div>
+		</div>
+	</div>
 	<div id="Setting.Glacier.PrecipitationIdw" dojoType="dijit.Dialog" title="降水反距离插值参数" execute="glacier.saveSetting('Glacier.PrecipitationIdw');">
 		<div class="blockBody">
 			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.PrecipitationIdw.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
@@ -134,9 +144,9 @@
 	</div>
 	<div id="Setting.Glacier.Runoff" dojoType="dijit.Dialog" title="冰川径流模型参数" execute="glacier.saveSetting('Glacier.Runoff');">
 		<div class="blockBody">
-			<div class="viewItem"><div class="viewTitle">指数:</div><div id="Glacier.Runoff.Pow" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="2"></div></div>
-			<div class="viewItem"><div class="viewTitle">最大个数:</div><div id="Glacier.Runoff.MaxCount" dojoType="dijit.form.NumberTextBox" style="width: 70px;"></div> (置空忽略该参数)</div>
-			<div class="viewItem"><div class="viewTitle">搜索半径:</div><div id="Glacier.Runoff.MaxDistance" dojoType="dijit.form.NumberTextBox" style="width: 90px;"></div> (置空忽略该参数)</div>
+			<div class="viewItem"><div class="viewTitle">网格大小:</div><div id="Glacier.Runoff.CellSize" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="0.0083"></div></div>
+			<div class="viewItem"><div class="viewTitle">降水临界值:</div><div id="Glacier.Runoff.RainCritical" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="5"></div></div>
+			<div class="viewItem"><div class="viewTitle">融雪临界值:</div><div id="Glacier.Runoff.SnowCritical" dojoType="dijit.form.NumberTextBox" style="width: 70px;" value="0"></div></div>
 			<div class="viewItem"><button dojoType="dijit.form.Button" type="submit">保存</button></div>
 		</div>
 	</div>

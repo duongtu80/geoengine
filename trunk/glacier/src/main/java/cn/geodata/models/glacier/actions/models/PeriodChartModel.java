@@ -1,5 +1,7 @@
 package cn.geodata.models.glacier.actions.models;
 
+import java.util.Date;
+
 public class PeriodChartModel extends ChartModel {
 	protected int startYear;
 	protected int endYear;
@@ -18,5 +20,13 @@ public class PeriodChartModel extends ChartModel {
 
 	public void setEndYear(int endYear) {
 		this.endYear = endYear;
+	}
+	
+	public Date getStartDate(){
+		return new Date(this.startYear - 1900, 8, 1);
+	}
+	
+	public Date getEndDate(){
+		return new Date(this.endYear - 1900, 8, 1);
 	}
 }

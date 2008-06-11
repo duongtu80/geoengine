@@ -28,6 +28,7 @@ public class IdwChartPeriodModel extends PeriodChartModel {
 	protected int pow;
 	protected int maxCount;
 	protected double maxDistance;
+	protected Map<String, Object> inputs = new HashMap<String, Object>();
 	
 	public double getX() {
 		return x;
@@ -74,8 +75,8 @@ public class IdwChartPeriodModel extends PeriodChartModel {
         TimeSeries _s1 = new TimeSeries(seriesTitle, Month.class);
 		
 		JSONArray _list = new JSONArray();
-		Date _endDate = new Date(this.endYear - 1900, 9, 1);
-		for(Date _startDate = new Date(this.startYear - 1900, 9, 1); _startDate.before(_endDate);){
+		Date _endDate = this.getEndDate();
+		for(Date _startDate = this.getStartDate(); _startDate.before(_endDate);){
 			double _val = this.calculate(_p, _startDate);
 
 			_s1.add(new Month(_startDate), _val);
@@ -112,6 +113,12 @@ public class IdwChartPeriodModel extends PeriodChartModel {
 		_inputs.put("Site", _factory.createPoint(new Coordinate(this.x, this.y)));
 		_inputs.put("MaxCount", this.maxCount);
 		_inputs.put("MaxDistance", this.maxDistance);
+		
+		if(this.inputs != null && this.inputs.keySet().size() > 0){
+			for(String _key : this.inputs.keySet()){
+				_inputs.put(_key, this.inputs.get(_key));
+			}
+		}
 		
 		process.execute(_inputs);
 		return (Double) process.getOutput(process.getResponse().getExecuteResponse().getProcessOutputs().getOutputArray()[0].getIdentifier().getStringValue(), DataCategories.getInstance().findCategory("double"));
