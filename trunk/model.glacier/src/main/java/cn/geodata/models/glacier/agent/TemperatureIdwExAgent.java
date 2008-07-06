@@ -32,7 +32,7 @@ public class TemperatureIdwExAgent extends AbstractProcessing {
 		if(pow > 0)
 			_idwModel.setPow(pow);
 
-		RasterManager _demModel = new RasterManager(new File("O:\\tank\\data\\dem\\tiff"), 0);
+		RasterManager _demModel = new RasterManager(new File("E:\\recovery\\tank\\data\\dem\\tiff"), 0);
 		
 		//Inititalize and execute temperature model
 		TemperatureModelEx _tempModel = new TemperatureModelEx();

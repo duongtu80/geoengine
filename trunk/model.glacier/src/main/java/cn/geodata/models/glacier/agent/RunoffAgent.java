@@ -82,7 +82,7 @@ public class RunoffAgent extends AbstractProcessing {
 //		log.info(this.catchment.getCentroid().getX() + "\t" + this.catchment.getCentroid().getY());
 //		log.info("Glacier count:" + this.glacier.size());
 //		
-		RasterManager _demModel = new RasterManager(new File("O:\\tank\\data\\dem\\tiff"), 0);
+		RasterManager _demModel = new RasterManager(new File("E:\\recovery\\tank\\data\\dem\\tiff"), 0);
 		
 		double[] _levels = new double[20];
 		for(int i=0;i<20;i++){

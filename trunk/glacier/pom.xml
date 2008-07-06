@@ -16,6 +16,35 @@
 	<url>http://maven.apache.org</url>
 	<build>
 		<finalName>glacier</finalName>
+    <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <warName>glacier</warName>
+          <webappDirectory>${project.build.directory}/glacier</webappDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>war</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-eclipse-plugin</artifactId>
+		<configuration>
+			<projectNameTemplate>[artifactId]</projectNameTemplate>
+			<wtpmanifest>true</wtpmanifest>
+			<wtpapplication>true</wtpapplication>
+			<wtpversion>1.5</wtpversion>
+		</configuration>
+	</plugin>
+    </plugins>
 	</build>
 	<dependencies>
 		<dependency>
