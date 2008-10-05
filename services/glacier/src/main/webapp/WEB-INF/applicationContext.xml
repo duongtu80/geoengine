@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="processManage" class="cn.geodata.models.glacier.actions.models.ProcessManage" scope="singleton">
+	</bean>
+	<bean id="test" class="cn.geodata.models.glacier.actions.map.Test" scope="prototype">
+	</bean>
+	<bean id="basinArea" class="cn.geodata.models.glacier.actions.models.BasinArea">
+	</bean>
+	<bean id="basinDataset" class="cn.geodata.models.glacier.actions.models.BasinDataset">
+		<constructor-arg value="STATION"></constructor-arg>
+	</bean>
+	<bean id="mapMap" class="cn.geodata.models.glacier.actions.map.Map">
+		<property name="wmsMapUrl" value="http://192.168.17.51/tilecache/tilecache.cgi"></property>
+		<property name="wmsLayerName" value="glacier.background"></property>
+	</bean>
+	<bean id="runoffStart" class="cn.geodata.models.glacier.actions.models.RunoffStart" scope="prototype">
+		<constructor-arg ref="basinArea"></constructor-arg>
+		<constructor-arg ref="basinDataset"></constructor-arg>
+		<property name="manage" ref="processManage"></property>
+		<!-- 
+		<property name="fileCatchment" value="d:\Tank\Save\Java\geoengine\var\glacier\apache-tomcat-6.0.16\webapps\geoserver\data\data\china\basin.shp"></property>
+		<property name="fileGlacier" value="d:\Tank\Save\Java\geoengine\var\glacier\apache-tomcat-6.0.16\webapps\geoserver\data\data\china\glacier.shp"></property>
+		 -->
+	</bean>
+	<bean id="runoffQuery" class="cn.geodata.models.glacier.actions.models.RunoffQuery" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="runoffData" class="cn.geodata.models.glacier.actions.models.RunoffData" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="runoffChart" class="cn.geodata.models.glacier.actions.models.RunoffChart" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="runoffView" class="cn.geodata.models.glacier.actions.models.RunoffView" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
+<!-- 
+	<bean id="chartOutputter" class="cn.geodata.models.glacier.actions.models.ChartOutputter">
+	</bean>
+	<bean id="temperatureIdw" class="cn.geodata.models.glacier.actions.models.TemperatureIdw">
+		<property name="chart" ref="chartOutputter"></property>
+	</bean>
+	<bean id="temperatureIdwEx" class="cn.geodata.models.glacier.actions.models.TemperatureIdwEx">
+		<property name="chart" ref="chartOutputter"></property>
+	</bean>
+	<bean id="precipitationIdw" class="cn.geodata.models.glacier.actions.models.PrecipitationIdw">
+		<property name="chart" ref="chartOutputter"></property>
+	</bean>
+	<bean id="snowDdfIdw" class="cn.geodata.models.glacier.actions.models.SnowDdfIdw">
+	</bean>
+	<bean id="iceDdfIdw" class="cn.geodata.models.glacier.actions.models.IceDdfIdw">
+	</bean>
+	<bean id="runoff" class="cn.geodata.models.glacier.actions.models.RunoffModel">
+		<property name="chart" ref="chartOutputter"></property>
+	</bean>
+ -->
+	<bean id="loadDataset" class="cn.geodata.models.glacier.actions.map.LoadDataset">
+		<constructor-arg ref="basinDataset"></constructor-arg>
+		<!-- 
+		<property name="wfsUrl" value="http://192.168.17.51:48080/geoserver/wfs"></property>
+		 -->
+	</bean>
+	<bean id="chartStream" class="cn.geodata.models.glacier.actions.models.ChartStream">
+		<property name="tempDir" value="/tmp"></property>
+	</bean>
+</beans>

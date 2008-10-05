@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="DemModel90m" class="cn.geodata.models.glacier.DemModel">
+		<property name="demPath" value="Q:\tank\data\dem\geotiff"></property>
+		<property name="nodata" value="0"></property>
+	</bean>
+	<bean id="DemModel1000m" class="cn.geodata.models.glacier.DemModel">
+		<property name="demPath" value="R:\tank\data\dem"></property>
+		<property name="nodata" value="-9999"></property>
+	</bean>
+
+	<bean id="GlacierAreaModel" class="cn.geodata.models.glacier.GlacierAreaModel" scope="prototype">
+		<property name="demModel" ref="DemModel90m"></property>
+		<property name="cellSize" value="0.000249"></property>
+<!-- 
+		<property name="cellSize" value="0.000083"></property>
+ -->
+	</bean>
+	<bean id="TestModel" class="cn.geodata.models.glacier.TestModel">
+	</bean>
+	<bean id="RunoffModel" class="cn.geodata.models.glacier.RunoffModel" scope="prototype">
+<!-- 
+		<property name="evaporationRatio" value="1"></property>
+		<property name="temperatureGrad" value="-0.006"></property>
+		<property name="precipitationGrad" value="1"></property>
+ -->
+		<property name="snowCritical" value="-0.5"></property>
+		<property name="rainCritical" value="2"></property>
+		<property name="snowFrozenRatio" value="0.1"></property>
+	</bean>
+	
+	<bean id="IdwModel" class="cn.geodata.models.glacier.InvertDistanceWeightModel" scope="prototype">
+		<property name="maxDistance" value="0"></property>
+		<property name="maxCount" value="10"></property>
+		<property name="power" value="2"></property>
+	</bean>
+	<bean id="IceDDFModel" class="cn.geodata.models.glacier.IceDDFModel" scope="prototype">
+		<property name="model" ref="IdwModel"></property>
+	</bean>
+	<bean id="SnowDDFModel" class="cn.geodata.models.glacier.SnowDDFModel" scope="prototype">
+		<property name="model" ref="IdwModel"></property>
+	</bean>
+	<bean id="TemperatureModelEx" class="cn.geodata.models.glacier.TemperatureModelEx" scope="prototype">
+		<property name="model" ref="IdwModel"></property>
+		<property name="grads" value="-0.006"></property>
+		<property name="stand" value="3000"></property>
+	</bean>
+	<bean id="PrecipitationModel" class="cn.geodata.models.glacier.PrecipitationModel" scope="prototype">
+		<property name="model" ref="IdwModel"></property>
+	</bean>
+</beans>
