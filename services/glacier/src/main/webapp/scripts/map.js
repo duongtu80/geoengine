@@ -74,7 +74,7 @@ function initMap() {
 			var _items = [];
 			var i;
 			for(i=0;i<fs.object.features.length;i++){
-				_items.push({'name': fs.object.features[i].attributes['NAME'], 'fid': fs.object.features[i].fid});
+				_items.push({'name': fs.object.features[i].attributes['STATION'], 'fid': fs.object.features[i].fid});
 			}
 			
 			var _store = new dojo.data.ItemFileReadStore({data: {items: _items}});
