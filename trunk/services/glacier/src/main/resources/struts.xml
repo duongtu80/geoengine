@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <constant name="struts.enable.DynamicMethodInvocation" value="true" />
+    <constant name="struts.devMode" value="true" />
+    <constant name="struts.action.extension" value="do" />
+    
+    <package name="default" extends="struts-default" namespace="/">
+    	<action name="map" class="mapMap">
+    		<result>map.jsp</result>
+    	</action>
+    	<action name="test" class="test">
+    		<result type="stream">
+    			<param name="contentType">text</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="text.txt"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="runoffView" class="runoffView">
+    		<result>view.jsp</result>
+    	</action>
+    	<action name="loadDataset" class="loadDataset">
+    		<result type="stream">
+    			<param name="contentType">text/xml</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="text.xml"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="wfsDatasets" class="cn.geodata.models.glacier.actions.map.WfsDataset">
+    		<result type="stream">
+    			<param name="contentType">text/json-comment-filtered</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    </package>
+    <package name="model" extends="struts-default" namespace="/model">
+    	<action name="runoffStart" class="runoffStart">
+    		<result type="stream">
+    			<param name="contentType">text</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="runoffQuery" class="runoffQuery">
+    		<result type="stream">
+    			<param name="contentType">text</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="runoffData" class="runoffData">
+    		<result type="stream">
+    			<param name="contentType">text</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="runoffChart" class="runoffChart">
+    		<result type="stream">
+    			<param name="contentType">image/png</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.png"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="chartStream" class="chartStream">
+    		<result type="stream">
+    			<param name="contentType">image/png</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.png"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="listWpsModel" class="cn.geodata.models.glacier.actions.models.ListWpsModel">
+    		<result type="stream">
+    			<param name="contentType">text</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+<!-- 
+    	<action name="temperatureIdw" class="temperatureIdw">
+    		<result type="stream">
+    			<param name="contentType">text/json-comment-filtered</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="temperatureIdwEx" class="temperatureIdwEx">
+    		<result type="stream">
+    			<param name="contentType">text/json-comment-filtered</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="precipitationIdw" class="precipitationIdw">
+    		<result type="stream">
+    			<param name="contentType">text/json-comment-filtered</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="snowDdfIdw" class="snowDdfIdw">
+    		<result type="stream">
+    			<param name="contentType">text/json-comment-filtered</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="iceDdfIdw" class="iceDdfIdw">
+    		<result type="stream">
+    			<param name="contentType">text/json-comment-filtered</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+    	<action name="runoff" class="runoff">
+    		<result type="stream">
+    			<param name="contentType">text</param>
+    			<param name="inputName">stream</param>
+    			<param name="contentDisposition">filename="chart.json"</param>
+  				<param name="bufferSize">1024</param>
+    		</result>
+    	</action>
+ -->
+    </package>
+</struts>

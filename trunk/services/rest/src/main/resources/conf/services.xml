@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services>
+	<global>
+		<host>192.168.17.108</host>
+		<port>59080</port>
+	</global>
+	<identification>
+		<title>地理空间模型共享平台</title>
+		<abstract>开放式地理空间模型的共享平台</abstract>
+		<keywords>
+			<keyword>geospatial</keyword>
+			<keyword>model</keyword>
+		</keywords>
+		<serviceType>WPS</serviceType>
+		<serviceTypeVersion>0.4.0</serviceTypeVersion>
+		<fees>NONE</fees>
+		<accessConstraints>NONE</accessConstraints>
+	</identification>
+	<provider>
+		<name>中国科学院地理科学与资源研究所</name>
+		<site>http://www.igsnrr.ac.cn</site>
+		<contact>
+			<name>冯敏</name>
+			<position></position>
+			<email>fengm@lreis.ac.cn</email>
+			<phone>+86-10-64889045</phone>
+			<address>
+				<deliveryPoint>朝阳区大屯路甲11号</deliveryPoint>
+				<city>北京</city>
+				<administrativeArea>北京</administrativeArea>
+				<postCode>100101</postCode>
+				<country>中华人民共和国</country>
+			</address>
+		</contact>
+	</provider>
+</services>
