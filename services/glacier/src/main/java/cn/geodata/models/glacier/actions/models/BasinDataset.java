@@ -3,6 +3,7 @@ package cn.geodata.models.glacier.actions.models;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.geotools.data.FeatureSource;
@@ -31,11 +32,14 @@ public class BasinDataset {
 	}
 	
 	public MultiPolygon getBasin(String name) throws IOException{
+		log.info("Looking for:|" + name + "|");
+		
 		FeatureIterator _it = this.featureSource.getFeatures().features();
 		try {
 			while (_it.hasNext()) {
 				Feature _f = _it.next();
-				if (_f.getAttribute(fieldName).equals(name)) {
+				String _station = _f.getAttribute(fieldName).toString().trim();
+				if (_station.equalsIgnoreCase(name)) {
 					return (MultiPolygon) _f.getDefaultGeometry();
 				}
 			}

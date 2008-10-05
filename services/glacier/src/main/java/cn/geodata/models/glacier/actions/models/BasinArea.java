@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 
 public class BasinArea {
 	private Map<String, double[]> map;
+	private double[] levels;
 	
 	public BasinArea() throws IOException{
 		Map<String, double[]> map = new HashMap<String, double[]>();
@@ -25,6 +26,8 @@ public class BasinArea {
 			
 			map.put(_n, _vs);
 		}
+		this.levels = map.remove("Levels");
+		this.map = map;
 	}
 	
 	public double[] getBasinArea(String basin){
@@ -32,6 +35,6 @@ public class BasinArea {
 	}
 	
 	public double[] getLevels(){
-		return this.map.remove("Levels");
+		return this.levels;
 	}
 }
