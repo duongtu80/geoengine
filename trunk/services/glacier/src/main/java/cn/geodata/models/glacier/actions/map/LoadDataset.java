@@ -4,6 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.GeoTools;
+import org.geotools.feature.Feature;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.jdom.output.XMLOutputter;
 
 import cn.geodata.models.glacier.actions.models.BasinDataset;
@@ -34,9 +39,19 @@ public class LoadDataset {
 	// }
 	//
 	public String execute() throws Exception {
+		FeatureCollection _fs = this.basins.getBasins();
+		FeatureIterator _it = _fs.features();
+		
+		FeatureCollection _ns = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
+		while(_it.hasNext()){
+			Feature _f = _it.next();
+			
+			if(_f.getAttribute("STATION").equals("台兰"))
+				_ns.add(_f);
+		}
+		
 		XMLOutputter _output = new XMLOutputter();
-		String _txt = _output.outputString(ParserUtil.createParserFinder()
-				.encode(this.basins.getBasins()));
+		String _txt = _output.outputString(ParserUtil.createParserFinder().encode(_ns));
 
 		this.stream = new ByteArrayInputStream(_txt.getBytes("utf-8"));
 		return "success";
