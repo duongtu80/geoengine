@@ -3,6 +3,9 @@
 <beans>
 	<bean id="DemModel90m" class="cn.geodata.models.glacier.DemModel">
 		<property name="demPath" value="Q:\tank\data\dem\geotiff"></property>
+<!-- 
+		<property name="demPath" value="E:\recovery\tank\data\dem\tiff"></property>
+ -->
 		<property name="nodata" value="0"></property>
 	</bean>
 	<bean id="DemModel1000m" class="cn.geodata.models.glacier.DemModel">
@@ -12,10 +15,10 @@
 
 	<bean id="GlacierAreaModel" class="cn.geodata.models.glacier.GlacierAreaModel" scope="prototype">
 		<property name="demModel" ref="DemModel90m"></property>
-		<property name="cellSize" value="0.000249"></property>
 <!-- 
-		<property name="cellSize" value="0.000083"></property>
+		<property name="cellSize" value="0.000249"></property>
  -->
+		<property name="cellSize" value="0.000083"></property>
 	</bean>
 	<bean id="TestModel" class="cn.geodata.models.glacier.TestModel">
 	</bean>
