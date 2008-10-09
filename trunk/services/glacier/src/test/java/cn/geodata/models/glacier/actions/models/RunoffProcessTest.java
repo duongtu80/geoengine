@@ -107,7 +107,7 @@ public class RunoffProcessTest extends TestCase {
 
 	public void testTest2() throws Exception {
 		Map<String, double[]> _map = new HashMap<String, double[]>();
-		List<String> _list = FileUtils.readLines(new File("d:\\Temp\\data3\\20081001-9\\glacier.area.csv"));
+		List<String> _list = FileUtils.readLines(new File("d:\\Temp\\data3\\20081007\\areas.csv"), "utf-8");
 		
 		for(String _l : _list){
 			String[] _parts = _l.split(",");
@@ -140,9 +140,18 @@ public class RunoffProcessTest extends TestCase {
 	}
 	
 	protected void calculateRunoff(String basin, int startYear, int endYear, double[] levels, double[] areas) throws Exception {
+		File _path = new File("D:\\Temp\\data3\\20081007\\" + basin);
+		
+		if(_path.exists() == false){
+			_path.mkdir();
+		}
+		else{
+			return;
+		}
+
 		JSONObject _param = JSONObject.fromString("{\"Temperature\":{\"id\":\"TemperatureModelEx\",\"params\":{\"Power\":2,\"Stand\":3000,\"Grads\":-0.006}},\"Precipitation\":{\"id\":\"PrecipitationModel\",\"params\":{\"Power\":2}},\"SnowDDF\":{\"id\":\"SnowDDFModel\",\"params\":{\"Power\":2}},\"IceDDF\":{\"id\":\"IceDDFModel\",\"params\":{\"Power\":2}},\"Runoff\":{\"id\":\"RunoffModel\",\"params\":{\"RainCritical\":2,\"SnowCritical\":-0.5,\"SnowFrozenRatio\":0.1}}}");
 		
-		MultiPolygon _border = this.getCatchment(basin, "d:\\Tank\\Save\\Java\\geoengine\\var\\glacier\\apache-tomcat-6.0.16\\webapps\\geoserver\\data\\data\\china\\basin.shp");
+		MultiPolygon _border = this.getCatchment(basin, "d:\\Temp\\data3\\data\\basin.shp");
 		Point _pt = _border.getCentroid();
 		RunoffProcess _p = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _param, levels, areas);
 		
@@ -156,12 +165,6 @@ public class RunoffProcessTest extends TestCase {
 		DecimalFormat _leveFormat = new DecimalFormat("0");		
 		
 		List<Object> _dates = _p.getMap().get("Dates");
-		File _path = new File("D:\\Temp\\data3\\" + basin);
-		
-		if(_path.exists() == false){
-			_path.mkdir();
-		}
-		
 		for(String _key : _listCols){
 			List<Object> _item = _p.getMap().get(_key);
 			

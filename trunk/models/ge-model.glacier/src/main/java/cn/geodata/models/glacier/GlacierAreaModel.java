@@ -36,6 +36,7 @@ public class GlacierAreaModel implements Calculate {
 //		Map<Integer, Integer> _pixels = _m.calculate(catchment, cellSize, new File("d:\\Temp\\ttt5.tif"));
 //		writePixels(_pixels);
 		
+//		Map<Integer, Integer> _pixels = _m.calculate(catchment, cellSize, new File("D:\\Temp\\data3\\20081007\\dem\\dem1.tif"));
 		Map<Integer, Integer> _pixels = _m.calculate(catchment, cellSize, null);
 //		Map<Integer, Integer> _pixels = this.readPixels();
 		
@@ -43,11 +44,11 @@ public class GlacierAreaModel implements Calculate {
 //		double _pixelArea = (new ProjectTransformModel("EPSG:4326", "EPSG:21416")).calculate(Utilities.covertEnvelope2D(new Envelope2D(null, _pt.getX(), _pt.getY(), cellSize, cellSize))).getArea();
 		double _pixelArea = (new ProjectTransformModel("EPSG:4326", "EPSG:32644")).calculate(Utilities.covertEnvelope2D(new Envelope2D(null, _pt.getX(), _pt.getY(), cellSize, cellSize))).getArea();
 		
-		for(Integer _k : _pixels.keySet()){
-			System.out.println("Elevation " + _k + ":" + _pixels.get(_k));
-		}
-		
-		System.out.println("Pixel Area:" + _pixelArea);
+//		for(Integer _k : _pixels.keySet()){
+//			System.out.println("Elevation " + _k + ":" + _pixels.get(_k));
+//		}
+//		
+//		System.out.println("Pixel Area:" + _pixelArea);
 		double[] _areas = new double[levels.length];
 		for(int i=0;i<levels.length;i++){
 			long _pixelCount = 0;
