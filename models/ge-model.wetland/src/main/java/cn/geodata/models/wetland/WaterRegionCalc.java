@@ -18,7 +18,7 @@ import com.vividsolutions.jts.geom.Polygon;
 public class WaterRegionCalc {
 	private static Logger log = Logger.getAnonymousLogger();
 	
-	private EnviRasterReader reader;
+	private DemRaster raster;
 //	private Catchment catchment;
 	private double waterLevel;
 	private MultiPolygon waterRegion;
@@ -37,11 +37,11 @@ public class WaterRegionCalc {
 		this.factory = new GeometryFactory();
 	}
 	
-	public EnviRasterReader getReader() {
-		return reader;
+	public DemRaster getRaster() {
+		return raster;
 	}
-	public void setReader(EnviRasterReader reader) {
-		this.reader = reader;
+	public void setReader(DemRaster raster) {
+		this.raster = raster;
 	}
 	public double getWaterLevel() {
 		return waterLevel;
@@ -57,28 +57,28 @@ public class WaterRegionCalc {
 			return null;
 		}
 		
-		Envelope2D _env = this.getReader().getEnvelope();
+		Envelope2D _env = this.raster.getRaster().getEnvelope();
 		
 		Extent _extent = new Extent();
 		_extent.setMinX(0);
 		_extent.setMinY(0);
-		_extent.setMaxX(this.reader.getColCount());
-		_extent.setMaxY(this.reader.getRowCount());
+		_extent.setMaxX(this.raster.getRaster().getColCount());
+		_extent.setMaxY(this.raster.getRaster().getRowCount());
 		
 		Envelope _env2 = this.catchment.getEnvelopeInternal();
 		log.info("ENV:" + _env2.toString());
 		
 		if(_env.getMinX() < _env2.getMinX()){
-			_extent.setMinX((int) Math.floor((_env2.getMinX() - _env.getMinX()) / this.getReader().getCellSize()));
+			_extent.setMinX((int) Math.floor((_env2.getMinX() - _env.getMinX()) / this.raster.getRaster().getCellSize()));
 		}
 		if(_env.getMaxX() > _env2.getMaxX()){
-			_extent.setMaxX((int) Math.ceil((_env2.getMaxX() - _env.getMinX()) / this.getReader().getCellSize()));
+			_extent.setMaxX((int) Math.ceil((_env2.getMaxX() - _env.getMinX()) / this.raster.getRaster().getCellSize()));
 		}
 		if(_env.getMaxY() > _env2.getMaxY()){
-			_extent.setMinY((int) Math.floor((_env.getMaxY() - _env2.getMaxY())/ this.getReader().getCellSize()));
+			_extent.setMinY((int) Math.floor((_env.getMaxY() - _env2.getMaxY())/ this.raster.getRaster().getCellSize()));
 		}
 		if(_env.getMinY() < _env2.getMinY()){
-			_extent.setMaxY((int) Math.floor((_env.getMaxY() - _env2.getMinY()) / this.getReader().getCellSize()));
+			_extent.setMaxY((int) Math.floor((_env.getMaxY() - _env2.getMinY()) / this.raster.getRaster().getCellSize()));
 		}
 		log.info("Extent:" + _extent.toString());
 		
@@ -100,17 +100,13 @@ public class WaterRegionCalc {
 		WetlandDemPixel _min = null;
 		WetlandDemPixel _max = null;
 		
-//		FileOutputStream _stream = new FileOutputStream(new File("d:/temp/ttt1.txt"));
-//		_stream.write(("X,Y,V\n").getBytes());
-		double _y = this.reader.getEnvelope().getMaxY() - this.getReader().getCellSize() * extent.getMinY() - this.getReader().getCellSize() / 2;
+		double _y = this.raster.getRaster().getEnvelope().getMaxY() - this.raster.getRaster().getCellSize() * extent.getMinY() - this.raster.getRaster().getCellSize() / 2;
 		for(int _row = extent.getMinY();_row <= extent.getMaxY();_row++){
-			double _x = this.reader.getEnvelope().getMinX() + this.getReader().getCellSize() * extent.getMinX() + this.getReader().getCellSize() / 2;
+			double _x = this.raster.getRaster().getEnvelope().getMinX() + this.raster.getRaster().getCellSize() * extent.getMinX() + this.raster.getRaster().getCellSize() / 2;
 			for(int _col=extent.getMinX(); _col <= extent.getMaxX(); _col++){
 				double _distance = polygon.distance(factory.createPoint(new Coordinate(_x, _y)));
 				if(_distance <= 0){
-					float _val = this.reader.readFloat(_row, _col);
-//					log.info("Loc:" + _col + "," + _row + "," + _val);
-//					log.info("Found pt");
+					float _val = this.raster.getRaster().readFloat(_row, _col);
 					
 					if(_min == null || _min.getVal() > _val){
 						_min = new WetlandDemPixel(_row, _col, _val, _x, _y, false);
@@ -118,15 +114,12 @@ public class WaterRegionCalc {
 					if(_max == null || _max.getVal() < _val){
 						_max = new WetlandDemPixel(_row, _col, _val, _x, _y, false);
 					}
-					
-//					_stream.write((_x + "," + _y + "," + _val + "\n").getBytes());
 				}
-				_x += this.getReader().getCellSize();
+				_x += this.raster.getRaster().getCellSize();
 			}
 			
-			_y -= this.getReader().getCellSize();
+			_y -= this.raster.getRaster().getCellSize();
 		}
-//		_stream.close();
 		
 		return new WetlandDemPixel[]{_min, _max};
 	}
@@ -134,30 +127,23 @@ public class WaterRegionCalc {
 	private MultiPolygon generateBoundary(MultiPolygon polygon, Extent extent, double evl) throws IOException{
 		ArrayList<WetlandDemPixel> _list = new ArrayList<WetlandDemPixel>();
 		
-		FileOutputStream _stream = new FileOutputStream(new File("d:/temp/ttt2.txt"));
-		_stream.write(("X,Y,V\n").getBytes());
-		double _y = this.reader.getEnvelope().getMaxY() - this.getReader().getCellSize() * extent.getMinY() - this.getReader().getCellSize() / 2;
+		double _y = this.raster.getRaster().getEnvelope().getMaxY() - this.raster.getRaster().getCellSize() * extent.getMinY() - this.raster.getRaster().getCellSize() / 2;
 		for(int _row = extent.getMinY();_row <= extent.getMaxY();_row++){
-			double _x = this.reader.getEnvelope().getMinX() + this.getReader().getCellSize() * extent.getMinX() + this.getReader().getCellSize() / 2;
+			double _x = this.raster.getRaster().getEnvelope().getMinX() + this.raster.getRaster().getCellSize() * extent.getMinX() + this.raster.getRaster().getCellSize() / 2;
 			for(int _col=extent.getMinX(); _col <= extent.getMaxX(); _col++){
 				double _distance = polygon.distance(factory.createPoint(new Coordinate(_x, _y)));
 				if(_distance <= 0){
-					float _val = this.getReader().readFloat(_row, _col);
-//					if(_val <= evl){
-//						log.info("test:" + _val);
-//					}
+					float _val = this.raster.getRaster().readFloat(_row, _col);
 					if(_val <= evl && isBoundary(_col, _row, polygon, _val, evl)){
 						_list.add(new WetlandDemPixel(_row, _col, _val, _x, _y, true));
-						_stream.write((_x + "," + _y + "," + _val + "\n").getBytes());
 					}
 					
 				}
-				_x += this.getReader().getCellSize();
+				_x += this.raster.getRaster().getCellSize();
 			}
 			
-			_y -= this.getReader().getCellSize();
+			_y -= this.raster.getRaster().getCellSize();
 		}
-		_stream.close();
 		
 //		orginzieBoundary(_list);
 		
@@ -190,16 +176,8 @@ public class WaterRegionCalc {
 			_line.add(_n.get(0));
 			
 			_list.set(_list.indexOf(_n.get(0)), null);
-//			WetlandDemPixel[] _ns = popNeighborPixels(_list, _startPt, -1);
 			if(this.createPointArray(_line, _list, _startPt, _n.get(0), _n.get(1))){
 				if(_line.size() > 2){
-					_stream = new FileOutputStream(new File("d:/temp/ttt3.txt"));
-					_stream.write(("X,Y,V\n").getBytes());
-					
-					for(int i=0;i<_line.size();i++){
-						_stream.write((_line.get(i).getLon() + "," + _line.get(i).getLat() + "," + _line.get(i).getVal() + "\n").getBytes());
-					}
-					_stream.close();
 					
 					for(int j=0;j<_line.size();j++){
 						_coordinates.add(new Coordinate(_line.get(j).getLon(), _line.get(j).getLat()));
@@ -218,13 +196,6 @@ public class WaterRegionCalc {
 				}
 			}
 			log.info("Point count left:" + _list.size());
-//			WetlandDemPixel _p = this.popNeighborPixel(_list, _line.get(_line.size() - 1));
-//			while(_p != null){
-//				_line.add(_p);
-//				
-//				_p = this.popNeighborPixel(_list, _line.get(_line.size() - 1));
-//			}
-//			
 		}
 		
 		if(_polygons.size() > 0){
@@ -233,7 +204,6 @@ public class WaterRegionCalc {
 		else{
 			log.warning("No polygon has been generated.");
 			return null;
-//			throw new NullPointerException("Failed to create water region");
 		}
 	}
 	
@@ -396,15 +366,15 @@ public class WaterRegionCalc {
 	private boolean isBoundary(int col, int row, MultiPolygon polygon, double val, double evl) throws IOException{
 		for(int _row = row - 1;_row <= row + 1;_row++){
 			for(int _col = col - 1; _col <= col + 1; _col++){
-				if(_row >= 0 && _row < this.reader.getRowCount() && _col >= 0 && _col < this.reader.getColCount()){
+				if(_row >= 0 && _row < this.raster.getRaster().getRowCount() && _col >= 0 && _col < this.raster.getRaster().getColCount()){
 					if(_row != row || _col != col){
-						float _val = this.reader.readFloat(_row, _col);
+						float _val = this.raster.getRaster().readFloat(_row, _col);
 	
 						if(_val > evl){
 							return true;
 						}
 
-						double _distance = polygon.distance(factory.createPoint(this.reader.getLocation(_row, _col)));
+						double _distance = polygon.distance(factory.createPoint(this.raster.getRaster().getLocation(_row, _col)));
 						if(_distance > 0){
 							return true;
 						}
