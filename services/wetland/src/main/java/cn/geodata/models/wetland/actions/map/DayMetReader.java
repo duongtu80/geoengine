@@ -37,6 +37,10 @@ public class DayMetReader {
 		
 	}
 	
+	public DayMetReader(String cache) {
+		this.cache = cache;
+	}
+
 	public ArrayList<DayMet> read(Date startDate, Date endDate, String tag, double x, double y) throws IOException, ParseException{
 		File _f = new File(new File(this.cache), tag.toLowerCase());
 		
