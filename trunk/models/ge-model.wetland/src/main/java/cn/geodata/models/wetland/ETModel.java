@@ -5,7 +5,7 @@ import cn.geodata.models.annotation.GeoInput;
 import cn.geodata.models.annotation.GeoOutput;
 import cn.geodata.models.annotation.GeoProcess;
 
-@GeoProcess(title="ET Model")
+@GeoProcess(title="ET Model", keywords={"ET"})
 public class ETModel implements Calculate {
 	private double albedo;
 	private double height;

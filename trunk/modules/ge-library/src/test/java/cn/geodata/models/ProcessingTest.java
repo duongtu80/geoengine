@@ -34,9 +34,10 @@ public class ProcessingTest extends TestCase {
 	private File basin;
 	
 	public ProcessingTest(){
-		this.path = new File("D:\\Temp\\data3\\20081007");
+		this.path = new File("D:\\Temp\\data3\\20081021");
 		this.glacier = new File("d:\\Tank\\Save\\Java\\geoengine\\var\\glacier\\apache-tomcat-6.0.16\\webapps\\geoserver\\data\\data\\china\\glacier.shp");
-		this.basin = new File("d:\\Temp\\data3\\data\\basin.shp");
+//		this.glacier = new File("d:\\Temp\\data3\\data\\glacier.shp");
+		this.basin = new File("d:\\Temp\\data3\\20081021\\data\\昌马堡.shp");
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -67,7 +68,7 @@ public class ProcessingTest extends TestCase {
 
 	public void testArea() throws Exception {
 //		String[] _basins = new String[] {"Tuotuohe", "阿拉沟", "阿勒泰", "巴音布鲁克", "白吉", "白杨河", "冰沟", "布尔津", "布曲雁石坪站", "策勒", "插剑门", "察汗乌苏", "昌都站", "昌马堡", "楚玛尔河", "大米滩", "大青河", "党城湾", "迪那河", "丰乐河", "富温", "干沟门", "甘孜", "岗拖", "古浪水库", "哈拉衣敏", "黑山", "黑山头", "黑孜", "红山头", "黄河沿", "黄清", "黄水沟", "黄羊水库", "吉勒德", "加勒果拉", "解放大桥", "金川峡水库", "精河山口", "久治", "九条岭", "军功", "卡浪古尔", "卡浪古吕克河", "卡勒格牙", "卡木鲁克", "开垦河", "克尔古提", "克拉他什", "克勒克", "克勒克", "肯斯瓦特", "库克苏", "库鲁克栏干", "库威", "拉萨", "兰干", "李家桥", "马海", "煤窑沟", "那棱格勒", "纳赤台三站", "南营水库", "奴各沙", "努儿", "努买提兰干", "皮山", "匹里青", "破城子", "祁连", "恰甫", "切德克", "群库勒", "桑株", "沙沟寺", "沙里桂兰克", "沙曼", "石门子", "双树寺", "台兰", "台兰2", "唐克", "头道河", "瓦房城", "维它克河", "温泉", "乌拉斯台", "乌鲁瓦提", "乌什水", "香日德", "小柴旦", "小川", "协和拉", "新地", "循化", "牙师", "英雄桥", "杂木寺", "则克台", "泽林沟", "札马什克", "制材厂", "朱巴", "濯桑", "尕大滩"};
-		String[] _basins = new String[] {"台兰"};
+		String[] _basins = new String[] {"昌马堡"};
 
 		FeatureCollection _glaciers = this.getGlaciers();
 		double[] _levels = new double[]{0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500, 4600, 4700, 4800, 4900, 5000, 5100, 5200, 5300, 5400, 5500, 5600, 5700, 5800, 5900, 6000, 6100, 6200, 6300, 6400, 6500, 6600, 6700, 6800, 6900, 7000, 7100, 7200, 7300, 7400, 7500, 7600, 7700, 7800, 7900, 8000, 8100, 8200, 8300, 8400, 8500, 8600, 8700, 8800, 8900, 9000};
@@ -95,8 +96,8 @@ public class ProcessingTest extends TestCase {
 			System.out.println(_l);
 		}
 		
-		System.out.println("Output to " + new File(path, "areas.txt").getAbsolutePath());
-		FileUtils.writeLines(new File(path, "areas.txt"), _lines);
+		System.out.println("Output to " + new File(path, "areas.csv").getAbsolutePath());
+		FileUtils.writeLines(new File(path, "areas.csv"), "gb2312", _lines);
 	}
 	
 	public void atestRunoff() throws Exception {
@@ -259,9 +260,9 @@ public class ProcessingTest extends TestCase {
 			_lines.add(_format.format(_date) + "\t" + _library.getOutput(_tempModel, "Temperature") + "\t" + _library.getOutput(_precModel, "Precipitation") + "\t" + _runoff);
 		}
 		
-		FileUtils.writeLines(new File("D:\\Temp\\" + basin + "\\ouput3.txt"), _lines, "\n");
+		FileUtils.writeLines(new File("D:\\Temp\\" + basin + "\\ouput3.txt"), "gb2312", _lines);
 		for(String _key : _itemLines.keySet()){
-			FileUtils.writeLines(new File(new File("D:\\Temp\\" + basin + "\\"), _key + ".txt"), _itemLines.get(_key), "\n");
+			FileUtils.writeLines(new File(new File("D:\\Temp\\" + basin + "\\"), _key + ".txt"), "gb2312", _itemLines.get(_key));
 		}	
 	}
 
@@ -420,7 +421,7 @@ public class ProcessingTest extends TestCase {
 		try{
 			while(_it.hasNext()){
 				Feature _f = _it.next();
-				if(_f.getAttribute("STATION").equals(catchmentName)){
+				if(_f.getAttribute("站点").equals(catchmentName)){
 					return (MultiPolygon) _f.getDefaultGeometry();
 				}
 			}

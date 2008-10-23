@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.Envelope2D;
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import cn.geodata.models.Calculate;
 import cn.geodata.models.annotation.GeoInput;
@@ -22,6 +25,7 @@ import com.vividsolutions.jts.geom.Point;
 
 @GeoProcess(title="冰川面积模型", keywords={"glacier", "area"})
 public class GlacierAreaModel implements Calculate {
+	private Logger log = Logger.getAnonymousLogger();
 
 	private DemModel demModel;
 	private FeatureCollection glaciers;
@@ -36,14 +40,21 @@ public class GlacierAreaModel implements Calculate {
 //		Map<Integer, Integer> _pixels = _m.calculate(catchment, cellSize, new File("d:\\Temp\\ttt5.tif"));
 //		writePixels(_pixels);
 		
-//		Map<Integer, Integer> _pixels = _m.calculate(catchment, cellSize, new File("D:\\Temp\\data3\\20081007\\dem\\dem1.tif"));
+//		Map<Integer, Integer> _pixels = _m.calculate(catchment, cellSize, new File("D:\\Temp\\data3\\20081010\\dem3.tif"));
 		Map<Integer, Integer> _pixels = _m.calculate(catchment, cellSize, null);
 //		Map<Integer, Integer> _pixels = this.readPixels();
 		
 		Point _pt = this.catchment.getCentroid();
-//		double _pixelArea = (new ProjectTransformModel("EPSG:4326", "EPSG:21416")).calculate(Utilities.covertEnvelope2D(new Envelope2D(null, _pt.getX(), _pt.getY(), cellSize, cellSize))).getArea();
-		double _pixelArea = (new ProjectTransformModel("EPSG:4326", "EPSG:32644")).calculate(Utilities.covertEnvelope2D(new Envelope2D(null, _pt.getX(), _pt.getY(), cellSize, cellSize))).getArea();
 		
+		String _wkt = "PROJCS[\"Asia_North_Albers_Equal_Area_Conic\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",95.0],PARAMETER[\"Standard_Parallel_1\",15.0],PARAMETER[\"Standard_Parallel_2\",65.0],PARAMETER[\"Latitude_Of_Origin\",30.0],UNIT[\"Meter\",1.0]]";
+
+		CoordinateReferenceSystem _sourcePrj = CRS.decode("EPSG:4326", true);
+		CoordinateReferenceSystem _targetPrj = CRS.parseWKT(_wkt);
+
+//		double _pixelArea = (new ProjectTransformModel("EPSG:4326", "EPSG:21416")).calculate(Utilities.covertEnvelope2D(new Envelope2D(null, _pt.getX(), _pt.getY(), cellSize, cellSize))).getArea();
+		double _pixelArea = (new ProjectTransformModel(_sourcePrj, _targetPrj)).calculate(Utilities.covertEnvelope2D(new Envelope2D(null, _pt.getX(), _pt.getY(), cellSize, cellSize))).getArea();
+		
+		log.info("Pixel area:" + _pixelArea);
 //		for(Integer _k : _pixels.keySet()){
 //			System.out.println("Elevation " + _k + ":" + _pixels.get(_k));
 //		}

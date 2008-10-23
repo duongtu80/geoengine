@@ -1,21 +1,14 @@
 package cn.geodata.models.wetland;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.commons.io.IOUtils;
-import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.FactoryRegistryException;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.AttributeType;
 import org.geotools.feature.AttributeTypeFactory;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.FeatureType;
 import org.geotools.feature.SchemaException;
 
@@ -28,10 +21,15 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 
 @GeoProcess(title="Water Region")
 public class WaterRegionModel implements Calculate  {
-	private Catchment catchment;
 	private String wetlandCode;
 	private double waterLevel;
+	private MultiPolygon catchment;
 	private FeatureCollection waterRegion;
+	private DemRaster raster;
+	
+	public WaterRegionModel(DemRaster raster){
+		this.raster = raster;
+	}
 
 	protected FeatureType createFeatureType() throws FactoryRegistryException, SchemaException, URISyntaxException {
 		AttributeType[] _attrs = new AttributeType[3];
@@ -43,19 +41,9 @@ public class WaterRegionModel implements Calculate  {
 	}
 	
 	public void calculate() throws Exception {
-		String[] _fileList = new String[] {"dem", "dem.hdr"};
-		File _temp = new File(System.getProperty("java.io.tmpdir"));
-		
-		for(String _f : _fileList){
-			File _file = new File(_temp, _f);
-			if(_file.exists() == false || _file.length() == 0){
-				IOUtils.copy(Catchment.class.getResourceAsStream("/wetland/data/" + _f), new FileOutputStream(_file));
-			}
-		}
-		
 		WaterRegionCalc _model = new WaterRegionCalc();
-		_model.setCatchment(this.catchment.findCatchmentByTag(wetlandCode));
-		_model.setReader(new EnviRasterReader(new File(_temp, _fileList[0]).toURL(), new File(_temp, _fileList[1]).toURL(), 1024 * 1024));
+		_model.setCatchment(this.catchment);
+		_model.setReader(raster);
 		_model.setWaterLevel(waterLevel);
 		
 		MultiPolygon _water = _model.calculate();
@@ -69,7 +57,7 @@ public class WaterRegionModel implements Calculate  {
 		this.waterRegion = _fs;
 	}
 
-	public void setCatchment(Catchment catchment) {
+	public void setCatchment(MultiPolygon catchment) {
 		this.catchment = catchment;
 	}
 
