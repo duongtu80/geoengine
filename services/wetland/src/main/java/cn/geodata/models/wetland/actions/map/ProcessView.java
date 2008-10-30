@@ -47,10 +47,10 @@ public class ProcessView extends AbstractProcess {
 	public String execute() throws Exception {
 		JSONObject _data = this.manage.getProcess(code).getData();
 		
-		JSONArray _dateList = _data.getJSONArray("Date");
-		JSONArray _etList = _data.getJSONArray("ET");
-		JSONArray _waterLevelList = _data.getJSONArray("WaterLevel");
-		JSONArray _precipitationList = _data.getJSONArray("Precipitation");
+		JSONArray _dateList = _data.getJSONArray("date");
+		JSONArray _etList = _data.getJSONArray("eT");
+		JSONArray _waterLevelList = _data.getJSONArray("waterLevel");
+		JSONArray _precipitationList = _data.getJSONArray("precipitation");
 		
 		this.dateList = new ArrayList<String>();
 		this.etList = new ArrayList<String>();

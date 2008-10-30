@@ -28,15 +28,19 @@ public class Catchment {
 	private Logger log = Logger.getAnonymousLogger();
 	
 	private String fieldName;
-	private FeatureSource catchments;
+	private FeatureSource features;
 
 	public Catchment() throws MalformedURLException, IOException{
-		this.catchments = new ShapefileDataStore(Catchment.class.getResource("/wetland-data/shp/catchment.shp")).getFeatureSource();
+		this.features = new ShapefileDataStore(Catchment.class.getResource("/wetland-data/shp/catchment.shp")).getFeatureSource();
 		this.fieldName = "NAME";
 	}
 
 	public void setFieldName(String fieldName) {
 		this.fieldName = fieldName;
+	}
+
+	public FeatureSource getFeatures() {
+		return features;
 	}
 
 	public String findCatchment(double x, double y) throws Exception {
@@ -65,7 +69,7 @@ public class Catchment {
 
 	public MultiPolygon findCatchmentByTag(String tag) throws NumberFormatException, Exception{
 		FilterFactory2 _factory = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
-		FeatureIterator _it = this.catchments.getFeatures().features();
+		FeatureIterator _it = this.features.getFeatures().features();
 		try{
 			log.info("tag:" + tag);
 			while(_it.hasNext()){
@@ -87,7 +91,7 @@ public class Catchment {
 
 	public Feature findWetland(Point pt) throws IOException {
 		FilterFactory2 _factory = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
-		FeatureIterator _it = this.catchments.getFeatures(_factory.contains(_factory.property(this.catchments.getSchema().getDefaultGeometry().getLocalName()), _factory.literal(pt))).features();
+		FeatureIterator _it = this.features.getFeatures(_factory.contains(_factory.property(this.features.getSchema().getDefaultGeometry().getLocalName()), _factory.literal(pt))).features();
 		try{
 			log.info("location:" + pt.toText());
 			if(_it.hasNext()){
@@ -104,7 +108,7 @@ public class Catchment {
 	}
 	
 	public FeatureCollection getCatchments() throws IOException {
-		return this.catchments.getFeatures();
+		return this.features.getFeatures();
 	}
 	
 	/**

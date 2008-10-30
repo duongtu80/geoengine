@@ -1,16 +1,39 @@
 package cn.geodata.models.wetland.actions.map;
 
+import java.awt.Paint;
+import java.awt.Stroke;
+
 public class ChartModel {
 	protected String title;
 	protected String xAxis;
 	protected String yAxis;
 	protected String seriesTitle;
+	protected Stroke stroke;
+	protected Paint paint;
 	
-	public ChartModel(String title, String xAxis, String yAxis, String seriesTitle){
+	public ChartModel(String title, String xAxis, String yAxis, String seriesTitle, Paint paint, Stroke stroke){
 		this.title = title;
 		this.xAxis = xAxis;
 		this.yAxis = yAxis;
 		this.seriesTitle = seriesTitle;
+		this.paint = paint;
+		this.stroke = stroke;
+	}
+
+	public Paint getPaint() {
+		return paint;
+	}
+
+	public void setPaint(Paint paint) {
+		this.paint = paint;
+	}
+
+	public void setStroke(Stroke stroke) {
+		this.stroke = stroke;
+	}
+
+	public Stroke getStroke() {
+		return stroke;
 	}
 
 	public String getSeriesTitle() {

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.sf.json.JSONArray;
@@ -101,7 +102,7 @@ public class WaterLevelProcess implements Process, Runnable {
 			ArrayList<DayMet> _daymets = dayMetReader.read(startDate, endDate, basin, _center.getX(), _center.getY());
 			
 			Map<String, List<Double>> _values = new HashMap<String, List<Double>>();
-			for(String _b : new String[] {"Tday", "Srad", "Vpd", "Precipitation", "ET", "WaterLevel"}){
+			for(String _b : new String[] {"tday", "srad", "vpd", "precipitation", "eT", "waterLevel"}){
 				_values.put(_b, new ArrayList<Double>());
 			}
 			List<Long> _dates = new ArrayList<Long>();
@@ -118,6 +119,7 @@ public class WaterLevelProcess implements Process, Runnable {
 
 			//What's the unit of catchment area in the formula? km2, m2, or anything else?
 			_area = _area / (1000 * 2); 
+			_area = 3;
 			
 			log.info("catchment area " + _area);
 			log.info("spill point " + _spillPoint);			
@@ -154,26 +156,37 @@ public class WaterLevelProcess implements Process, Runnable {
 	            	_waterLevel = Math.round(_waterLevel * 100) / 100.0;
 	        	}
 	        	
-	        	_values.get("Tday").add(_daymets.get(i).getTday());
-	        	_values.get("Srad").add(_daymets.get(i).getSrad());
-	        	_values.get("Vpd").add(_daymets.get(i).getVpd());
-	        	_values.get("Precipitation").add(_daymets.get(i).getPrcp());
-	        	_values.get("ET").add((Double)_etModel.getOutput("Et") / 10.0);
-	        	_values.get("WaterLevel").add(_waterLevel);
-	        	_values.get("Vpd").add(_daymets.get(i).getVpd());
+	        	_values.get("tday").add(_daymets.get(i).getTday());
+	        	_values.get("srad").add(_daymets.get(i).getSrad());
+	        	_values.get("vpd").add(_daymets.get(i).getVpd());
+	        	_values.get("precipitation").add(_daymets.get(i).getPrcp());
+	        	_values.get("eT").add((Double)_etModel.getOutput("Et") / 10.0);
+	        	_values.get("waterLevel").add(_waterLevel);
+	        	_values.get("vpd").add(_daymets.get(i).getVpd());
 	        }
 
 			JSONObject _data = new JSONObject();
 	        for(String _b : _values.keySet()){
 	        	_data.put(_b, JSONArray.fromArray(_values.get(_b).toArray()));
 	        }
-	        _data.put("Date", JSONArray.fromArray(_dates.toArray()));
+	        _data.put("date", JSONArray.fromArray(_dates.toArray()));
+	        
+	        //Add additional parameters
+	        JSONObject _inputs = new JSONObject();
+	        _inputs.set("basin", this.basin);
+	        _inputs.set("startDate", this.startDate.getTime());
+	        _inputs.set("endDate", this.endDate.getTime());
+	        _inputs.set("params", this.input);
+	        
+	        _data.put("inputs", _inputs);
 	        
 	        this.data = _data;
 			
 			this.status.put("percent", 100);
 			this.status.put("message", "Finished");
 		} catch (Exception e) {
+			log.log(Level.WARNING, "Failed with water level process", e);
+			
 			this.status.put("percent", -1);
 			this.status.put("message", "Failed:" + e.getMessage());
 		}
