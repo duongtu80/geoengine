@@ -70,7 +70,7 @@
 <div id="mainPanel">
 <div class="panelTitle">Charts</div>
 <div>
-	<s:iterator value="{'ET', 'WaterLevel', 'Precipitation'}" status="row2">
+	<s:iterator value="{'eT', 'waterLevel', 'precipitation'}" status="row2">
 		<img src="model/processChart.do?tag=<s:property />&id=<s:property value="code" />&date=<s:property value="(new java.util.Date()).time + #row2.index" />" ></img>
 	</s:iterator>
 </div>

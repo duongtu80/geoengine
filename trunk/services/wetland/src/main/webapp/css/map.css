@@ -27,6 +27,10 @@ div.progressRunning {
 	background-image: url('../images/running.gif');
 	background-position: left center;
 	background-repeat: no-repeat;
+	filter:alpha(opacity=50);
+	-moz-opacity:0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
 }
 
 div.progressReady {

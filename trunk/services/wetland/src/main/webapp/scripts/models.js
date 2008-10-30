@@ -27,20 +27,22 @@ function WetlandModel (map){
 					},
 					function(params) {
 						wetland.progressBar.pushProgress('Calculating ET');
-						dojo.xhrGet({ //
-					        url: "model/et.do", 
-					        handleAs: "json",
-					        content: params,
-					        timeout: 60000,
-					        load: function(response, ioArgs) {
-					        	(new ModelResult()).addResultChartPanel(context, params, response);
-					        	wetland.progressBar.popProgress();
-					        },
-					        error: wetland.errorFunction
-						});
+						dojo.xhrGet(
+							{ //
+						        url: "model/et.do", 
+						        handleAs: "json",
+						        content: params,
+						        timeout: 60000,
+						        load: function(response, ioArgs) {
+						        	(new ModelResult()).addResultChartPanel(context, params, response);
+						        	wetland.progressBar.popProgress();
+						        },
+						        error: wetland.errorFunction
+							}
+						);
 					}
-				),
-				'WaterTableModel': new WpsModel ('WaterTableModel', dijit.byId('Setting.WaterTableModel'),
+				)
+				, 'WaterTableModel': new WpsModel ('WaterTableModel', dijit.byId('Setting.WaterTableModel'),
 						function() {
 							var _p = {};
 							if(!isNaN(dijit.byId('WaterTableModel.SaturationPrcp').getValue())){
@@ -61,9 +63,18 @@ function WetlandModel (map){
 						        	wetland.progressBar.popProgress();
 						        }
 								,error: wetland.errorFunction
-							});
+							}
+						);
+					}
+				)				
+				, 'WaterRegionModel': new WpsModel ('WaterRegionModel', dijit.byId('Setting.WaterRegionModel'),
+						function() {
+							var _p = {};
+							
+							return {id: 'WaterRegionModel', params: _p};
 						}
-					)				
+						,null
+				)
 			};
 
 
@@ -74,9 +85,11 @@ function WetlandModel (map){
 			_f.style = this.basinLayer.style;
 			this.basinLayer.drawFeature(_f);
 		}
-		
+
+		//Change style with the selected feature
 		var _f = this.selectFeatureById(this.basinLayer, dijit.byId('listCatchment').item.fid);
-		_f.style = this.basinLayer.selectedStyle;
+		_f.style = this.basinLayer.styleMap.styles.select.defaultStyle;
+		
 		this.basinLayer.drawFeature(_f);
 		
 		this.basinLayer.selectedFeatures.push(_f);
@@ -163,10 +176,9 @@ function WetlandModel (map){
 	        timeout: 60000,
 	        load: function(response, ioArgs) {
 	        	try{
-	        		wetland.progressBar.pushProgress('Loading models');
-	        		
 		        	wetland.initModelList(response, 'et', 'modelET');
 		        	wetland.initModelList(response, 'water table', 'modelWaterTable');
+		        	wetland.initModelList(response, 'water region', 'modelWaterRegion');
 		        }
 		        finally{
 		        	wetland.progressBar.popProgress();
@@ -258,7 +270,27 @@ function WetlandModel (map){
 	        },
 	        error: this.errorFunction
 		});
-	}
+	};
+	
+	this.loadWaterLevelOnMap = function(e){
+		var _t = e.target;
+		
+		var _params = {'id': _t.processId};
+		wetland.progressBar.pushProgress('Load water level');
+		dojo.xhrGet({ //
+//	        url: "test.txt",
+	        url: "model/processData.do",
+	        handleAs: "json",
+	        content: _params,
+	        timeout: 60000,
+	        load: function(response, ioArgs) {
+				wetland.progressBar.popProgress();
+				wetland.waterAnimation = new WaterLevelAnimation(response.inputs.basin, response.date, response.waterLevel);
+				wetland.waterAnimation.moveToPosition(0);
+			},
+	        error: this.errorFunction
+		});
+	};
 }
 
 function WpsModel (id, dialog, saveSetting , execute) {
@@ -307,13 +339,23 @@ function ModelResult() {
      	this.panelDiv.appendChild(_textDiv);
      	_textDiv.className = 'resultItem';
      	_textDiv.style["textAlign"] = 'right';
-     	
-     	var _linkDiv = document.createElement('a');
-     	_textDiv.appendChild(_linkDiv);
-     	_linkDiv.target = '_blank';
-     	_linkDiv.className = 'resultLink';
-     	_linkDiv.href = 'runoffView.do?code=' + param.id;
-     	_linkDiv.innerHTML = 'View Data>>';
+
+     	var _viewDiv = document.createElement('span');
+     	_textDiv.appendChild(_viewDiv);
+//     	_viewDiv.target = '_blank';
+     	_viewDiv.className = 'resultLink';
+//     	_viewDiv.href = '#';
+     	_viewDiv.processId = param.id;
+     	_viewDiv.innerHTML = 'Animation on map';
+     	dojo.connect(_viewDiv, "onclick", wetland, 'loadWaterLevelOnMap');
+//     	_viewDiv.onclick = wetland.loadWaterLevelOnMap;
+
+//     	var _linkDiv = document.createElement('a');
+//     	_textDiv.appendChild(_linkDiv);
+//     	_linkDiv.target = '_blank';
+//     	_linkDiv.className = 'resultLink';
+//     	_linkDiv.href = 'runoffView.do?code=' + param.id;
+//     	_linkDiv.innerHTML = 'View Data>>';
      	
      	var i = 0;
      	for(i=0;i<tags.length;i++){
@@ -322,7 +364,8 @@ function ModelResult() {
 	     	this.panelDiv.appendChild(_newImg);
 	     	this.panelDiv.className = 'resultPanel';
      	}
-
+     	
+     	
      	
      	dojo.byId('resultPanel').appendChild(this.panelDiv);
 	};
@@ -368,7 +411,8 @@ function ModelProcess() {
 		
 		if(_param.percent >= 100){
 			//如果执行完毕
-			(new ModelResult()).addResultChartPanel(['ET', 'WaterLevel', 'Precipitation'], ['ET', 'Water Level', 'Precipitation'], _param);
+			(new ModelResult()).addResultChartPanel(['eT,waterLevel,precipitation'], [''], _param);
+//			(new ModelResult()).addResultChartPanel(['ET', 'WaterLevel', 'Precipitation'], ['ET', 'Water Level', 'Precipitation'], _param);
 //			(new ModelResult()).addResultChartPanel('Temperature', '气温', _param);
 //			(new ModelResult()).addResultChartPanel('Precipitation', '降水', _param);
 //			(new ModelResult()).addResultChartPanel('Runoff', '径流', _param);
@@ -392,4 +436,155 @@ function ModelProcess() {
 			});
 		}
 	}
+}
+
+function WaterLevelAnimation(basin, dates, levels) {
+	this.panel = dojo.byId('waterLevelPanel');
+	this.button = dijit.byId('btnStartAnimation');
+	this.basin = basin;
+	this.dates = dates;
+	this.levels = levels;	
+	this.panel.style.visibility = 'visible';
+	this.timerId = -1;
+	this.pos = -1;
+	this.running = false;
+	
+	this.clean = function() {
+		wetland.waterLayer.removeFeatures(wetland.waterLayer.features);
+//		this.panel.style.visibility = 'hidden';
+	};
+	
+	this.moveToPosition = function(pos){
+		var _pos = pos;
+		if(pos < 0){
+			_pos = 0;
+		}
+		else if(pos >= this.dates.length && this.dates.length > 0){
+			_pos = this.dates.length-1;
+		}
+		if(_pos == this.pos){
+			return false;
+		}
+		
+		this.pos = _pos;
+		
+		dijit.byId('dateWaterLevel').setValue(new Date(this.dates[this.pos]));
+		dijit.byId('valWaterLevel').setValue(this.levels[this.pos]);
+		
+		wetland.progressBar.pushProcess('Execute model', this.loadWaterLevel, this, [this.levels[this.pos]]);
+		
+		return true;
+	};
+	
+	this.changeDate = function(){
+		var _t = dijit.byId('dateWaterLevel').getValue().getTime()
+		var i;
+		for(i=0;i<this.dates.length;i++){
+			if(this.dates[i] == _t){
+				this.moveToPosition(i);
+				return true;
+			}
+		}
+		return false;
+	};
+	
+	this.loadWaterLevel = function(v){
+		if(this.running || v <= 0){
+			wetland.waterLayer.removeFeatures(wetland.waterLayer.features);
+			wetland.progressBar.popProgress();
+			this.running = false;
+			
+			return;
+		}
+		
+		this.running = true;
+		
+		var _modelParam = {};
+		_modelParam['WaterRegion'] = wetland.models[wetland.getItemFromCombox(dijit.byId('modelWaterRegion')).id].saveSetting();
+
+		var _params = {
+				'basin': this.basin,
+				'level': v,
+				'params': _modelParam
+			};
+		
+		dojo.xhrGet({ //
+	        url: "model/waterRegionStart.do", 
+	        handleAs: "xml",
+	        content: {"params": dojo.toJson(_params)},
+	        timeout: 60000,
+	        'load': function(response, ioArgs) {
+				if(response != null){
+					if(response.documentElement.nodeName == 'error'){
+						alert(response.documentElement.childNodes[0].nodeValue);
+					}
+					else{
+						var _options = {
+								'internalProjection': map.projection,
+								'externalProjection': map.displayProjection
+							};
+						
+						var _gml = new OpenLayers.Format.GML(_options);
+						var _fs = _gml.read(response);
+
+						wetland.waterLayer.removeFeatures(wetland.waterLayer.features);
+						wetland.waterLayer.addFeatures(_fs);
+					}
+				}
+				else{
+					alert('Failed to load basins.');
+				}
+				wetland.progressBar.popProgress();
+				wetland.waterAnimation.running = false;
+	        }
+	        ,'error': function(response, ioArgs){
+	        	wetland.errorFunction(response, ioArgs);
+	        	wetland.waterAnimation.running = false;
+	        	
+	        	wetland.waterAnimation.stopAnimation();
+	        }
+		});
+	};
+	
+	this.switchAnimation = function (){
+		if(this.timerId > 0){
+			this.stopAnimation();
+		}
+		else{
+			this.startAnimation();
+		}
+	};
+	
+	this.startAnimation = function (){
+		if(this.dates == null || this.levels == null){
+			alert('No water table records');
+			return;
+		}
+		
+		this.timerId = setInterval("invokeTime()", 1000);
+		this.button.setLabel('Stop');
+	};
+	
+	this.stopAnimation = function (){
+		if(this.timerId > 0){
+			clearInterval(this.timerId);
+		}
+		this.timerId = -1;
+
+		this.button.setLabel('Start');
+	};
+	
+	this.processAnimation = function() {
+		if(this.running == true)
+			return false;
+		
+		if(this.moveToPosition(this.pos + 7) == false){
+			this.stopAnimation();
+		}
+		return true;
+	};
+}
+
+function invokeTime(){
+	wetland.waterAnimation.processAnimation.apply(wetland.waterAnimation);
 }
