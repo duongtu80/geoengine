@@ -19,7 +19,7 @@ import cn.geodata.models.annotation.GeoProcess;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
-@GeoProcess(title="Water Region")
+@GeoProcess(title="Water Region", keywords={"water region"})
 public class WaterRegionModel implements Calculate  {
 	private String wetlandCode;
 	private double waterLevel;
@@ -57,6 +57,7 @@ public class WaterRegionModel implements Calculate  {
 		this.waterRegion = _fs;
 	}
 
+	@GeoInput(title="Catchment")
 	public void setCatchment(MultiPolygon catchment) {
 		this.catchment = catchment;
 	}
@@ -65,12 +66,7 @@ public class WaterRegionModel implements Calculate  {
 	public FeatureCollection getWaterRegion() {
 		return waterRegion;
 	}
-
-	@GeoInput(title="Wetland Code")
-	public void setWetlandCode(String wetlandCode) {
-		this.wetlandCode = wetlandCode;
-	}
-
+	
 	@GeoInput(title="Water Level")
 	public void setWaterLevel(double waterLevel) {
 		this.waterLevel = waterLevel;
