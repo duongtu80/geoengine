@@ -128,6 +128,9 @@ public class RunoffProcess implements Process, Runnable {
 			_library.setInput(_precModel, "Point", _pt);
 			_library.setInput(_snowModel, "Point", _pt);
 			_library.setInput(_iceeModel, "Point", _pt);
+			
+			_tempModel.setInput("Power", 3);
+			_precModel.setInput("Power", 3);
 
 			this.status.put("message", "计算冰度日因子");
 			_library.executeProcess(_snowModel);

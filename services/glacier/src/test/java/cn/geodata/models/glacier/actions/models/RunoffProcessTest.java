@@ -1,20 +1,20 @@
 package cn.geodata.models.glacier.actions.models;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import junit.framework.TestCase;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -26,88 +26,21 @@ import org.geotools.feature.FeatureIterator;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import junit.framework.TestCase;
-
 public class RunoffProcessTest extends TestCase {
 	private Logger log = Logger.getAnonymousLogger();
+	private File folder;
+	private String fieldName;
 	
-	public void atestTest1() throws Exception {
-		JSONObject _param = JSONObject.fromString("{\"Temperature\":{\"id\":\"TemperatureModelEx\",\"params\":{\"Power\":2,\"Stand\":3000,\"Grads\":-0.006}},\"Precipitation\":{\"id\":\"PrecipitationModel\",\"params\":{\"Power\":2}},\"SnowDDF\":{\"id\":\"SnowDDFModel\",\"params\":{\"Power\":2}},\"IceDDF\":{\"id\":\"IceDDFModel\",\"params\":{\"Power\":2}},\"Runoff\":{\"id\":\"RunoffModel\",\"params\":{\"RainCritical\":2,\"SnowCritical\":-0.5,\"SnowFrozenRatio\":0.1}}}");
-		RunoffProcess _p = null; // new RunoffProcess(80.333326615, 41.826389655, 1960, 2007, "tailang", _param, "d:\\Tank\\Save\\Java\\geoengine\\var\\glacier\\apache-tomcat-6.0.16\\webapps\\geoserver\\data\\data\\china\\basin.shp", "d:\\Tank\\Save\\Java\\geoengine\\var\\glacier\\apache-tomcat-6.0.16\\webapps\\geoserver\\data\\data\\china\\glacier.shp");
-		
-		_p.run();
-		
-		String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "Accumulations", "Balances"};
-		String[] _valuCols = new String[] {"Temperature", "Precipitation", "Runoff"};
-
-		SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM");
-		DecimalFormat _numbFormat = new DecimalFormat("0.00");
-		
-		List<Object> _dates = _p.getMap().get("Dates");
-		File _path = new File("D:\\Temp\\data3");
-		for(String _key : _listCols){
-			List<Object> _item = _p.getMap().get(_key);
-			
-			FileOutputStream _stream = new FileOutputStream(new File(_path, _key + ".txt"));
-			for(int i=0;i<_item.size();i++){
-				Date _d = (Date) _dates.get(i);
-
-				StringBuffer _line = new StringBuffer();
-				_line.append(_dateFormat.format(_d));
-
-				double[] _list = (double[])_item.get(i);
-				for(int j=0;j<_list.length;j++){
-					_line.append("\t" + _numbFormat.format(_list[j]));
-				}
-				_line.append("\n");
-				
-				IOUtils.write(_line, _stream);
-			}
-			_stream.close();
-		}
-		
-		for(String _key : _valuCols){
-			List<Object> _item = _p.getMap().get(_key);
-			
-			FileOutputStream _stream = new FileOutputStream(new File(_path, _key + ".txt"));
-			for(int i=0;i<_item.size();i++){
-				StringBuffer _line = new StringBuffer();
-				_line.append(_numbFormat.format((Double)_item.get(i)) + "\n");
-				
-				IOUtils.write(_line, _stream);
-			}
-			_stream.close();
-		}
-
-//		JSONObject _data = _p.getData();
-//		Iterator _it = _data.keys();
-//		
-//		SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM");
-//		while(_it.hasNext()){
-//			String _key = (String)_it.next();
-//			Object _vv = _data.get(_key);
-//			if (_vv instanceof JSONArray) {
-//				System.out.print(_key);
-//				JSONArray _arr = _data.getJSONArray(_key);
-//				for(int i=0;i<_arr.length();i++){
-//					if(_key.equals("Date")){
-//						System.out.print("\t" + _dateFormat.format(new Date(_arr.getLong(i)))); 
-//					}
-//					else{
-//						System.out.print("\t" + _arr.get(i)); 
-//					}
-//				}
-//				System.out.println();
-//			}
-//		}
+	public RunoffProcessTest() {
+		folder = new File("D:\\Temp\\data3\\20081023");
+		this.fieldName = "站点";
 	}
 	
-
 	public void testTest2() throws Exception {
 		Map<String, double[]> _map = new HashMap<String, double[]>();
-		List<String> _list = FileUtils.readLines(new File("d:\\Temp\\data3\\20081021\\areas.csv"), "gb2312");
+		List<String> _list = FileUtils.readLines(new File(this.folder, "areas.csv"), "gb2312");
+		
+		assertNotNull(_list);
 		
 		for(String _l : _list){
 			String[] _parts = _l.split(",");
@@ -135,6 +68,7 @@ public class RunoffProcessTest extends TestCase {
 			
 			if(_a > 0){
 				this.calculateRunoff(_b, 1960, 2007, _levels, _areas);
+//				this.calculateRunoff(_b, 1980, 1990, _levels, _areas);
 			}
 			else{
 				log.warning("Skip basin:" + _b);
@@ -144,7 +78,7 @@ public class RunoffProcessTest extends TestCase {
 	
 	protected void calculateRunoff(String basin, int startYear, int endYear, double[] levels, double[] areas) throws Exception {
 		log.info("Calculating basin:" + basin);
-		File _path = new File("D:\\Temp\\data3\\20081021\\" + basin);
+		File _path = new File(this.folder, basin);
 		
 		if(_path.exists() == false){
 			_path.mkdir();
@@ -155,7 +89,7 @@ public class RunoffProcessTest extends TestCase {
 
 		JSONObject _param = JSONObject.fromString("{\"Temperature\":{\"id\":\"TemperatureModelEx\",\"params\":{\"Power\":2,\"Stand\":3000,\"Grads\":-0.006}},\"Precipitation\":{\"id\":\"PrecipitationModel\",\"params\":{\"Power\":2}},\"SnowDDF\":{\"id\":\"SnowDDFModel\",\"params\":{\"Power\":2}},\"IceDDF\":{\"id\":\"IceDDFModel\",\"params\":{\"Power\":2}},\"Runoff\":{\"id\":\"RunoffModel\",\"params\":{\"RainCritical\":2,\"SnowCritical\":-0.5,\"SnowFrozenRatio\":0.1}}}");
 		
-		MultiPolygon _border = this.getCatchment(basin, "d:\\Temp\\data3\\20081021\\data\\basin.shp");
+		MultiPolygon _border = this.getCatchment(basin, new File(this.folder, "data\\basin.shp"));
 		Point _pt = _border.getCentroid();
 		RunoffProcess _p = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _param, levels, areas);
 		
@@ -223,24 +157,23 @@ public class RunoffProcessTest extends TestCase {
 
 	private MultiPolygon getCatchment(String catchmentName, String path)
 			throws MalformedURLException, IOException {
-		FeatureIterator _it = new ShapefileDataStore(new File(
-				path).toURL(), false, Charset.forName("gb2312"))
+		return this.getCatchment(catchmentName, new File(path));
+	}
+
+	private MultiPolygon getCatchment(String catchmentName, File path) throws MalformedURLException, IOException {
+		FeatureIterator _it = new ShapefileDataStore(path.toURL(), false, Charset.forName("gb2312"))
 				.getFeatureSource().getFeatures().features();
 		try {
 			while (_it.hasNext()) {
 				Feature _f = _it.next();
-				if (_f.getAttribute("站点").equals(catchmentName)) {
+				if (_f.getAttribute(this.fieldName).equals(catchmentName)) {
 					return (MultiPolygon) _f.getDefaultGeometry();
 				}
 			}
 		} finally {
 			_it.close();
 		}
-
-		return null;
-	}
-
-	public void atestTest2() throws Exception {
 		
+		return null;
 	}
 }
