@@ -69,7 +69,7 @@ public class RunoffModel implements Calculate{
 			double _level = levels[i];
 
 			//计算分带的气温和降水
-			double _precBand = precipitation4Band(precipitation, precElevation, _level);
+			double _precBand = precipitation4Band(precipitation, precElevation, _level, date.getMonth(), this.days);
 			double _tempBand = temperature4Band(temperature, _alt, _level);
 			double _acmtBand = this.computerAT(location.getY(), date.getMonth(), _tempBand, days); //temperature4Band(accumulatedTemperature, _alt, _level);
 			
@@ -356,7 +356,36 @@ public class RunoffModel implements Calculate{
 		}
 		return _val;
 	}
-	
+
+	/**
+	 * 根据昌马堡修正的降水梯度计算方法
+	 * 
+	 * @param val 源降水值
+	 * @param sourceLat 源高程
+	 * @param targetLat 目标分带高程
+	 * @param month 月份
+	 * @return
+	 */
+	private double precipitation4Band(double val, double sourceLat, double targetLat, int month, int days) {
+		if(month >= 4 && month <= 8){
+			if(targetLat < 5100){
+				double _val = val + (((targetLat - sourceLat) / 100.0) * 2);
+				if(_val < 0)
+					_val = 0;
+				
+				return _val;
+			}
+			else{
+				double _val = val + (((5000 - sourceLat) / 100.0) * 2) + (((targetLat - sourceLat) / 100.0) * 2);
+				
+				return _val;
+			}
+		}
+		else{
+			return val;
+		}
+	}
+
 	/**
 	 * 计算冰川末端
 	 * @return

@@ -27,10 +27,11 @@
 		<constructor-arg ref="demAnalysis"></constructor-arg>
 	</bean>
 	<bean id="WaterRegionModel" class="cn.geodata.models.wetland.WaterRegionModel" scope="prototype">
+		<constructor-arg ref="dem"></constructor-arg>
 <!-- 
 		<property name="catchment" ref="catchment"></property>
- -->
 		<property name="wetlandCode" value="P4"></property>
+ -->
 	</bean>
 <!-- 
 	<bean id="LoadWetlands" class="cn.geodata.models.wetland.LoadWetlands" scope="singleton">
