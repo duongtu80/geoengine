@@ -174,7 +174,7 @@ function initMap() {
 //	var _back_layer = new OpenLayers.Layer.Google("Google Map", {'type': G_SATELLITE_MAP, 'sphericalMercator': true, 'minZoomLevel': 13});
 //	var _back_layer = new OpenLayers.Layer.Google("Google Map", {'type': G_PHYSICAL_MAP, 'sphericalMercator': true, 'minZoomLevel': 13});
 
-	var _basin_layer = new OpenLayers.Layer.Vector("Wetlands", {styleMap: createDisasterSymbol()});
+	var _basin_layer = new OpenLayers.Layer.Vector("Catchments", {styleMap: createDisasterSymbol()});
 
 	map.addLayers([
 	               new OpenLayers.Layer.Google("Satellite", {'type': G_SATELLITE_MAP, 'sphericalMercator': true, 'minZoomLevel': 13}),
@@ -191,7 +191,7 @@ function initMap() {
 //	var vlayer = new OpenLayers.Layer.Vector('Markers');
 //	map.addLayer(vlayer);
 
-	var _water_layer = new OpenLayers.Layer.Vector("Water");
+	var _water_layer = new OpenLayers.Layer.Vector("Water Extent");
 	_water_layer.style = OpenLayers.Util.extend({'fill':'black'}, OpenLayers.Feature.Vector.style['default']);
 	
 	_water_layer.style.pointRadius = 3;
@@ -216,6 +216,6 @@ function initMap() {
 	wetland.progressBar.pushProcess('Load catchments', loadCatchments, null);
 	wetland.progressBar.pushProcess('Load models', wetland.loadWpsModel, null);
 
-	dojo.connect(dojo.byId('divLoadMapTest'), 'onclick', wetland, 'loadWaterLevelOnMap');
-	dojo.byId('divLoadMapTest').processId = '1111111';
+//	dojo.connect(dojo.byId('divLoadMapTest'), 'onclick', wetland, 'loadWaterLevelOnMap');
+//	dojo.byId('divLoadMapTest').processId = '1111111';
 }

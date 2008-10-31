@@ -35,9 +35,9 @@ public class ProcessChart extends AbstractProcess {
 		charts = new HashMap<String, ChartModel>();
 		
 		
-		charts.put("eT", new ChartModel("ET", "Date", "C", "eT", new Color(200, 55, 55) , new BasicStroke(1.0f)));
-		charts.put("waterLevel", new ChartModel("Water Level", "Date", "m", "waterLevel", new Color(55, 55, 200) , new BasicStroke(1.0f)));
-		charts.put("precipitation", new ChartModel("Precipitation", "Date", "m3/s", "precipitation", new Color(55, 200, 55) , new BasicStroke(1.0f)));
+		charts.put("eT", new ChartModel("ET", "Date", "C", "ET(mm)", new Color(200, 55, 55) , new BasicStroke(1.0f)));
+		charts.put("waterLevel", new ChartModel("Water Level", "Date", "m", "Water Level(m)", new Color(55, 55, 200) , new BasicStroke(1.0f)));
+		charts.put("precipitation", new ChartModel("Precipitation", "Date", "m3/s", "Precipitation(cm)", new Color(55, 200, 55) , new BasicStroke(1.0f)));
 	}
 	
 	public void setTag(String tag) {

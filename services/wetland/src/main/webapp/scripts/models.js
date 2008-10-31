@@ -285,8 +285,18 @@ function WetlandModel (map){
 	        timeout: 60000,
 	        load: function(response, ioArgs) {
 				wetland.progressBar.popProgress();
-				wetland.waterAnimation = new WaterLevelAnimation(response.inputs.basin, response.date, response.waterLevel);
-				wetland.waterAnimation.moveToPosition(0);
+				
+				if(wetland.waterAnimation){
+					wetland.waterAnimation.clean();
+				}
+				
+				if(response.date.length == 0)
+					alert('No level');
+				else{
+					wetland.waterAnimation = new WaterLevelAnimation(response.inputs.basin, response.date, response.waterLevel);
+					wetland.waterAnimation.show();
+					wetland.waterAnimation.moveToPosition(0);
+				}
 			},
 	        error: this.errorFunction
 		});
@@ -365,8 +375,6 @@ function ModelResult() {
 	     	this.panelDiv.className = 'resultPanel';
      	}
      	
-     	
-     	
      	dojo.byId('resultPanel').appendChild(this.panelDiv);
 	};
 
@@ -441,26 +449,39 @@ function ModelProcess() {
 function WaterLevelAnimation(basin, dates, levels) {
 	this.panel = dojo.byId('waterLevelPanel');
 	this.button = dijit.byId('btnStartAnimation');
+	this.animationType = dijit.byId('listAnimationType');
 	this.basin = basin;
 	this.dates = dates;
 	this.levels = levels;	
-	this.panel.style.visibility = 'visible';
 	this.timerId = -1;
 	this.pos = -1;
 	this.running = false;
 	
 	this.clean = function() {
 		wetland.waterLayer.removeFeatures(wetland.waterLayer.features);
-//		this.panel.style.visibility = 'hidden';
+		this.panel.style.visibility = 'hidden';
+		this.panel.style.height = '0px';
+	};
+	
+	this.show = function() {
+		this.panel.style.visibility = 'visible';
+		this.panel.style.height = '26px';
 	};
 	
 	this.moveToPosition = function(pos){
+		if(this.running == true){
+			return false;
+		}
+		
 		var _pos = pos;
-		if(pos < 0){
+		if(_pos < 0){
 			_pos = 0;
 		}
-		else if(pos >= this.dates.length && this.dates.length > 0){
+		else if(_pos >= this.dates.length && this.dates.length > 0){
 			_pos = this.dates.length-1;
+			alert('The animation reached the end');
+			
+			return false;
 		}
 		if(_pos == this.pos){
 			return false;
@@ -471,34 +492,57 @@ function WaterLevelAnimation(basin, dates, levels) {
 		dijit.byId('dateWaterLevel').setValue(new Date(this.dates[this.pos]));
 		dijit.byId('valWaterLevel').setValue(this.levels[this.pos]);
 		
-		wetland.progressBar.pushProcess('Execute model', this.loadWaterLevel, this, [this.levels[this.pos]]);
+		var _v = this.levels[this.pos];
+		if(_v <= 0){
+			wetland.waterLayer.removeFeatures(wetland.waterLayer.features);
+			wetland.progressBar.popProgress();
+
+			return true;
+		}
+		
+		this.running = true;
+		wetland.progressBar.pushProcess('Execute model', this.loadWaterLevel, this, [_v]);
 		
 		return true;
 	};
 	
 	this.changeDate = function(){
-		var _t = dijit.byId('dateWaterLevel').getValue().getTime()
-		var i;
-		for(i=0;i<this.dates.length;i++){
-			if(this.dates[i] == _t){
-				this.moveToPosition(i);
-				return true;
-			}
+		if(this.timerId > 0){
+			return false;
 		}
+		
+		var _t = dijit.byId('dateWaterLevel').getValue().getTime()
+		
+		var _p = this.findPosition(_t);
+		if(_p != this.pos && _p >= 0){
+			this.moveToPosition(_p);
+			return true;
+		}
+
 		return false;
 	};
 	
-	this.loadWaterLevel = function(v){
-		if(this.running || v <= 0){
-			wetland.waterLayer.removeFeatures(wetland.waterLayer.features);
-			wetland.progressBar.popProgress();
-			this.running = false;
-			
-			return;
+	this.findPosition = function (v) {
+		if(this.dates.length == 0){
+			return -1;
 		}
 		
-		this.running = true;
+		var i;
+		for(i=0;i<this.dates.length;i++){
+			if(this.dates[i] == v){
+				return i;
+			}
+		}
 		
+		if(v < this.dates[0])
+			return 0;
+		else if(v > this.dates[this.dates.length -1])
+			return this.dates.length -1;
+		else
+			throw 'Failed to date:' + new Date(v);
+	};
+	
+	this.loadWaterLevel = function(v){
 		var _modelParam = {};
 		_modelParam['WaterRegion'] = wetland.models[wetland.getItemFromCombox(dijit.byId('modelWaterRegion')).id].saveSetting();
 
@@ -578,10 +622,63 @@ function WaterLevelAnimation(basin, dates, levels) {
 		if(this.running == true)
 			return false;
 		
-		if(this.moveToPosition(this.pos + 7) == false){
+		if(this.pos < 0 || this.pos >= this.dates.length){
+			return false;
+		}
+		
+		var _animationType = this.animationType.getValue();
+		var _jump = 0;
+		
+		var _d = new Date(this.dates[this.pos]);
+		if(_animationType == 'weekly'){
+			_jump = 7;
+		}
+		else if(_animationType == 'daily'){
+			_jump = 1;
+		}
+		else if(_animationType == 'monthly'){
+			var _month = _d.getMonth();
+			if(_month == 0 || _month == 2 || _month == 4 || _month == 6 || _month == 7 || _month == 9 || _month == 11){
+				_jump = 31;
+			}
+			else if(_month == 3 || _month == 5 || _month == 8 || _month == 10){
+				_jump = 30;
+			}
+			else if(_month == 1 && this.isLeapYear(_d.getFullYear())){
+				_jump = 29;
+			}
+			else if(_month == 1 && !this.isLeapYear(_d.getFullYear())){
+				_jump = 28;
+			}
+			else{
+				throw 'Unknown month type';
+			}
+		}
+		else if(_animationType == 'yearly'){
+			if(this.isLeapYear(_d.getFullYear())){
+				_jump = 366;
+			}
+			else{
+				_jump = 365;
+			}
+		}
+		else{
+			throw 'Unknown animation type:' + _animationType;
+		}
+		
+		if(this.moveToPosition(this.pos + _jump) == false){
 			this.stopAnimation();
 		}
 		return true;
+	};
+	
+	this.isLeapYear = function(y){
+		if((y % 400) == 0 || ((y % 4) == 0 && (y % 100) != 0)){
+			return true;
+		}
+		else{
+			return false;
+		}
 	};
 }
 

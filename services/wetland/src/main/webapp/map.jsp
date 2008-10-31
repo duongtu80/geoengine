@@ -58,15 +58,15 @@
 						<div id="progressPanel" class="progressReady">
 							<div id="progressText">Ready</div>
 						</div>
-						<div style="position: absolute;z-index: 1000;">
-							<div id="waterLevelPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 26px; background-color: #EEEEEE;visibility: hidden;">
+						<div style="position: absolute;z-index: 5000;">
+							<div id="waterLevelPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 0px; background-color: #EEEEEE;visibility: hidden; overflow: hidden;">
 								Date <input id='dateWaterLevel' value="1990-01-01" dojoType='dijit.form.DateTextBox' trim="true" style="width: 80px;" onchange="changeWaterLevel();" />
 								Water Level <input id='valWaterLevel' value="0" dojoType='dijit.form.TextBox' trim="true" style="width: 60px;" />
 								Animation Type <select id='listAnimationType' dojoType="dijit.form.ComboBox" style="width: 100px;height: 15px;">
-									<option value="1">Daily</option>
-					                <option value="7" selected="selected">Weekly</option>
-					                <option value="[month]" >Monthly</option>
-					                <option value="[year]">Yearly</option>
+									<option value="1">daily</option>
+					                <option value="7" selected="selected">weekly</option>
+					                <option value="[month]" >monthly</option>
+					                <option value="[year]">yearly</option>
 								</select>
 								<button id='btnStartAnimation' dojoType="dijit.form.Button" style="height: 20px;" onclick="wetland.waterAnimation.switchAnimation();">Start</button>
 							</div>
@@ -75,7 +75,7 @@
 				</td>
 				<td id="rightPanel">
 					<div dojoType="dijit.layout.AccordionContainer" duration="200" style="margin 0px; width: 276px; height: 430px; overflow: hidden">
-						<div dojoType="dijit.layout.AccordionPane" selected="true" title="Water Level Simulation">
+						<div dojoType="dijit.layout.AccordionPane" selected="true" title="Wetland Hydrology">
 							<div class="blockTitle">Introduction</div>
 							<div style="border-bottom: 1px solid #999999; padding: 3px;">
 								<img src="images/waterlevel.gif"></img>
@@ -93,10 +93,11 @@
 							<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
 								<button dojoType="dijit.form.Button" onclick="wetland.waterLevelExecute();">Simulate</button>
 							</div>
-							
+<!-- 
 							<div>
 								<span id="divLoadMapTest" class="resultLink" processId="1111111">Load on Map</span>
 							</div>
+ -->
 						</div>
 						<div dojoType="dijit.layout.AccordionPane" selected="false" title="Models Setting">						
 							<button dojoType="dijit.form.Button" onclick="wetland.selectWpsModel();">Reload Models</button>
