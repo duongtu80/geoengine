@@ -357,6 +357,18 @@ function ModelResult() {
 //     	_viewDiv.href = '#';
      	_viewDiv.processId = param.id;
      	_viewDiv.innerHTML = 'Animation on map';
+
+     	var _spaceDiv = document.createElement('span');
+     	_spaceDiv.innerHTML = '  ';
+     	_textDiv.appendChild(_spaceDiv);
+
+     	var _dataDiv = document.createElement('a');
+     	_textDiv.appendChild(_dataDiv);
+     	_dataDiv.target = '_blank';
+     	_dataDiv.className = 'resultLink';
+     	_dataDiv.href = 'model/processOutputExcel.do?id=' + param.id;
+     	_dataDiv.innerHTML = 'Download results';
+     	
      	dojo.connect(_viewDiv, "onclick", wetland, 'loadWaterLevelOnMap');
 //     	_viewDiv.onclick = wetland.loadWaterLevelOnMap;
 

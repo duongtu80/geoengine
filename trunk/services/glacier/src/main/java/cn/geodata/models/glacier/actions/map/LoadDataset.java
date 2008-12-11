@@ -46,7 +46,7 @@ public class LoadDataset {
 		while(_it.hasNext()){
 			Feature _f = _it.next();
 			
-			if(_f.getAttribute("STATION").equals("台兰"))
+//			if(_f.getAttribute("STATION").equals("台兰"))
 				_ns.add(_f);
 		}
 		

@@ -49,6 +49,9 @@
 	<bean id="processData" class="cn.geodata.models.wetland.actions.map.ProcessData" scope="prototype">
 		<property name="manage" ref="processManage"></property>
 	</bean>
+	<bean id="processOutputExcel" class="cn.geodata.models.wetland.actions.map.ProcessOutputExcel" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
 	<bean id="processChart" class="cn.geodata.models.wetland.actions.map.ProcessChart" scope="prototype">
 		<property name="manage" ref="processManage"></property>
 	</bean>
