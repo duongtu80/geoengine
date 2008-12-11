@@ -1,4 +1,4 @@
-package cn.geodata.models.glacier.actions.models;
+package cn.geodata.models.glacier.actions.map;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,34 +13,57 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import junit.framework.TestCase;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+
+import cn.geodata.models.glacier.actions.models.RunoffProcess;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 
-public class RunoffProcessTest extends TestCase {
+public class GlacierRunoff {
 	private Logger log = Logger.getAnonymousLogger();
-	private File folder;
+
+	/**
+	 * @param args
+	 * @throws Exception 
+	 */
+	public static void main(String[] args) throws Exception {
+		if(args.length != 5){
+			System.out.println("Usage: GlacierRunoff [basin shapefile] [basin field name] [startYear] [endYear] [output folder]");
+			return;
+		}
+		
+		System.out.println("Basin shapefile:" + args[0]);
+		System.out.println("Basin field name:" + args[1]);
+		System.out.println("Start year:" + args[2]);
+		System.out.println("End year:" + args[3]);
+		System.out.println("Data folder:" + args[4]);
+		
+		GlacierRunoff _glacier = new GlacierRunoff(new File(args[0]), args[1], new File(args[4]));
+		_glacier.run(Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+		
+		
+	}
+
+	private File basinShp;
 	private String fieldName;
+	private File dataFolder;
 	
-	public RunoffProcessTest() {
-		folder = new File("D:\\Temp\\data3\\20081129-4");
-		this.fieldName = "站点";
+	public GlacierRunoff(File basinShp, String fieldName, File dataFolder) {
+		this.basinShp = basinShp;
+		this.fieldName = fieldName;
+		this.dataFolder = dataFolder;
 	}
 	
-	public void testTest2() throws Exception {
+	public void run(int startYear, int endYear) throws Exception {
 		Map<String, double[]> _map = new HashMap<String, double[]>();
-		List<String> _list = FileUtils.readLines(new File(this.folder, "areas.csv"), "gb2312");
-		
-		assertNotNull(_list);
+		List<String> _list = FileUtils.readLines(new File(this.dataFolder, "areas.csv"), "gb2312");
 		
 		for(String _l : _list){
 			String[] _parts = _l.split(",");
@@ -56,7 +79,6 @@ public class RunoffProcessTest extends TestCase {
 		}
 		
 		double[] _levels = _map.remove("Levels");
-		assertNotNull(_levels);
 		
 		for(String _b : _map.keySet()){
 			double[] _areas = _map.get(_b);
@@ -67,8 +89,7 @@ public class RunoffProcessTest extends TestCase {
 			}
 			
 			if(_a > 0){
-				this.calculateRunoff(_b, 1960, 2007, _levels, _areas);
-//				this.calculateRunoff(_b, 1980, 1990, _levels, _areas);
+				this.calculateRunoff(_b, startYear, endYear, _levels, _areas);
 			}
 			else{
 				log.warning("Skip basin:" + _b);
@@ -78,7 +99,7 @@ public class RunoffProcessTest extends TestCase {
 	
 	protected void calculateRunoff(String basin, int startYear, int endYear, double[] levels, double[] areas) throws Exception {
 		log.info("Calculating basin:" + basin);
-		File _path = new File(this.folder, basin);
+		File _path = new File(this.dataFolder, basin);
 		
 		if(_path.exists() == false){
 			_path.mkdir();
@@ -87,10 +108,13 @@ public class RunoffProcessTest extends TestCase {
 //			return;
 		}
 
-		JSONObject _param = JSONObject.fromString("{\"Temperature\":{\"id\":\"TemperatureModelEx\",\"params\":{\"Power\":2,\"Stand\":3000,\"Grads\":-0.006}},\"Precipitation\":{\"id\":\"PrecipitationModel\",\"params\":{\"Power\":2}},\"SnowDDF\":{\"id\":\"SnowDDFModel\",\"params\":{\"Power\":2}},\"IceDDF\":{\"id\":\"IceDDFModel\",\"params\":{\"Power\":2}},\"Runoff\":{\"id\":\"RunoffModel\",\"params\":{\"RainCritical\":2,\"SnowCritical\":-0.5,\"SnowFrozenRatio\":0.1}}}");
-		
-		MultiPolygon _border = this.getCatchment(basin, new File(this.folder, "data\\basin.shp"));
+		MultiPolygon _border = this.getCatchment(basin, this.basinShp);
 		Point _pt = _border.getCentroid();
+
+//		JSONObject _param = JSONObject.fromString(FileUtils.readFileToString(new File(this.folder, "params.txt")));
+//		JSONObject _param = JSONObject.fromString("{\"Temperature\":{\"id\":\"TemperatureModelEx\",\"params\":{\"Power\":2,\"Stand\":3000,\"Grads\":-0.006}},\"Precipitation\":{\"id\":\"PrecipitationModel\",\"params\":{\"Power\":2}},\"SnowDDF\":{\"id\":\"SnowDDFModel\",\"params\":{\"Power\":2}},\"IceDDF\":{\"id\":\"IceDDFModel\",\"params\":{\"Power\":2}},\"Runoff\":{\"id\":\"RunoffModel\",\"params\":{\"RainCritical\":2,\"SnowCritical\":-0.5,\"SnowFrozenRatio\":0.1}}}");
+		JSONObject _param = JSONObject.fromString("{\"Temperature\":{\"id\":\"TemperatureModelEx\",\"params\":{}},\"Precipitation\":{\"id\":\"PrecipitationModel\",\"params\":{}},\"SnowDDF\":{\"id\":\"SnowDDFModel\",\"params\":{}},\"IceDDF\":{\"id\":\"IceDDFModel\",\"params\":{}},\"Runoff\":{\"id\":\"RunoffModel\",\"params\":{}}}");
+		
 		RunoffProcess _p = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _param, levels, areas);
 		
 		_p.run();
@@ -146,18 +170,6 @@ public class RunoffProcessTest extends TestCase {
 			IOUtils.write(_line, _stream);
 			_stream.close();
 		}
-	}
-
-	private FeatureCollection getGlaciers(String path) throws MalformedURLException,
-			IOException {
-		return new ShapefileDataStore(new File(path).toURL(),
-				false, Charset.forName("gb2312")).getFeatureSource()
-				.getFeatures();
-	}
-
-	private MultiPolygon getCatchment(String catchmentName, String path)
-			throws MalformedURLException, IOException {
-		return this.getCatchment(catchmentName, new File(path));
 	}
 
 	private MultiPolygon getCatchment(String catchmentName, File path) throws MalformedURLException, IOException {

@@ -69,7 +69,7 @@ public class RunoffModel implements Calculate{
 			double _level = levels[i];
 
 			//计算分带的气温和降水
-			double _precBand = precipitation4Band(precipitation, precElevation, _level, date.getMonth(), this.days);
+			double _precBand = precipitation4Band2(precipitation, precElevation, _level, date.getMonth(), this.days);
 			double _tempBand = temperature4Band(temperature, _alt, _level);
 			double _acmtBand = this.computerAT(location.getY(), date.getMonth(), _tempBand, days); //temperature4Band(accumulatedTemperature, _alt, _level);
 			
@@ -384,6 +384,26 @@ public class RunoffModel implements Calculate{
 		else{
 			return val;
 		}
+	}
+
+	/**
+	 * 根据昌马堡修正的降水梯度计算方法
+	 * 
+	 * @param val 源降水值
+	 * @param sourceLat 源高程
+	 * @param targetLat 目标分带高程
+	 * @param month 月份
+	 * @return
+	 */
+	private double precipitation4Band2(double val, double sourceLat, double targetLat, int month, int days) {
+		double[] _grads = new double[]{-0.0062,0.044,-0.022,-0.037,0.945,2.626,2.894,2.569,1.061,0.1659,-0.063,-0.027};
+		//修改为100m梯度
+		double _val = val + ((targetLat - sourceLat) / 100.0) * _grads[month];
+		
+		if(_val < 0)
+			_val = 0;
+		
+		return _val;
 	}
 
 	/**

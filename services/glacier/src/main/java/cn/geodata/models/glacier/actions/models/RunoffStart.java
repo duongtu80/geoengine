@@ -28,10 +28,14 @@ public class RunoffStart extends AbstractRunoff {
 	private String basin;
 	private BasinArea areas;
 	private BasinDataset basins;
+	private boolean async;
 	
 	public RunoffStart(BasinArea areas, BasinDataset basins){
 		this.areas = areas;
 		this.basins = basins;
+		this.async = false;
+		
+		
 	}
 
 	public void setX(double x) {
@@ -65,6 +69,10 @@ public class RunoffStart extends AbstractRunoff {
 		this.param = param;
 	}
 
+	public void setAsync(boolean async) {
+		this.async = async;
+	}
+
 	public String execute() throws Exception {
 		JSONObject _inputs = JSONObject.fromString(param);
 		
@@ -72,10 +80,16 @@ public class RunoffStart extends AbstractRunoff {
 		Point _pt = _border.getCentroid();
 		
 		RunoffProcess _process = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _inputs, areas.getLevels(), areas.getBasinArea(basin));
-		this.manage.pushProcess(_process);
-		
-		Thread _thread = new Thread(_process);
-		_thread.start();
+
+		if(this.async){
+			this.manage.pushProcess(_process);
+			
+			Thread _thread = new Thread(_process);
+			_thread.start();
+		}
+		else{
+			_process.run();
+		}
 		
 //		JSONObject _outputs = new JSONObject();
 //		_outputs.put("id", _process.getId());

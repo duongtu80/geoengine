@@ -51,7 +51,10 @@ public class RunoffProcess implements Process, Runnable {
 	private double[] levels;
 	private double[] areas;
 	private Map<String, List<Object>> map;
-
+	
+//	private double temperaturePower;
+//	private double precipitationPower;
+//
 	public RunoffProcess(double x, double y, int startYear, int endYear, String basin, JSONObject input, double[] levels, double[] areas) {
 		this.id = Long.toHexString((new Date()).getTime());
 		this.x = x;
@@ -129,8 +132,10 @@ public class RunoffProcess implements Process, Runnable {
 			_library.setInput(_snowModel, "Point", _pt);
 			_library.setInput(_iceeModel, "Point", _pt);
 			
-			_tempModel.setInput("Power", 3);
-			_precModel.setInput("Power", 3);
+//			_tempModel.setInput("Power", 2);
+//			_precModel.setInput("Power", 3);
+//			_tempModel.setInput("Power", this.temperaturePower);
+//			_precModel.setInput("Power", this.precipitationPower);
 
 			this.status.put("message", "计算冰度日因子");
 			_library.executeProcess(_snowModel);
