@@ -53,7 +53,7 @@ public class GlacierArea {
 //		this.glacier = new File("d:\\Temp\\data3\\data\\glacier.shp");
 //		this.basin = new File("d:\\Temp\\data3\\20081021\\data\\昌马堡.shp");
 
-		GlacierArea _p = new GlacierArea(new File(args[0]), args[1], new File(args[2]), new File(args[3]), Integer.parseInt(args[5]));
+		GlacierArea _p = new GlacierArea(new File(args[0]), args[1], new File(args[2]), new File(args[3]), Integer.parseInt(args[4]));
 //		_p.setPath(new File(args[0]));
 //		_p.setBasin(new File(args[1]));
 //		_p.setGlacier(new File(args[2]));
