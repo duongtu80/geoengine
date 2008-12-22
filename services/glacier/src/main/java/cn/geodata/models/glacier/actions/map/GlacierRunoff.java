@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -170,6 +171,41 @@ public class GlacierRunoff {
 			IOUtils.write(_line, _stream);
 			_stream.close();
 		}
+		
+		List<Object> _balances = _p.getMap().get("Balances");
+		
+		double _totalArea = 0;
+		for(int _b=0;_b<areas.length;_b++){
+			_totalArea += areas[_b];
+		}
+		
+		//写入雪线高度和年度平衡值
+		List<String> _lines = new ArrayList<String>();
+		_lines.add("Year,Balance,SnowLine");
+		for(int _year = 0; _year < endYear-startYear; _year ++){
+			double _bb = 0;
+			int _snowLine = 0;
+			
+			for(int _b=areas.length-1;_b>=0;_b--){
+				if(areas[_b] > 0){
+					double _count = 0;
+					for(int _mi=0;_mi<12;_mi++){
+						double[] _list = (double[])_balances.get(_year * 12 + _mi);
+						_count += _list[_b];
+						
+						//判断出现负值的最高分带作为雪线
+						if(_list[_b] < 0 && _snowLine < _b){
+							_snowLine = _b;
+						}
+					}
+					_bb += _count * areas[_b] / _totalArea;
+				}
+			}
+			
+			_lines.add(_year + startYear + "," + _bb + "," + levels[_snowLine]);
+		}
+		
+		FileUtils.writeLines(new File(_path, "SnowLines.csv"), _lines);
 	}
 
 	private MultiPolygon getCatchment(String catchmentName, File path) throws MalformedURLException, IOException {
