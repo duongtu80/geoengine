@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.geotools.geometry.Envelope2D;
@@ -31,7 +33,20 @@ public class RunoffModelTest extends TestCase {
 //	private GlacierPrepareModel prepareModel;
 //	private ProjectTransformModel projectModel;
 	
-	public void testCalculate() throws Exception {
+	public void testTest1() throws Exception {
+		String _txt = "{0.52, 0.52, 0.52, 0.52, 0.54, 0.52, 0.52},\r\n{0.48, 0.5, 0.48, 0.5, 0.48, 0.5, 0.5},\r\n{0.54, 0.52, 0.54, 0.54, 0.54, 0.54, 0.54},\r\n{0.46, 0.44, 0.46, 0.46, 0.46, 0.46, 0.46},\r\n{0.48, 0.46, 0.48, 0.46, 0.48, 0.48, 0.46}";
+		Pattern _p = Pattern.compile("([\\d\\.]+)");
+		
+		Matcher _m = _p.matcher(_txt);
+		int _pos = 0;
+		while(_m.find(_pos)){
+			System.out.println(_m.end(1));
+			System.out.println(_m.group(1));
+			_pos = _m.end(1);
+		}
+	}
+	
+	public void atestCalculate() throws Exception {
 //		double[] _levels = new double[0];
 //		
 //		

@@ -1,7 +1,11 @@
 package cn.geodata.models.glacier;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -10,6 +14,10 @@ import cn.geodata.models.annotation.GeoInput;
 import cn.geodata.models.annotation.GeoOutput;
 import cn.geodata.models.annotation.GeoProcess;
 
+/**
+ * @author tank
+ *
+ */
 /**
  * @author tank
  *
@@ -45,7 +53,16 @@ public class RunoffModel implements Calculate{
 	private double snowDDF;
 	private double iceDDF;
 	private double precElevation;
-	
+
+	private String temperatureM;
+	private String temperatureV;
+	private String temperatureL;
+	private String precipitationGrads1;
+	private String precipitationGrads2;
+	private double precipitationMaxAlt;
+	private String atT1;
+	private String atT2;
+	private double atTx;
 	
 	/* 
 	 * 模型运行
@@ -58,18 +75,20 @@ public class RunoffModel implements Calculate{
 		precipitations = new double[this.levels.length];
 		accumulatedTemperatures = new double[this.levels.length];
 		
-		if(accumulations == null){
-			accumulations = new double[this.levels.length];
-		}
-
 		int _minGlacierBand = getMinGlacierBand();
 		double _alt = location.getCoordinate().z;
 		//计算各分带
 		for(int i=0;i<levels.length ;i++){
+			//如果是没有积累或者10月份，则累计值清零 02/23/2009
+			if(accumulations == null || this.date.getMonth() == 9){
+				accumulations = new double[this.levels.length];
+			}
+
 			double _level = levels[i];
 
 			//计算分带的气温和降水
-			double _precBand = precipitation4Band2(precipitation, precElevation, _level, date.getMonth(), this.days);
+			double _precBand = precipitation4Band(precipitation, precElevation, _level);
+//			double _precBand = precipitation4Band(precipitation, precElevation, _level, date.getMonth(), this.days);
 			double _tempBand = temperature4Band(temperature, _alt, _level);
 			double _acmtBand = this.computerAT(location.getY(), date.getMonth(), _tempBand, days); //temperature4Band(accumulatedTemperature, _alt, _level);
 			
@@ -93,6 +112,9 @@ public class RunoffModel implements Calculate{
 					_snow += _precBand * (_tempBand - snowCritical) / (rainCritical - snowCritical);
 				}
 			}
+			
+			//降水中的固体部分
+			double _snowSolid = _snow;
 			
 			_precBand -= _snow;
 			if(_precBand < 0)
@@ -123,12 +145,17 @@ public class RunoffModel implements Calculate{
 			_runoffBand += _precBand;
 			
 			//计算物质平衡
-			double _balanceBand = _snow + (this.snowFrozenRatio - 1) * _runoffBand;
+			double _balanceBand = _snowSolid + (this.snowFrozenRatio - 1) * _runoffBand;
 			_runoffBand *= (1 - this.snowFrozenRatio);
+			//添加新的Accu变量
+			double _accumlBand = _precBand - this.snowFrozenRatio  * _runoffBand;
+			_accumlBand = _accumlBand > 0 ? _accumlBand : 0;
 			
 			if(areas[i] > 0){
-				runoffs[i] = _runoffBand * areas[i] / (1000.0 * days * 24 * 60 * 60); //* 1000 
-				accumulations[i] = _snow;
+				//修改径流为mm 2009-01-12
+				runoffs[i] = _runoffBand > 0 ? _runoffBand: 0; 
+//				runoffs[i] = _runoffBand * areas[i] / (1000.0 * days * 24 * 60 * 60); //* 1000 
+				accumulations[i] = _accumlBand;
 				balances[i] = _balanceBand;
 			}
 		}
@@ -254,6 +281,42 @@ public class RunoffModel implements Calculate{
 		return 0;
 	}
 
+	public void setTemperatureM(String temperatureM) {
+		this.temperatureM = temperatureM;
+	}
+
+	public void setTemperatureV(String temperatureV) {
+		this.temperatureV = temperatureV;
+	}
+
+	public void setTemperatureL(String temperatureL) {
+		this.temperatureL = temperatureL;
+	}
+
+	public void setPrecipitationGrads1(String precipitationGrads1) {
+		this.precipitationGrads1 = precipitationGrads1;
+	}
+
+	public void setPrecipitationGrads2(String precipitationGrads2) {
+		this.precipitationGrads2 = precipitationGrads2;
+	}
+
+	public void setPrecipitationMaxAlt(double precipitationMaxAlt) {
+		this.precipitationMaxAlt = precipitationMaxAlt;
+	}
+
+	public void setAtT1(String atT1) {
+		this.atT1 = atT1;
+	}
+
+	public void setAtT2(String atT2) {
+		this.atT2 = atT2;
+	}
+
+	public void setAtTx(double atTx) {
+		this.atTx = atTx;
+	}
+
 	/**
 	 * 计算积温
 	 * 
@@ -264,11 +327,13 @@ public class RunoffModel implements Calculate{
 	 * @return
 	 */
 	public double computerAT(double latitude, int month, double temperature, int days){
-		double[] _t1 = new double[]{0.114,0.134,0.148,0.127,0.085,0.07,0.074,0.099,0.11,0.105,0.154,0.153};
-		double[] _t2 = new double[]{-0.53,-0.89,-1.352,-0.864,0.192,0.107,-0.313,-1.137,-1.118,-0.337,-1.827,-1.841};
+//		double[] _t1 = new double[]{0.114,0.134,0.148,0.127,0.085,0.07,0.074,0.099,0.11,0.105,0.154,0.153};
+//		double[] _t2 = new double[]{-0.53,-0.89,-1.352,-0.864,0.192,0.107,-0.313,-1.137,-1.118,-0.337,-1.827,-1.841};
+		List<Double> _t1 = this.searchNumbers(this.atT1);
+		List<Double> _t2 = this.searchNumbers(this.atT2);
 		
-		double _drt = latitude * _t1[month] + _t2[month];
-		double _tx=0.02;
+		double _drt = latitude * _t1.get(month) + _t2.get(month);
+		double _tx=this.atTx;
 		double _p=0;
 		double _fb=0;
 		
@@ -288,7 +353,28 @@ public class RunoffModel implements Calculate{
 		if(_p < 10) _p = 0;
 		
 		return _p;
-	}	
+	}
+	
+	/**
+	 * 从数值字符串列表中提取数值数组
+	 * 
+	 * @param txt
+	 * @return
+	 */
+	private List<Double> searchNumbers(String txt){
+		Pattern _p = Pattern.compile("([\\d\\.]+)");
+		
+		List<Double> _list = new ArrayList<Double>();
+		Matcher _m = _p.matcher(txt);
+		int _pos = 0;
+		while(_m.find(_pos)){
+			_list.add(Double.parseDouble(_m.group(1)));
+			_pos = _m.end(1);
+		}
+		
+		return _list;
+	}
+
 
 	/**
 	 * 计算分带的气温
@@ -299,28 +385,28 @@ public class RunoffModel implements Calculate{
 	 * @return
 	 */
 	private double temperature4Band(double val, double sourceLat, double targetLat) {
-		double[][] _m = new double[][]{
-				{0.52, 0.52, 0.52, 0.52, 0.54, 0.52, 0.52},
-				{0.48, 0.5, 0.48, 0.5, 0.48, 0.5, 0.5},
-				{0.54, 0.52, 0.54, 0.54, 0.54, 0.54, 0.54},
-				{0.46, 0.44, 0.46, 0.46, 0.46, 0.46, 0.46},
-				{0.48, 0.46, 0.48, 0.46, 0.48, 0.48, 0.46}				
-			};
+		double[][] _m = new double[5][7];
+		List<Double> _mm = this.searchNumbers(this.temperatureM);
+		for(int _col=0;_col<5;_col++){
+			for(int _row=0;_row<7;_row++){
+				_m[_col][_row] = _mm.get(_col * 5 + _row);
+			}
+		}
 		
-		double[] _v = new double[] {28, 30, 32, 34, 36};
-		double[] _l = new double[] {2000, 2500, 3000, 3500, 4000, 4500, 5000};
+		List<Double> _v = this.searchNumbers(this.temperatureV);
+		List<Double> _l = this.searchNumbers(this.temperatureL);
 		
 		double _lat = location.getY();
-		int _y = _v.length - 1;
-		for(int i=0;i<_v.length;i++){
-			if(_lat >= _v[i]){
+		int _y = _v.size() - 1;
+		for(int i=0;i<_v.size();i++){
+			if(_lat >= _v.get(i)){
 				_y = i;
 				break;
 			}
 		}
 		
-		double _d = _m[_y][_l.length - 1];
-		for(int i=0;i<_l.length - 1;i++){
+		double _d = _m[_y][_l.size() - 1];
+		for(int i=0;i<_l.size() - 1;i++){
 			if(targetLat >= _m[_y][i]){
 				_d = _m[_y][i];
 				break;
@@ -338,17 +424,16 @@ public class RunoffModel implements Calculate{
 	 * @param targetLat
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	private double precipitation4Band(double val, double sourceLat, double targetLat) {
-		double[] _k1 = new double[]{-0.2, -0.1, 0.1, 2.5, 5.2, 5.9, 5.1, 4.3, 3.3, 1.0, 0.1, -0.1};
-		double[] _k2 = new double[]{-1,-1.8,-0.2,-4, -4.2, -4.2, -4.2, -2.8, -3.4,-3.2,-3.6,-1.8};
+		List<Double> _k1 = this.searchNumbers(this.precipitationGrads1);
+		List<Double> _k2 = this.searchNumbers(this.precipitationGrads2);
 		
 		double _val = 0;
-		if(targetLat <= 3500){
-			_val = val + _k1[date.getMonth()] * (targetLat - sourceLat) / 100.0;
+		if(targetLat <= this.precipitationMaxAlt){
+			_val = val + _k1.get(date.getMonth()) * (targetLat - sourceLat) / 100.0;
 		}
 		else{
-			_val = val + _k1[date.getMonth()] * (3500 - sourceLat) / 100.0 + _k2[date.getMonth()] * (targetLat - 3500) / 100.0;
+			_val = val + _k1.get(date.getMonth()) * (this.precipitationMaxAlt - sourceLat) / 100.0 + _k2.get(date.getMonth()) * (targetLat - this.precipitationMaxAlt) / 100.0;
 		}
 		
 		if(_val < 0){
@@ -366,6 +451,7 @@ public class RunoffModel implements Calculate{
 	 * @param month 月份
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	private double precipitation4Band(double val, double sourceLat, double targetLat, int month, int days) {
 		if(month >= 4 && month <= 8){
 			if(targetLat < 5100){
@@ -386,25 +472,26 @@ public class RunoffModel implements Calculate{
 		}
 	}
 
-	/**
-	 * 根据昌马堡修正的降水梯度计算方法
-	 * 
-	 * @param val 源降水值
-	 * @param sourceLat 源高程
-	 * @param targetLat 目标分带高程
-	 * @param month 月份
-	 * @return
-	 */
-	private double precipitation4Band2(double val, double sourceLat, double targetLat, int month, int days) {
-		double[] _grads = new double[]{-0.0062,0.044,-0.022,-0.037,0.945,2.626,2.894,2.569,1.061,0.1659,-0.063,-0.027};
-		//修改为100m梯度
-		double _val = val + ((targetLat - sourceLat) / 100.0) * _grads[month];
-		
-		if(_val < 0)
-			_val = 0;
-		
-		return _val;
-	}
+//	/**
+//	 * 根据昌马堡修正的降水梯度计算方法
+//	 * 
+//	 * @param val 源降水值
+//	 * @param sourceLat 源高程
+//	 * @param targetLat 目标分带高程
+//	 * @param month 月份
+//	 * @return
+//	 */
+//	@SuppressWarnings("deprecation")
+//	private double precipitation4Band2(double val, double sourceLat, double targetLat, int month, int days) {
+//		List<Double> _grads = this.searchNumbers(this.precipitationGrads);
+//		//修改为100m梯度
+//		double _val = val + ((targetLat - sourceLat) / 100.0) * _grads.get(month);
+//		
+//		if(_val < 0)
+//			_val = 0;
+//		
+//		return _val;
+//	}
 
 	/**
 	 * 计算冰川末端
