@@ -144,23 +144,30 @@ public class GlacierRunoffModel {
 						_snow = _precBand * (_tempBand - this.snowCritical) / (this.rainCritical - this.snowCritical);
 					}
 				}
+				
+				//降水中的固体部分
+				double _snowSolid = _snow;
 				double _runoffBand = _precBand - _snow;
 				
 				if(_months.size() > 0){
 					_snow += _months.get(_months.size() - 1).getBands().get(i).getAccumulation();
 				}
 				
-				double _accumlBand = 0;
+//				double _accumlBand = 0;
 				double _pSnowMelt = _tempBand * _snowDDF;
 				if(_pSnowMelt <= _snow){
-					_accumlBand = _snow - _pSnowMelt;
+//					_accumlBand = _snow - _pSnowMelt;
 					_runoffBand += _pSnowMelt;
 				}
 				else{
 					_runoffBand += _snow + (_tempBand - _snow / _snowDDF) * _iceDDF;
 				}
 				
-				double _balanceBand = _accumlBand - (1 - this.snowFrozenRatio) * _runoffBand;
+				double _balanceBand = _snowSolid - (1 - this.snowFrozenRatio) * _runoffBand;
+				//添加新的Accu变量
+				double _accumlBand = _precBand - this.snowFrozenRatio  * _runoffBand;
+				
+				_runoffBand *= (1-this.snowFrozenRatio);
 				
 				_band.setTemperature(_tempBand);
 				_band.setPrecipitation(_precBand);
