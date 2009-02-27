@@ -214,7 +214,7 @@ function initMap() {
 	wetland.progressBar = _progressBar;
 	
 	wetland.progressBar.pushProcess('Load catchments', loadCatchments, null);
-	wetland.progressBar.pushProcess('Load models', wetland.loadWpsModel, null);
+//	wetland.progressBar.pushProcess('Load models', wetland.loadWpsModel, null);
 
 //	dojo.connect(dojo.byId('divLoadMapTest'), 'onclick', wetland, 'loadWaterLevelOnMap');
 //	dojo.byId('divLoadMapTest').processId = '1111111';
