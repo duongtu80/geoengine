@@ -141,6 +141,11 @@ public class RunoffProcess implements Process, Runnable {
 			_library.executeProcess(_snowModel);
 			this.status.put("message", "计算雪度日因子");
 			_library.executeProcess(_iceeModel);
+			
+			double _area = 0; //总冰川面积
+			for(double _a : areas){
+				_area += _a;
+			}
 
 			Processing _runoModel = this.createProcess(_library, input.getJSONObject("Runoff"));
 			_library.setInput(_runoModel, "Levels", levels);
@@ -207,18 +212,19 @@ public class RunoffProcess implements Process, Runnable {
 				_library.executeProcess(_runoModel);
 
 				_accumulations = (double[]) _library.getOutput(_runoModel, "Accumulations");
-				//如果是10月，则清理累积值
-				if(_date.getMonth() != 9){
-					_accumulations = _accumulations.clone();
-				}
-				else{
-					_accumulations = new double[_accumulations.length];
+				_accumulations = _accumulations.clone();
+
+				//修改总径流为 mm (2009-01-12)
+				double _runoff = 0;
+				double[] _runoffs = (double[]) _library.getOutput(_runoModel, "Runoffs");
+				for(int i=0;i<areas.length;i++){
+					_runoff += areas[i] * _runoffs[i] / _area;
 				}
 
-				double _runoff = 0;
-				for (double _r : (double[]) _library.getOutput(_runoModel, "Runoffs")) {
-					_runoff += _r;
-				}
+//				double _runoff = 0;
+//				for (double _r : (double[]) _library.getOutput(_runoModel, "Runoffs")) {
+//					_runoff += _r;
+//				}
 				
 				_listDate.add(_calendar.getTimeInMillis());
 				_listTemp.add((Double)_library.getOutput(_tempModel, "Temperature"));

@@ -120,6 +120,12 @@ public class GlacierRunoff {
 		
 		_p.run();
 		
+		//判断是否计算失败
+		if(_p.getStatus().getInt("percent") < 0){
+			log.severe(_p.getStatus().getString("message"));
+			return;
+		}
+		
 		String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "Accumulations", "Balances"};
 		String[] _valuCols = new String[] {"Temperature", "Precipitation", "Runoff"};
 
@@ -199,6 +205,16 @@ public class GlacierRunoff {
 						}
 					}
 					_bb += _count * areas[_b] / _totalArea;
+				}
+			}
+			
+			//如果雪线低于最低冰川分带，则赋值为最低冰川分带
+			if(_snowLine == 0){
+				for(int _b=0;_b < areas.length;_b++){
+					if(areas[_b] > 0){
+						_snowLine = _b;
+						break;
+					}
 				}
 			}
 			

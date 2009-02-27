@@ -3,13 +3,13 @@
 <beans>
 	<!-- 90m DEM配置参数 -->
 	<bean id="DemModel90m" class="cn.geodata.models.glacier.DemModel">
-		<property name="demPath" value="Q:\tank\data\dem\geotiff"></property>
+		<property name="demPath" value="S:\tank\data\dem\geotiff"></property>
 		<property name="nodata" value="0"></property>
 	</bean>
 	
 	<!-- 1km DEM配置参数 -->
 	<bean id="DemModel1000m" class="cn.geodata.models.glacier.DemModel">
-		<property name="demPath" value="R:\tank\data\dem"></property>
+		<property name="demPath" value="S:\tank\data\dem"></property>
 		<property name="nodata" value="-9999"></property>
 	</bean>
 
@@ -28,6 +28,45 @@
 		<property name="snowCritical" value="-0.5"></property>
 		<property name="rainCritical" value="2"></property>
 		<property name="snowFrozenRatio" value="0.1"></property>
+
+		<!-- 以下为分带气温计算参数 -->
+		<property name="temperatureM">
+			<value>
+				{
+				{0.52, 0.52, 0.52, 0.52, 0.54, 0.52, 0.52},
+				{0.48, 0.5, 0.48, 0.5, 0.48, 0.5, 0.5},
+				{0.54, 0.52, 0.54, 0.54, 0.54, 0.54, 0.54},
+				{0.46, 0.44, 0.46, 0.46, 0.46, 0.46, 0.46},
+				{0.48, 0.46, 0.48, 0.46, 0.48, 0.48, 0.46}				
+				}
+			</value>
+		</property>
+		<property name="temperatureV">
+			<value>{28, 30, 32, 34, 36}</value>
+		</property>
+		<property name="temperatureL">
+			<value>{2000, 2500, 3000, 3500, 4000, 4500, 5000}</value>
+		</property>
+		
+		<!-- 以下为分带降水计算参数 -->
+		<property name="precipitationGrads1">
+			<value>{-0.2, -0.1, 0.1, 2.5, 5.2, 5.9, 5.1, 4.3, 3.3, 1.0, 0.1, -0.1}</value>
+		</property>
+		<property name="precipitationGrads2">
+			<value>{-1,-1.8,-0.2,-4, -4.2, -4.2, -4.2, -2.8, -3.4,-3.2,-3.6,-1.8}</value>
+		</property>
+		<property name="precipitationMaxAlt">
+			<value>3500</value>
+		</property>
+		
+		<!-- 以下为积温计算参数 -->
+		<property name="atT1">
+			<value>{0.114,0.134,0.148,0.127,0.085,0.07,0.074,0.099,0.11,0.105,0.154,0.153}</value>
+		</property>
+		<property name="atT2">
+			<value>{-0.53,-0.89,-1.352,-0.864,0.192,0.107,-0.313,-1.137,-1.118,-0.337,-1.827,-1.841}</value>
+		</property>
+		<property name="atTx"><value>0.02</value></property>
 	</bean>
 	
 	<!-- 冰度日因子模型参数 -->

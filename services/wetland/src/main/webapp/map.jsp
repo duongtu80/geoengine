@@ -99,9 +99,11 @@
 							</div>
  -->
 						</div>
-						<div dojoType="dijit.layout.AccordionPane" selected="false" title="Models Setting">						
-							<button dojoType="dijit.form.Button" onclick="wetland.selectWpsModel();">Reload Models</button>
+						<div dojoType="dijit.layout.AccordionPane" selected="false" title="Models Setting">
+							<div style="padding: 2px; margin-top: 5px;">DayMet<input dojoType='dijit.form.TextBox' id="txtDayMet" style="width: 200px; margin-left: 5px;" value="http://www.daymet.org/getRawData.do?lon=%f&amp;lat=%f"></input></div>
+							<hr/>
 							
+							<button dojoType="dijit.form.Button" onclick="wetland.selectWpsModel();">Load Models</button>
 							<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
 								<div class="viewItem"><div class="viewTitle">ET</div><input id="modelET" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelET');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelET');">Change</a></div>
 							</div>

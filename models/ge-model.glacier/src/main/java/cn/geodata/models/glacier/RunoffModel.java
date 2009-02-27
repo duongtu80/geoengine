@@ -74,15 +74,16 @@ public class RunoffModel implements Calculate{
 		temperatures = new double[this.levels.length];
 		precipitations = new double[this.levels.length];
 		accumulatedTemperatures = new double[this.levels.length];
-		
+
+		//如果是没有积累或者10月份，则累计值清零 02/23/2009
+		if(accumulations == null || this.date.getMonth() == 9){
+			accumulations = new double[this.levels.length];
+		}
+
 		int _minGlacierBand = getMinGlacierBand();
 		double _alt = location.getCoordinate().z;
 		//计算各分带
 		for(int i=0;i<levels.length ;i++){
-			//如果是没有积累或者10月份，则累计值清零 02/23/2009
-			if(accumulations == null || this.date.getMonth() == 9){
-				accumulations = new double[this.levels.length];
-			}
 
 			double _level = levels[i];
 
@@ -143,13 +144,20 @@ public class RunoffModel implements Calculate{
 			}
 			
 			_runoffBand += _precBand;
-			
+
 			//计算物质平衡
-			double _balanceBand = _snowSolid + (this.snowFrozenRatio - 1) * _runoffBand;
-			_runoffBand *= (1 - this.snowFrozenRatio);
+			double _balanceBand = _precBand + _snowSolid - (1 - this.snowFrozenRatio) * _runoffBand;
 			//添加新的Accu变量
-			double _accumlBand = _precBand - this.snowFrozenRatio  * _runoffBand;
-			_accumlBand = _accumlBand > 0 ? _accumlBand : 0;
+			double _accumlBand = _snow + this.snowFrozenRatio  * _runoffBand;
+
+			_runoffBand *= (1 - this.snowFrozenRatio);
+			
+//			//计算物质平衡
+//			double _balanceBand = _precBand - (this.snowFrozenRatio - 1) * _runoffBand;
+//			_runoffBand *= (1 - this.snowFrozenRatio);
+//
+//			//添加新的Accu变量
+//			double _accumlBand = _snowSolid + this.snowFrozenRatio  * _runoffBand;
 			
 			if(areas[i] > 0){
 				//修改径流为mm 2009-01-12
