@@ -163,7 +163,7 @@ public class RunoffProcess implements Process, Runnable {
 			DateFormat _format = new SimpleDateFormat("yyyy-MM");
 
 			int _month = 0;
-			double[] _accumulations = null;
+			double[] _accumulationSnows = null;
 			
 			ArrayList<Long> _listDate = new ArrayList<Long>();
 			ArrayList<Double> _listTemp = new ArrayList<Double>();
@@ -171,7 +171,7 @@ public class RunoffProcess implements Process, Runnable {
 			ArrayList<Double> _listRuno = new ArrayList<Double>();
 			ArrayList<Double> _listAcut = new ArrayList<Double>();
 			
-			String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "Accumulations", "Balances"};
+			String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "AccumulationSnows", "Accumulations", "Balances"};
 			String[] _valuCols = new String[] {"Temperature", "Precipitation", "Runoff"};
 			
 			//临时存储计算结果
@@ -203,7 +203,7 @@ public class RunoffProcess implements Process, Runnable {
 				_library.setInput(_runoModel, "Temperature", (Double)_library.getOutput(_tempModel, "Temperature"));
 				_library.setInput(_runoModel, "Precipitation", _library.getOutput(_precModel, "Precipitation"));
 				_library.setInput(_runoModel, "PrecElevation", _library.getOutput(_precModel, "Elevation"));
-				_library.setInput(_runoModel, "Accumulations", _accumulations);
+				_library.setInput(_runoModel, "AccumulationSnows", _accumulationSnows);
 				_library.setInput(_runoModel, "Days", _days);
 				_library.setInput(_runoModel, "SnowDDF", (Double) _library.getOutput(_snowModel, "SnowDDF"));
 				_library.setInput(_runoModel, "IceDDF", (Double) _library.getOutput(_iceeModel, "IceDDF"));
@@ -211,8 +211,8 @@ public class RunoffProcess implements Process, Runnable {
 
 				_library.executeProcess(_runoModel);
 
-				_accumulations = (double[]) _library.getOutput(_runoModel, "Accumulations");
-				_accumulations = _accumulations.clone();
+				_accumulationSnows = (double[]) _library.getOutput(_runoModel, "AccumulationSnows");
+				_accumulationSnows = _accumulationSnows.clone();
 
 				//修改总径流为 mm (2009-01-12)
 				double _runoff = 0;
