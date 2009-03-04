@@ -126,7 +126,7 @@ public class GlacierRunoff {
 			return;
 		}
 		
-		String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "Accumulations", "Balances"};
+		String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "Accumulations", "AccumulationSnows", "Balances"};
 		String[] _valuCols = new String[] {"Temperature", "Precipitation", "Runoff"};
 
 		SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM");
