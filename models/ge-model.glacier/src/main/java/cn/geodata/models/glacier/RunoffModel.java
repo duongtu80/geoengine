@@ -18,14 +18,6 @@ import cn.geodata.models.annotation.GeoProcess;
  * @author tank
  *
  */
-/**
- * @author tank
- *
- */
-/**
- * @author tank
- *
- */
 @GeoProcess(title="冰川融水径流模型", keywords={"runoff"})
 public class RunoffModel implements Calculate{
 	private Logger log = Logger.getLogger(RunoffModel.class.getName());
@@ -42,6 +34,7 @@ public class RunoffModel implements Calculate{
 	private double[] levels;
 	private double[] areas;
 	private Point location;
+	private double[] accumulationSnows;
 	private double[] accumulations;
 	private double[] balances;
 	private double[] runoffs;
@@ -73,23 +66,22 @@ public class RunoffModel implements Calculate{
 		balances = new double[this.levels.length];
 		temperatures = new double[this.levels.length];
 		precipitations = new double[this.levels.length];
+		accumulations = new double[this.levels.length];
 		accumulatedTemperatures = new double[this.levels.length];
 
 		//如果是没有积累或者10月份，则累计值清零 02/23/2009
-		if(accumulations == null || this.date.getMonth() == 9){
-			accumulations = new double[this.levels.length];
+		if(accumulationSnows == null || this.date.getMonth() == 9){
+			accumulationSnows = new double[this.levels.length];
 		}
 
 		int _minGlacierBand = getMinGlacierBand();
 		double _alt = location.getCoordinate().z;
 		//计算各分带
 		for(int i=0;i<levels.length ;i++){
-
 			double _level = levels[i];
 
-			//计算分带的气温和降水
+			//计算分带的气温、降水和积温
 			double _precBand = precipitation4Band(precipitation, precElevation, _level);
-//			double _precBand = precipitation4Band(precipitation, precElevation, _level, date.getMonth(), this.days);
 			double _tempBand = temperature4Band(temperature, _alt, _level);
 			double _acmtBand = this.computerAT(location.getY(), date.getMonth(), _tempBand, days); //temperature4Band(accumulatedTemperature, _alt, _level);
 			
@@ -102,68 +94,53 @@ public class RunoffModel implements Calculate{
 				_tempBand -= 1;
 			}
 			
-			//初始化积雪
-			double _snow = 0;
-			
+			//计算固态降水
+			double _snowBand = 0;
 			if(_tempBand < this.snowCritical){
-				_snow += _precBand;
+				_snowBand = _precBand;
 			}
 			else{
 				if(_tempBand < rainCritical){
-					_snow += _precBand * (_tempBand - snowCritical) / (rainCritical - snowCritical);
+					_snowBand = _precBand * (_tempBand - snowCritical) / (rainCritical - snowCritical);
+					if(_snowBand > _precBand)
+						_snowBand = _precBand;
 				}
 			}
-			
-			//降水中的固体部分
-			double _snowSolid = _snow;
-			
-			_precBand -= _snow;
-			if(_precBand < 0)
-				_precBand = 0;
 
-			if(accumulations[i] > 0)
-				_snow += accumulations[i];
+			//计算液态降水
+			double _rainBand = _precBand - _snowBand;
+
+			//固态降水的积累
+			double _accumlationSnowBand = _snowBand;
+			if(accumulationSnows[i] > 0)
+				_accumlationSnowBand += accumulationSnows[i];
 			
-			double _snowDDF = snowDDF; // * days;
-			double _iceDDF = iceDDF; // * days;
-			//计算径流
-			double _runoffBand = 0;
+			//计算融冰和融雪
+			double _iceMeltBand = 0;
+			double _snowMeltBand = 0;
+			
 			if(_acmtBand > 0){
-				double _pSnowMelt = _acmtBand * _snowDDF;
-				if(_snow - _pSnowMelt > 0){
-					_runoffBand = _pSnowMelt;
-					_snow -= _pSnowMelt;
-				}
-				else if(_snow == 0){
-					_runoffBand = _acmtBand * _iceDDF;
-				}
-				else{
-					_runoffBand = _snow + (_acmtBand - _snow / _snowDDF) * _iceDDF;
-					_snow = 0;
+				_snowMeltBand = _acmtBand * snowDDF;
+				if(_snowMeltBand > _accumlationSnowBand){
+					_iceMeltBand = (_acmtBand - _accumlationSnowBand / snowDDF) * iceDDF;
+					_snowMeltBand = _accumlationSnowBand;
 				}
 			}
+			_accumlationSnowBand -= _snowMeltBand;
 			
-			_runoffBand += _precBand;
-
+			//计算产流
+			double _runoffYieldBand = (_snowMeltBand + _iceMeltBand) * (1 - snowFrozenRatio);
+			//冰川积累
+			double _accumulationBand = _snowBand + _rainBand * snowFrozenRatio;
+			//计算径流
+			double _runoffBand = _runoffYieldBand + _rainBand * (1 - snowFrozenRatio);
 			//计算物质平衡
-			double _balanceBand = _precBand + _snowSolid - (1 - this.snowFrozenRatio) * _runoffBand;
-			//添加新的Accu变量
-			double _accumlBand = _snow + this.snowFrozenRatio  * _runoffBand;
-
-			_runoffBand *= (1 - this.snowFrozenRatio);
-			
-//			//计算物质平衡
-//			double _balanceBand = _precBand - (this.snowFrozenRatio - 1) * _runoffBand;
-//			_runoffBand *= (1 - this.snowFrozenRatio);
-//
-//			//添加新的Accu变量
-//			double _accumlBand = _snowSolid + this.snowFrozenRatio  * _runoffBand;
+			double _balanceBand = _accumulationBand - _runoffYieldBand;
 			
 			if(areas[i] > 0){
-				//修改径流为mm 2009-01-12
 				runoffs[i] = _runoffBand > 0 ? _runoffBand: 0; 
-//				runoffs[i] = _runoffBand * areas[i] / (1000.0 * days * 24 * 60 * 60); //* 1000 
-				accumulations[i] = _accumlBand;
+				accumulations[i] = _accumulationBand;
+				accumulationSnows[i] = _accumlationSnowBand;
 				balances[i] = _balanceBand;
 			}
 		}
@@ -180,10 +157,15 @@ public class RunoffModel implements Calculate{
 	}
 
 	@GeoOutput(title="积雪积累量")
+	public double[] getAccumulationSnows() {
+		return accumulationSnows;
+	}
+
+	@GeoOutput(title="积雪累积量")
 	public double[] getAccumulations() {
 		return accumulations;
 	}
-	
+
 	@GeoOutput(title="物质平衡")
 	public double[] getBalances(){
 		return balances;
@@ -205,8 +187,8 @@ public class RunoffModel implements Calculate{
 	}
 
 	@GeoInput(title="积雪积累量")
-	public void setAccumulations(double[] accumulations) {
-		this.accumulations = accumulations;
+	public void setAccumulationSnows(double[] accumulationSnows) {
+		this.accumulationSnows = accumulationSnows;
 	}
 
 	@GeoInput(title="降雪临界温度")
