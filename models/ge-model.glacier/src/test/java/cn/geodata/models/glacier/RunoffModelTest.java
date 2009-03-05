@@ -34,8 +34,8 @@ public class RunoffModelTest extends TestCase {
 //	private ProjectTransformModel projectModel;
 	
 	public void testTest1() throws Exception {
-		String _txt = "{0.52, 0.52, 0.52, 0.52, 0.54, 0.52, 0.52},\r\n{0.48, 0.5, 0.48, 0.5, 0.48, 0.5, 0.5},\r\n{0.54, 0.52, 0.54, 0.54, 0.54, 0.54, 0.54},\r\n{0.46, 0.44, 0.46, 0.46, 0.46, 0.46, 0.46},\r\n{0.48, 0.46, 0.48, 0.46, 0.48, 0.48, 0.46}";
-		Pattern _p = Pattern.compile("([\\d\\.]+)");
+		String _txt = "{0.52, -0.52, 0.52, -0.52, 0.54, 0.52, 0.52},\r\n{0.48, 0.5, 0.48, 0.5, 0.48, 0.5, 0.5},\r\n{0.54, 0.52, 0.54, 0.54, 0.54, 0.54, 0.54},\r\n{0.46, 0.44, 0.46, 0.46, 0.46, 0.46, 0.46},\r\n{0.48, 0.46, 0.48, 0.46, 0.48, 0.48, 0.46}";
+		Pattern _p = Pattern.compile("(-{0,1}[\\d\\.]+)");
 		
 		Matcher _m = _p.matcher(_txt);
 		int _pos = 0;
@@ -128,10 +128,10 @@ public class RunoffModelTest extends TestCase {
 //
 	}
 	
-	public void testComputeCT() throws Exception {
-		RunoffModel _m = new RunoffModel();
-		double _v = _m.computerAT(45, 7, 12.7, 31);
-		
-		System.out.println(_v);
-	}
+//	public void testComputeCT() throws Exception {
+//		RunoffModel _m = new RunoffModel();
+//		double _v = _m.computerAT(45, 7, 12.7, 31);
+//		
+//		System.out.println(_v);
+//	}
 }
