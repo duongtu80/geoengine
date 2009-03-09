@@ -187,10 +187,19 @@ public class GlacierRunoff {
 		
 		//写入雪线高度和年度平衡值
 		List<String> _lines = new ArrayList<String>();
-		_lines.add("Year,Balance,SnowLine");
+		_lines.add("Year,Balance,SnowLine,SnowLineYearly");
 		for(int _year = 0; _year < endYear-startYear; _year ++){
-			double _bb = 0;
-			int _snowLine = 0;
+			double _bb = 0; //年均物质平衡
+			int _lowestLine = 0; //最低冰川分带
+			for(int _b=0;_b < areas.length;_b++){
+				if(areas[_b] > 0){
+					_lowestLine = _b;
+					break;
+				}
+			}
+
+			int _snowLine1 = _lowestLine; //最低月雪线
+			int _snowLine2 = _lowestLine; //通过年物质平衡计算的雪线
 			
 			for(int _b=areas.length-1;_b>=0;_b--){
 				if(areas[_b] > 0){
@@ -200,25 +209,18 @@ public class GlacierRunoff {
 						_count += _list[_b];
 						
 						//判断出现负值的最高分带作为雪线
-						if(_list[_b] < 0 && _snowLine < _b){
-							_snowLine = _b;
+						if(_list[_b] < 0 && _snowLine1 < _b){
+							_snowLine1 = _b;
 						}
 					}
 					_bb += _count * areas[_b] / _totalArea;
-				}
-			}
-			
-			//如果雪线低于最低冰川分带，则赋值为最低冰川分带
-			if(_snowLine == 0){
-				for(int _b=0;_b < areas.length;_b++){
-					if(areas[_b] > 0){
-						_snowLine = _b;
-						break;
+					if(_count < 0 && _snowLine2 < _b){
+						_snowLine2 = _b;
 					}
 				}
 			}
 			
-			_lines.add(_year + startYear + "," + _bb + "," + levels[_snowLine]);
+			_lines.add(_year + startYear + "," + _bb + "," + levels[_snowLine1] + "," + levels[_snowLine2]);
 		}
 		
 		FileUtils.writeLines(new File(_path, "SnowLines.csv"), _lines);
