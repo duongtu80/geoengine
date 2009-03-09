@@ -352,7 +352,7 @@ public class RunoffModel implements Calculate{
 	 * @return
 	 */
 	private List<Double> searchNumbers(String txt){
-		Pattern _p = Pattern.compile("([\\d\\.]+)");
+		Pattern _p = Pattern.compile("(-{0,1}[\\d\\.]+)");
 		
 		List<Double> _list = new ArrayList<Double>();
 		Matcher _m = _p.matcher(txt);
