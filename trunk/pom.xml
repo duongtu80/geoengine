@@ -37,7 +37,48 @@
 			</plugin>
 		</plugins>
 	</build>
-  <modules>
+<repositories>
+  <!--repository>
+   <id>opengeo</id>
+   <name>OpenGeo Maven Repository</name>
+   <url>http://repo.opengeo.org/</url>
+   <layout>default</layout>
+  </repository-->
+  <repository>
+   <id>geotools</id>
+   <name>geotools</name>
+   <url>http://maven.geotools.fr/repository/</url>
+   <snapshots>
+    <enabled>false</enabled>
+   </snapshots>
+   <layout>legacy</layout>
+  </repository>
+  <repository>
+   <id>refractions</id>
+   <name>refractions</name>
+   <url>http://lists.refractions.net/m2/</url>
+   <snapshots>
+    <enabled>true</enabled>
+   </snapshots>
+  </repository> 
+  <repository>
+   <id>mortbay</id>
+   <name>mortbay</name>
+   <url>http://www.mortbay.org/maven2/release</url>
+   <snapshots>
+    <enabled>false</enabled>
+   </snapshots>
+  </repository>
+    <repository>
+      <id>maven-restlet</id>
+      <name>Public online Restlet repository</name>
+      <url>http://maven.restlet.org</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+ </repositories>
+   <modules>
     <module>models</module>
     <module>modules</module>
     <module>references</module>
