@@ -14,7 +14,7 @@
     <module>ge-gml.parser</module>
     <module>ge-geojson.parser</module>
     <module>ge-data.parsers</module>
-    <module>ge-wps.client</module>
+    <!--module>ge-wps.client</module-->
     <module>ge-models</module>
     <module>ge-library</module>
     <module>ge-wps</module>
