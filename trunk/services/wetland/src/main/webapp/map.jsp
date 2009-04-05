@@ -6,18 +6,51 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Prairie Pothole Models</title>
+
 <style type="text/css">
 	@IMPORT url("css/common.css");
 	@IMPORT url("css/map.css");
 </style>
+
+<!-- Load google ajax api -->
+<script type='text/javascript' src='http://www.google.com/jsapi'></script>
+
+<!-- Load dojo from Google cache site -->
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.3.0/dojo/dojo.xd.js" djConfig="parseOnLoad:true"></script>
+<style type="text/css">
+    @import "http://ajax.googleapis.com/ajax/libs/dojo/1.3.0/dijit/themes/tundra/tundra.css";
+</style>
+
+<!-- 
 <style type="text/css">
     @import "/public/dojo/dijit/themes/tundra/tundra.css";
 </style>
 
-<script type='text/javascript' src='http://www.google.com/jsapi'></script>
 <script type="text/javascript" src="/public/dojo/dojo/dojo.js" djConfig="parseOnLoad:true"></script>
-
 <script type="text/javascript">
+</script>
+ --> 
+
+<style type="text/css">
+	@IMPORT url("controls/css/style.css");
+</style>
+
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<s:property value="key" />" type="text/javascript"></script>
+
+<!-- Load OpenLayers library -->
+<!--<script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>-->
+<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
+
+<!-- Load customized libraries -->
+<script type="text/javascript" src="scripts/LayerSwitcher.js"></script>
+<script type="text/javascript" src="scripts/models.js"></script>
+<script type="text/javascript" src="scripts/map.js"></script>
+
+<SCRIPT type="text/javascript">
+	//Load Google visualization packages
+	google.load('visualization', '1', {'packages':['annotatedtimeline']});
+
+	//Load Dojo libraries
 	dojo.require("dijit.form.TextBox");
 	dojo.require("dijit.form.DateTextBox");
 	dojo.require("dijit.form.NumberTextBox");
@@ -31,24 +64,6 @@
 	dojo.require("dijit.layout.TabContainer");
 	dojo.require("dijit.form.Slider");
 	dojo.require("dijit.layout.AccordionContainer");
-</script>
-
-<style type="text/css">
-	@IMPORT url("controls/css/style.css");
-</style>
-
-<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<s:property value="key" />" type="text/javascript"></script>
-
-<!--<script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>-->
-<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
-<script type="text/javascript" src="scripts/LayerSwitcher.js"></script>
-
-<script type="text/javascript" src="scripts/models.js"></script>
-<script type="text/javascript" src="scripts/map.js"></script>
-
-<SCRIPT type="text/javascript">
-	//Load Google visualization packages
-	google.load('visualization', '1', {'packages':['annotatedtimeline']});
 	
 	dojo.addOnLoad(initMap);
 </SCRIPT>
@@ -94,7 +109,7 @@
 		
 							<div class="viewItem"><div class="viewTitle1">Period</div>
 								<input type="text" id='startDate' value="1990-01-01" dojoType='dijit.form.DateTextBox' trim="true" style="width: 90px;" /> -
-								<input type="text" id='endDate' value="1999-12-31" dojoType='dijit.form.DateTextBox' trim="true" style="width: 90px;" />
+								<input type="text" id='endDate' value="1992-12-31" dojoType='dijit.form.DateTextBox' trim="true" style="width: 90px;" />
 							</div>
 
 							<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
