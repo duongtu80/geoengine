@@ -13,6 +13,8 @@
 <style type="text/css">
     @import "/public/dojo/dijit/themes/tundra/tundra.css";
 </style>
+
+<script type='text/javascript' src='http://www.google.com/jsapi'></script>
 <script type="text/javascript" src="/public/dojo/dojo/dojo.js" djConfig="parseOnLoad:true"></script>
 
 <script type="text/javascript">
@@ -37,12 +39,17 @@
 
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<s:property value="key" />" type="text/javascript"></script>
 
-<script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>
+<!--<script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>-->
+<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
 <script type="text/javascript" src="scripts/LayerSwitcher.js"></script>
+
 <script type="text/javascript" src="scripts/models.js"></script>
 <script type="text/javascript" src="scripts/map.js"></script>
 
 <SCRIPT type="text/javascript">
+	//Load Google visualization packages
+	google.load('visualization', '1', {'packages':['annotatedtimeline']});
+	
 	dojo.addOnLoad(initMap);
 </SCRIPT>
 
