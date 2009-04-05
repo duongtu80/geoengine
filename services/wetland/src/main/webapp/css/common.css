@@ -106,6 +106,12 @@ div.resultPanel {
 	background-color: #F0F0FF
 }
 
+div.chartPanel{
+	width: 100%;
+	height: 400px;
+	background-color: #FFFFFF;
+}
+
 .closeImg {
 	cursor: pointer;
 }

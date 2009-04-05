@@ -312,6 +312,7 @@ function WpsModel (id, dialog, saveSetting , execute) {
 
 function ModelResult() {
    	this.panelDiv = document.createElement('div');
+   	this.panelDiv.className = 'resultPanel';
 
 	this.closeResult = function() {
 //		if(confirm('确定关闭该结果吗?') == true){
@@ -379,17 +380,74 @@ function ModelResult() {
 //     	_linkDiv.href = 'runoffView.do?code=' + param.id;
 //     	_linkDiv.innerHTML = 'View Data>>';
      	
-     	var i = 0;
-     	for(i=0;i<tags.length;i++){
-	     	var _newImg = document.createElement("img");
-	     	_newImg.src = "model/processChart.do?tag=" + tags[i] + "&date=" + ((new Date()).getTime() + 1) + "&id=" + param.id;
-	     	this.panelDiv.appendChild(_newImg);
-	     	this.panelDiv.className = 'resultPanel';
-     	}
+     	//Create chart panel
+     	var _chartDiv = document.createElement("div");
+     	_chartDiv.className = 'chartPanel';
+     	_chartDiv.setAttribute('id', 'chart_' + param.id);
+     	
+     	this.panelDiv.appendChild(_chartDiv);
+     	
+     	//Load data for chart
+		dojo.xhrGet({ //
+	        url: "model/processData.do", 
+	        handleAs: "json",
+	        content: {id: param.id},
+	        timeout: 60000,
+	        load: function(response, ioArgs) {
+	        	var _id = ioArgs.args.content.id;
+	        	
+	        	var _cols = [
+	        	             {'id': 'eT', 'title': 'ET', 'color': '#CC6600'},
+	        	             {'id': 'waterLevel', 'title': 'WaterLevel', 'color': '#0033FF'},
+	        	             {'id': 'precipitation', 'title': 'Precipitation', 'color': '#666699'}
+	        	             ];
+	        	
+	            var _data = new google.visualization.DataTable();
+	            
+	            //Add columns
+	            _data.addColumn('date', 'Date');
+	            
+	            var i = 0;
+	            for(i=0;i<_cols.length;i++){
+	            	_data.addColumn('number', _cols[i].title);
+	            }
+	            
+	            var _days = response.date;
+	            //Add rows
+	            _data.addRows(_days.length);
+	            
+	            var _r = 0;
+	            for(_r=0;_r < _days.length;_r++){
+	            	_data.setValue(_r, 0, new Date(_days[_r]));
+	            	
+	            	for(i=0;i<_cols.length;i++){
+	            		_data.setValue(_r, i+1, response[_cols[i].id][_r]);
+	            	}
+	            }
+	            
+	            var _colors = [];
+	            for(i=0;i<_cols.length;i++){
+	            	_colors.push(_cols[i].color);
+	            }
+	            
+	            //Create chart
+	            var _chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_' + _id));
+	            _chart.draw(_data, {displayAnnotations: true, colors: _colors});
+	        }
+			,error: wetland.errorFunction
+		});
+     	
+//     	var i = 0;
+//     	for(i=0;i<tags.length;i++){
+//	     	var _newImg = document.createElement("img");
+//	     	_newImg.src = "model/processChart.do?tag=" + tags[i] + "&date=" + ((new Date()).getTime() + 1) + "&id=" + param.id;
+//	     	this.panelDiv.appendChild(_newImg);
+//	     	this.panelDiv.className = 'resultPanel';
+//     	}
      	
      	dojo.byId('resultPanel').appendChild(this.panelDiv);
 	};
-
+	
 	this.addResultTextPanel = function(tag, title, param){
      	var _txtDiv = document.createElement("div");
      	_txtDiv.className = 'textPanel';
@@ -430,15 +488,8 @@ function ModelProcess() {
 		var _params = {'id': _param.id, 'date': (new Date()).getTime()};
 		
 		if(_param.percent >= 100){
-			//如果执行完毕
 			(new ModelResult()).addResultChartPanel(['eT,waterLevel,precipitation'], [''], _param);
-//			(new ModelResult()).addResultChartPanel(['ET', 'WaterLevel', 'Precipitation'], ['ET', 'Water Level', 'Precipitation'], _param);
-//			(new ModelResult()).addResultChartPanel('Temperature', '气温', _param);
-//			(new ModelResult()).addResultChartPanel('Precipitation', '降水', _param);
-//			(new ModelResult()).addResultChartPanel('Runoff', '径流', _param);
-
 			wetland.progressBar.popProgress();
-//			alert('执行完毕' + _param.id);
 		}
 		else{
 			wetland.progressBar.popProgress();

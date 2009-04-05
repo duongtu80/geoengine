@@ -99,7 +99,14 @@ public class WaterLevelProcess implements Process, Runnable {
 			
 			//Calculate daymet
 			Point _center = _border.getCentroid();
-			ArrayList<DayMet> _daymets = dayMetReader.read(startDate, endDate, basin, _center.getX(), _center.getY());
+			
+			//Get data from one year before
+			Calendar _c = Calendar.getInstance();
+			_c.setTime(startDate);
+			_c.add(Calendar.YEAR, -3);
+			Date _startDate = _c.getTime();
+			
+			ArrayList<DayMet> _daymets = dayMetReader.read(_startDate, endDate, basin, _center.getX(), _center.getY());
 			
 			Map<String, List<Double>> _values = new HashMap<String, List<Double>>();
 			for(String _b : new String[] {"tday", "srad", "vpd", "precipitation", "eT", "waterLevel"}){
@@ -134,7 +141,6 @@ public class WaterLevelProcess implements Process, Runnable {
 	        DateFormat _dateFormat = new SimpleDateFormat("dd/MM/yy");
 	        for(int i=0;i<_daymets.size();i++){
 	        	Date _date = _daymets.get(i).getDate();
-	        	_dates.add(_date.getTime());
 	        	
 				this.status.put("percent", (i * 100) / _daymets.size());
 				this.status.put("message", "Cal " + _dateFormat.format(_date) + " " + this.basin + " water level");
@@ -156,13 +162,21 @@ public class WaterLevelProcess implements Process, Runnable {
 	            	_waterLevel = Math.round(_waterLevel * 100) / 100.0;
 	        	}
 	        	
-	        	_values.get("tday").add(_daymets.get(i).getTday());
-	        	_values.get("srad").add(_daymets.get(i).getSrad());
-	        	_values.get("vpd").add(_daymets.get(i).getVpd());
-	        	_values.get("precipitation").add(_daymets.get(i).getPrcp());
-	        	_values.get("eT").add((Double)_etModel.getOutput("Et") / 10.0);
-	        	_values.get("waterLevel").add(_waterLevel);
-	        	_values.get("vpd").add(_daymets.get(i).getVpd());
+	        	//Skip the first year
+	        	if(_date.before(startDate)){
+//	        		log.info("Skip " + _date.toLocaleString());
+	        	}
+	        	else{
+		        	_dates.add(_date.getTime());
+
+		        	_values.get("tday").add(_daymets.get(i).getTday());
+		        	_values.get("srad").add(_daymets.get(i).getSrad());
+		        	_values.get("vpd").add(_daymets.get(i).getVpd());
+		        	_values.get("precipitation").add(_daymets.get(i).getPrcp());
+		        	_values.get("eT").add((Double)_etModel.getOutput("Et") / 10.0);
+		        	_values.get("waterLevel").add(_waterLevel);
+		        	_values.get("vpd").add(_daymets.get(i).getVpd());
+	        	}
 	        }
 
 			JSONObject _data = new JSONObject();
