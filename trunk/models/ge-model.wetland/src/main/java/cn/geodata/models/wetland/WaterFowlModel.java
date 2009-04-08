@@ -1,6 +1,7 @@
 package cn.geodata.models.wetland;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,15 +30,15 @@ public class WaterFowlModel implements Calculate  {
 		for(String _line: (List<String>)IOUtils.readLines(WaterFowlModel.class.getResourceAsStream("/wetland/waterFowls.txt"))){
 			String[] _parts = _line.split("\\s*,\\s*");
 			if(_parts.length == 3){
-				this.coefficentA.put(_parts[0], Double.parseDouble(_parts[1]));
-				this.coefficentB.put(_parts[0], Double.parseDouble(_parts[2]));
+				this.coefficentA.put(_parts[0], Double.parseDouble(_parts[1]) * 1000);
+				this.coefficentB.put(_parts[0], Double.parseDouble(_parts[2]) * 1000);
 			}
 		}
 	}
 	
 	public void calculate() throws Exception {
 		if(this.coefficentA.containsKey(this.waterFowl) == false){
-			throw new Exception("No parameter for " + this.waterFowl);
+			throw new Exception("No parameter for " + this.waterFowl + " in " + Arrays.toString(this.coefficentA.keySet().toArray()));
 		}
 		
 		//Translate to ha

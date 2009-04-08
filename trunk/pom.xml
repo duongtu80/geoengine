@@ -83,5 +83,6 @@
     <module>modules</module>
     <module>references</module>
     <module>services</module>
+    <module>test</module>
   </modules>
 </project>
