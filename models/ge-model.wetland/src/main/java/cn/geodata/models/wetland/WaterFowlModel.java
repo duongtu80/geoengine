@@ -15,7 +15,7 @@ import cn.geodata.models.annotation.GeoProcess;
 
 @GeoProcess(title="Water Fowl Model", keywords={"bird", "waterfowl"})
 public class WaterFowlModel implements Calculate  {
-	private double wetlandArea;
+	private double waterArea;
 	private String waterFowl; 
 	private int number;
 	
@@ -41,7 +41,7 @@ public class WaterFowlModel implements Calculate  {
 		}
 		
 		//Translate to ha
-		double _wetlandArea = this.wetlandArea / 10000;
+		double _wetlandArea = this.waterArea / 10000;
 		
 		//Calculate
 		this.number = (int)Math.round(_wetlandArea * this.coefficentA.get(this.waterFowl) + Math.sqrt(_wetlandArea) * this.coefficentB.get(this.waterFowl));
@@ -52,9 +52,9 @@ public class WaterFowlModel implements Calculate  {
 		return number;
 	}
 
-	@GeoInput(title="Wetland Area", required=true)
-	public void setWetlandArea(double wetlandArea) {
-		this.wetlandArea = wetlandArea;
+	@GeoInput(title="Water Area", required=true)
+	public void setWaterArea(double waterArea) {
+		this.waterArea = waterArea;
 	}
 
 	@GeoInput(title="Waterfowl Name", required=true)
