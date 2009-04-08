@@ -28,6 +28,18 @@ public class WaterFowlStart extends ProcessStart {
 		this.catchment = catchment;
 		this.waterFowls = new String[] {"Mallard", "Gadwall", "American Wigeon", "Green-winged Teal", "Blue-winged Teal", "Northern Shoveler", "Northern Pintail", "Redhead", "Canvasback", "Lesser Scaup", "Ring-necked Duck", "Ruddy Duck"};
 	}
+	
+	public void setCatchment(Catchment catchment) {
+		this.catchment = catchment;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setWetlandCode(String wetlandCode) {
+		this.wetlandCode = wetlandCode;
+	}
 
 	public String execute() throws Exception {
         //Add simulation for water fowls
@@ -35,7 +47,7 @@ public class WaterFowlStart extends ProcessStart {
         
         Process _p = this.manage.getProcess(this.id);
         JSONArray _waterLevels = _p.getData().getJSONArray("waterLevel");
-        JSONArray _dates = _p.getData().getJSONArray("dates");
+        JSONArray _dates = _p.getData().getJSONArray("date");
     	
         ProcessLibrary _library = ProcessLibrary.createInstance();
         
@@ -44,7 +56,7 @@ public class WaterFowlStart extends ProcessStart {
         	double _waterLevel = _waterLevels.getDouble(i);
         	
         	//Simulate water fowls for May
-        	if(_date.getMonth() == 4){
+        	if(_date.getMonth() == 4 && _date.getDate() == 15){
         		JSONObject _birds = new JSONObject();
         		_birds.put("date", _dates);
         		
@@ -102,12 +114,12 @@ public class WaterFowlStart extends ProcessStart {
 		}
 		
 		Processing _waterFowlModel = library.createProcess("WaterFowlModel");
-		_waterFowlModel.setInput("WaterTable", _area);
+		_waterFowlModel.setInput("WaterArea", _area);
 		_waterFowlModel.setInput("WaterFowl", waterFowl);
 		
 		//Execute the process
 		library.executeProcess(_regionModel);
 		
-		return (Integer)_regionModel.getOutput("Number");
+		return (Integer)_waterFowlModel.getOutput("Number");
 	}
 }

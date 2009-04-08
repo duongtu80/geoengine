@@ -23,7 +23,7 @@ public class ProcessManage {
 			return this.processes.get(id);
 		}
 		
-		log.severe("No process:" + id + Arrays.toString(getProcessIds().toArray()));
+		log.severe("No process:" + id + " in " + Arrays.toString(getProcessIds().toArray()));
 		throw new NullPointerException("Failed to find process:" + id);
 	}
 	
