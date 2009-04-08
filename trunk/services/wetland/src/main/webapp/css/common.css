@@ -136,6 +136,7 @@ div.chartPanel{
 .resultLink {
 	cursor: pointer;
 	text-decoration: underline;
+	color: #111155;
 }
 
 .resultItem {

@@ -228,6 +228,17 @@ function WetlandModel (map){
 			alert('Start date should be earlier than ending date');
 			return;
 		}
+		
+		//DayMet has climate data available between 1980 to 2003
+		if(_startDate < (new Date(1980, 0, 1)).getTime()){
+			alert('No climate data before 1980. Please change your start date.');
+			return;
+		}
+		if(_endDate > (new Date(2003, 11, 31)).getTime()){
+			alert('No climate data later than 2003. Please change your end date.');
+			return;
+		}
+		
 		if(_basin == undefined || _basin == '' || this.basinLayer.selectedFeatures.length == 0){
 			alert('No wetland catchment selected');
 			return;
