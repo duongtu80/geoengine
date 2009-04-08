@@ -31,13 +31,14 @@ public class WaterFowlStartTest extends TestCase {
 			System.out.println(_p.getStatus().toString());
 		}
 		
-		FileUtils.writeStringToFile(new File("d:\\Temp\\eeee.txt"), _p.getData().toString());
+//		FileUtils.writeStringToFile(new File("d:\\Temp\\eeee.txt"), _p.getData().toString());
 		
 		WaterFowlStart _fowl = (WaterFowlStart) _factory.getBean("saterFowlStart");
 		_fowl.setId(_id);
 		_fowl.setWetlandCode("P4");
 		
 		System.out.println(_fowl.execute());
-	}	
-
+		
+		IOUtils.copy(_fowl.getStream(), FileUtils.openOutputStream(new File("c:\\mfeng\\tmp\\eeeee2.txt")));
+	}
 }
