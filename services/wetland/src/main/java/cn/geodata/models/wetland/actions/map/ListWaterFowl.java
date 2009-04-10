@@ -102,7 +102,8 @@ public class ListWaterFowl extends ProcessStart {
         			
         			for(int j=0;j<_waterFowlNum;j++){
 	            		Point _pt = this.pickupLocation(_basin, null);
-	        			_lines.add(_pt.getX() + "\t" + _pt.getY() + "\t" + _waterFowl + "\t" + _waterFowl + "\t" + "25,25" + "\t" + "-12.5,-12.5" + "\t" + "images/waterfowls/" + _waterFowl.toLowerCase().replace(" ", "_") + ".gif");
+	            		if(_pt != null)
+	            			_lines.add(_pt.getX() + "\t" + _pt.getY() + "\t" + _waterFowl + "\t" + _waterFowl + "\t" + "25,25" + "\t" + "-12.5,-12.5" + "\t" + "images/waterfowls/" + _waterFowl.toLowerCase().replace(" ", "_") + ".gif");
         			}
         		}
         		
@@ -130,18 +131,26 @@ public class ListWaterFowl extends ProcessStart {
 
 	private Point pickupLocation(MultiPolygon g, List<Point> pts) throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException, TransformException{
 		Envelope _ext = g.getEnvelopeInternal();
-		
-		double _x = (Math.random() * _ext.getWidth()) + _ext.getMinX();
-		double _y = (Math.random() * _ext.getHeight()) + _ext.getMinY();
-		
-		String _wkt = "PROJCS[\"Google Mercator\", GEOGCS[\"WGS 84\", DATUM[\"World Geodetic System 1984\", SPHEROID[\"WGS 84\", 6378137.0, 298.257223563, AUTHORITY[\"EPSG\",\"7030\"]], AUTHORITY[\"EPSG\",\"6326\"]], PRIMEM[\"Greenwich\", 0.0, AUTHORITY[\"EPSG\",\"8901\"]], UNIT[\"degree\", 0.017453292519943295], AXIS[\"Geodetic latitude\", NORTH], AXIS[\"Geodetic longitude\", EAST], AUTHORITY[\"EPSG\",\"4326\"]], PROJECTION[\"Mercator_1SP\"], PARAMETER[\"semi_minor\", 6378137.0], PARAMETER[\"latitude_of_origin\", 0.0], PARAMETER[\"central_meridian\", 0.0], PARAMETER[\"scale_factor\", 1.0], PARAMETER[\"false_easting\", 0.0], PARAMETER[\"false_northing\", 0.0], UNIT[\"m\", 1.0], AXIS[\"Easting\", EAST], AXIS[\"Northing\", NORTH], AUTHORITY[\"EPSG\",\"900913\"]]";
-		CoordinateReferenceSystem _targetPrj = CRS.parseWKT(_wkt);
-		CoordinateReferenceSystem _sourcePrj = CRS.decode("EPSG:4326", true);
-		
-		CoordinateOperation _coFactory = ReferencingFactoryFinder.getCoordinateOperationFactory(GeoTools.getDefaultHints()).createOperation(_sourcePrj, _targetPrj);
-		
 		GeometryFactory _factory = new GeometryFactory();
-		return (Point) JTS.transform(_factory.createPoint(new Coordinate(_x, _y)), _coFactory.getMathTransform());
+		
+		for(int i=0;i<20;i++){
+			double _x = (Math.random() * _ext.getWidth()) + _ext.getMinX();
+			double _y = (Math.random() * _ext.getHeight()) + _ext.getMinY();
+	
+			Point _pt = _factory.createPoint(new Coordinate(_x, _y));
+			if(g.contains(_pt) == false)
+				continue;
+	
+			String _wkt = "PROJCS[\"Google Mercator\", GEOGCS[\"WGS 84\", DATUM[\"World Geodetic System 1984\", SPHEROID[\"WGS 84\", 6378137.0, 298.257223563, AUTHORITY[\"EPSG\",\"7030\"]], AUTHORITY[\"EPSG\",\"6326\"]], PRIMEM[\"Greenwich\", 0.0, AUTHORITY[\"EPSG\",\"8901\"]], UNIT[\"degree\", 0.017453292519943295], AXIS[\"Geodetic latitude\", NORTH], AXIS[\"Geodetic longitude\", EAST], AUTHORITY[\"EPSG\",\"4326\"]], PROJECTION[\"Mercator_1SP\"], PARAMETER[\"semi_minor\", 6378137.0], PARAMETER[\"latitude_of_origin\", 0.0], PARAMETER[\"central_meridian\", 0.0], PARAMETER[\"scale_factor\", 1.0], PARAMETER[\"false_easting\", 0.0], PARAMETER[\"false_northing\", 0.0], UNIT[\"m\", 1.0], AXIS[\"Easting\", EAST], AXIS[\"Northing\", NORTH], AUTHORITY[\"EPSG\",\"900913\"]]";
+			CoordinateReferenceSystem _targetPrj = CRS.parseWKT(_wkt);
+			CoordinateReferenceSystem _sourcePrj = CRS.decode("EPSG:4326", true);
+			
+			CoordinateOperation _coFactory = ReferencingFactoryFinder.getCoordinateOperationFactory(GeoTools.getDefaultHints()).createOperation(_sourcePrj, _targetPrj);
+			
+			return (Point) JTS.transform(_pt, _coFactory.getMathTransform());
+		}
+		
+		return null;
 	}
 
 	private Point pickupLocation(Feature f, List<Point> pts) throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException, TransformException{
