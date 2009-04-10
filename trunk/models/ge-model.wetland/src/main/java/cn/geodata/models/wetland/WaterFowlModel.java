@@ -30,8 +30,8 @@ public class WaterFowlModel implements Calculate  {
 		for(String _line: (List<String>)IOUtils.readLines(WaterFowlModel.class.getResourceAsStream("/wetland/waterFowls.txt"))){
 			String[] _parts = _line.split("\\s*,\\s*");
 			if(_parts.length == 3){
-				this.coefficentA.put(_parts[0], Double.parseDouble(_parts[1]) * 1000);
-				this.coefficentB.put(_parts[0], Double.parseDouble(_parts[2]) * 1000);
+				this.coefficentA.put(_parts[0], Double.parseDouble(_parts[1]) * 10);
+				this.coefficentB.put(_parts[0], Double.parseDouble(_parts[2]) * 100);
 			}
 		}
 	}
