@@ -9,8 +9,8 @@ import org.springframework.core.io.UrlResource;
 
 import junit.framework.TestCase;
 
-public class WaterFowlStartTest extends TestCase {
-	public void testWaterFowls() throws Exception {
+public class ListWaterFowlTest extends TestCase {
+	public void testListWaterFowl() throws Exception {
 		XmlBeanFactory _factory = new XmlBeanFactory(new UrlResource(WaterFowlStartTest.class.getResource("/applicationContext.xml")));
 		WaterLevelStart _start = (WaterLevelStart) _factory.getBean("waterLevelStart");
 		
@@ -33,12 +33,13 @@ public class WaterFowlStartTest extends TestCase {
 		
 //		FileUtils.writeStringToFile(new File("d:\\Temp\\eeee.txt"), _p.getData().toString());
 		
-		WaterFowlStart _fowl = (WaterFowlStart) _factory.getBean("waterFowlStart");
+		ListWaterFowl _fowl = (ListWaterFowl) _factory.getBean("listWaterFowl");
 		_fowl.setId(_id);
 		_fowl.setWetlandCode("P4");
+		_fowl.setYear(1999);
 		
 		System.out.println(_fowl.execute());
 		
-		IOUtils.copy(_fowl.getStream(), FileUtils.openOutputStream(new File("c:\\mfeng\\tmp\\eeeee2.txt")));
+		IOUtils.copy(_fowl.getStream(), FileUtils.openOutputStream(new File("c:\\mfeng\\tmp\\eeeee3.txt")));
 	}
 }

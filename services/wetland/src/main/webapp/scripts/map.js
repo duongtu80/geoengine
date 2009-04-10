@@ -188,6 +188,9 @@ function initMap() {
 
 	map.addLayer(_basin_layer);
 	
+    var newl = new OpenLayers.Layer.Text( "text", { location:"./eeeee3.txt"} );
+    map.addLayer(newl);
+
 //	var vlayer = new OpenLayers.Layer.Vector('Markers');
 //	map.addLayer(vlayer);
 

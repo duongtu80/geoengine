@@ -32,7 +32,7 @@ public class WaterFowlStart extends ProcessStart {
 	
 	public WaterFowlStart(Catchment catchment){
 		this.catchment = catchment;
-		this.waterFowls = new String[] {"Mallard", "Gadwall", "American Wigeon", "Green-winged Teal", "Blue-winged Teal", "Northern Shoveler", "Northern Pintail", "Redhead", "Canvasback", "Lesser Scaup", "Ring-necked Duck", "Ruddy Duck"};
+		this.waterFowls = new String[] {"Mallard", "Gadwall", "American Wigeon", "Green Winged Teal", "Blue Winged Teal", "Northern Shoveler", "Northern Pintail", "Redhead", "Canvasback", "Lesser Scaup", "Ring Necked Duck", "Ruddy Duck"};
 	}
 	
 	public void setCatchment(Catchment catchment) {
