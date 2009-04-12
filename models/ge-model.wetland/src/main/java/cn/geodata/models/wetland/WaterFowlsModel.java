@@ -14,8 +14,8 @@ import cn.geodata.models.annotation.GeoInput;
 import cn.geodata.models.annotation.GeoOutput;
 import cn.geodata.models.annotation.GeoProcess;
 
-@GeoProcess(title="Water Fowl Model", keywords={"bird", "waterfowl"})
-public class WaterFowlModel implements Calculate  {
+@GeoProcess(title="Water Fowl Model", keywords={"birds", "water fowls"})
+public class WaterFowlsModel implements Calculate  {
 	private double waterArea;
 	private String waterFowl; 
 	private int number;
@@ -23,15 +23,15 @@ public class WaterFowlModel implements Calculate  {
 	private Map<String, Double> coefficentA;
 	private Map<String, Double> coefficentB;
 
-	public WaterFowlModel() throws IOException {
+	public WaterFowlsModel() throws IOException {
 		this.coefficentA = new HashMap<String, Double>();
 		this.coefficentB = new HashMap<String, Double>();
 		
-		for(String _line: (List<String>)IOUtils.readLines(WaterFowlModel.class.getResourceAsStream("/wetland/waterFowls.txt"))){
+		for(String _line: (List<String>)IOUtils.readLines(WaterFowlsModel.class.getResourceAsStream("/wetland/waterFowls.txt"))){
 			String[] _parts = _line.split("\\s*,\\s*");
 			if(_parts.length == 3){
-				this.coefficentA.put(_parts[0], Double.parseDouble(_parts[1]) * 10);
-				this.coefficentB.put(_parts[0], Double.parseDouble(_parts[2]) * 100);
+				this.coefficentA.put(_parts[0], Double.parseDouble(_parts[1]));
+				this.coefficentB.put(_parts[0], Double.parseDouble(_parts[2]) * 3);
 			}
 		}
 	}
