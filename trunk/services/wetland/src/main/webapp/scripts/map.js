@@ -188,9 +188,6 @@ function initMap() {
 
 	map.addLayer(_basin_layer);
 	
-    var newl = new OpenLayers.Layer.Text( "text", { location:"./eeeee3.txt"} );
-    map.addLayer(newl);
-
 //	var vlayer = new OpenLayers.Layer.Vector('Markers');
 //	map.addLayer(vlayer);
 
@@ -215,10 +212,34 @@ function initMap() {
 	wetland.basinLayer = _basin_layer;
 	wetland.waterLayer = _water_layer;
 	wetland.progressBar = _progressBar;
-	
+
+//    var newl = new OpenLayers.Layer.WaterFowls( "text", { location:"./eeeee3.txt"} );
+//    map.addLayer(newl);
+    
 	wetland.progressBar.pushProcess('Load catchments', loadCatchments, null);
 	wetland.progressBar.pushProcess('Load models', wetland.loadWpsModel, null);
 
+//    var dragFeature = new OpenLayers.Control.DragFeature(newl);
+//    map.addControl(dragFeature);
+//    dragFeature.activate();
+//
+
 //	dojo.connect(dojo.byId('divLoadMapTest'), 'onclick', wetland, 'loadWaterLevelOnMap');
 //	dojo.byId('divLoadMapTest').processId = '1111111';
+	
+	ignoreMouseEvents(dojo.byId('waterFowlsPanel'));
+	ignoreMouseEvents(dojo.byId('waterLevelPanel'));
 }
+
+function ignoreMouseEvents(div){
+    OpenLayers.Event.observe(div, "dblclick", ignoreEvent);
+    OpenLayers.Event.observe(div, "mouseup", ignoreEvent);
+    OpenLayers.Event.observe(div, "mousedown", ignoreEvent);
+    OpenLayers.Event.observe(div, "click", ignoreEvent);	
+}
+
+function ignoreEvent(evt) {
+//	alert('eeee');
+    OpenLayers.Event.stop(evt);
+}
+

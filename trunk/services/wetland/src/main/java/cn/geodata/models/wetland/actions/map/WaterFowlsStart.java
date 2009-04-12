@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -13,6 +14,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
@@ -38,15 +40,12 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 
-public class ListWaterFowl extends ProcessStart {
+public class WaterFowlsStart extends ProcessStart {
 	private static Logger log = Logger.getAnonymousLogger();
 	private Catchment catchment;
-	private String id;
-	private String wetlandCode;
 	private String[] waterFowls;
-	private int year;
 	
-	public ListWaterFowl(Catchment catchment){
+	public WaterFowlsStart(Catchment catchment){
 		this.catchment = catchment;
 		this.waterFowls = new String[] {"Mallard", "Gadwall", "American Wigeon", "Green Winged Teal", "Blue Winged Teal", "Northern Shoveler", "Northern Pintail", "Redhead", "Canvasback", "Lesser Scaup", "Ring Necked Duck", "Ruddy Duck"};
 	}
@@ -55,67 +54,72 @@ public class ListWaterFowl extends ProcessStart {
 		this.catchment = catchment;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public void setYear(int year) {
-		this.year = year;
-	}
-
-	public void setWetlandCode(String wetlandCode) {
-		this.wetlandCode = wetlandCode;
-	}
-
 	public String execute() throws Exception {
+		String _basinCode = this.params.getString("basin");
+		Double _waterLevel = this.params.getDouble("level");
+		
         //Add simulation for water fowls
 		List<String> _lines = new ArrayList<String>();
 		_lines.add("lon	lat	title	description	iconSize	iconOffset	icon");
 		
-        Process _p = this.manage.getProcess(this.id);
-        JSONArray _waterLevels = _p.getData().getJSONArray("waterLevel");
-        JSONArray _dates = _p.getData().getJSONArray("date");
-    	
-        ProcessLibrary _library = ProcessLibrary.createInstance();
-        
-        //Calculate the average water level for May
-        int _countMay = 0;
-        double _waterLevelMay = 0;
-        
-		MultiPolygon _basin = this.catchment.findCatchmentByTag(wetlandCode);
+		JSONObject _params = this.params.getJSONObject("params");
+		
+		//Processing
+		ProcessLibrary _library = ProcessLibrary.createInstance();
+		MultiPolygon _basin = this.catchment.findCatchmentByTag(_basinCode);
 
-        for(int i=0;i<_waterLevels.length();i++){
-        	Date _date = new Date(_dates.getLong(i));
-        	
-        	if(_date.getYear() + 1900 == this.year && _date.getMonth() == 4){
-        		_countMay++;
-        		_waterLevelMay = Math.max(_waterLevelMay, _waterLevels.getDouble(i));
-        	}
-        	else if(_countMay > 0){
-            	//Simulate water fowls for May
-        		
-        		FeatureCollection _regions = this.calculateWaterRegion(_basin, _library, wetlandCode, _waterLevelMay / _countMay);
-        		double _area = this.calculateWaterArea(_regions);
-        		
-        		for(String _waterFowl : this.waterFowls){
-        			int _waterFowlNum = this.calculateWaterFowlNum(_library, _waterFowl, _area);
+		FeatureCollection _regions = this.calculateWaterRegion(_library, _params.getJSONObject("WaterRegion"), _basin, _waterLevel);
+		double _area = this.calculateWaterArea(_regions);
+		
+		int _birdNum = 0;
+		JSONObject _birdNums = new JSONObject();
+		
+		JSONObject _types = new JSONObject();
+		for(String _waterFowl : this.waterFowls){
+			String _image = "images/waterfowls/" + _waterFowl.toLowerCase().replace(" ", "_") + ".png";
+
+			JSONObject _infos = new JSONObject();
+			_infos.put("icon", _image);
+			
+			_types.put(_waterFowl, _infos);
+			
+			int _waterFowlNum = this.calculateWaterFowlNum(_library, _params.getJSONObject("WaterFowls"), _waterFowl, _area);
+			
+			for(int j=0;j<_waterFowlNum;j++){
+        		Point _pt = this.pickupLocation(_basin, null);
+        		if(_pt != null){
+//        			if(_waterFowl.equalsIgnoreCase("redhead")){
+//        				_image = _waterFowl.toLowerCase().replace(" ", "_") + ".png";
+//        			}
         			
-        			for(int j=0;j<_waterFowlNum;j++){
-	            		Point _pt = this.pickupLocation(_basin, null);
-	            		if(_pt != null)
-	            			_lines.add(_pt.getX() + "\t" + _pt.getY() + "\t" + _waterFowl + "\t" + _waterFowl + "\t" + "25,25" + "\t" + "-12.5,-12.5" + "\t" + "images/waterfowls/" + _waterFowl.toLowerCase().replace(" ", "_") + ".gif");
+        			if(_birdNums.has(_waterFowl)){
+        				_birdNums.put(_waterFowl, _birdNums.getInt(_waterFowl) + 1);
         			}
+        			else{
+        				_birdNums.put(_waterFowl, 1);
+        			}
+        			
+        			_lines.add(_pt.getX() + "\t" + _pt.getY() + "\t" + _waterFowl + "\t" + _waterFowl + "\t" + "30,30" + "\t" + "-12.5,-12.5" + "\t" + _image);
+        			_birdNum++;
         		}
-        		
-        		_countMay = 0;
-        		_waterLevelMay = 0;
-        	}
-        }
+			}
+		}
+		//Add a empty line at the end
+		_lines.add("");
+		
+		JSONObject _birds = new JSONObject();
+		
+		_birds.put("birdNum", _birdNum);
+		_birds.put("birdNums", _birdNums);
+		_birds.put("types", _types);
 
-        ByteArrayOutputStream _buffer = new ByteArrayOutputStream(); 
-        IOUtils.writeLines(_lines, "\n", _buffer);
-        
-		stream = new ByteArrayInputStream(_buffer.toByteArray());
+		JSONObject _data = new JSONObject();
+		_data.put("params", _birds);
+		
+		
+		_data.put("text", StringUtils.join(_lines.iterator(), "\n"));
+		
+		stream = new ByteArrayInputStream(_data.toString().getBytes("utf-8"));
 
 		return "success";
 	}
@@ -169,8 +173,8 @@ public class ListWaterFowl extends ProcessStart {
 		return (Point) JTS.transform(_factory.createPoint(new Coordinate(_x, _y)), _coFactory.getMathTransform());
 	}
 	
-	private FeatureCollection calculateWaterRegion(MultiPolygon basin, ProcessLibrary library, String wetlandCode, double waterLevel) throws NumberFormatException, Exception {
-		Processing _regionModel = library.createProcess("WaterRegionModel");
+	private FeatureCollection calculateWaterRegion(ProcessLibrary library, JSONObject params, MultiPolygon basin, double waterLevel) throws NumberFormatException, Exception {
+		Processing _regionModel = this.createProcess(library, params);
 		
 		_regionModel.setInput("Catchment", basin);
 		_regionModel.setInput("WaterLevel", waterLevel);
@@ -203,8 +207,8 @@ public class ListWaterFowl extends ProcessStart {
 		return _area;
 	}
 	
-	private int calculateWaterFowlNum(ProcessLibrary library, String waterFowl, double waterArea) throws NumberFormatException, Exception{
-		Processing _waterFowlModel = library.createProcess("WaterFowlModel");
+	private int calculateWaterFowlNum(ProcessLibrary library, JSONObject params, String waterFowl, double waterArea) throws NumberFormatException, Exception{
+		Processing _waterFowlModel = this.createProcess(library, params);
 		_waterFowlModel.setInput("WaterArea", waterArea);
 		_waterFowlModel.setInput("WaterFowl", waterFowl);
 		

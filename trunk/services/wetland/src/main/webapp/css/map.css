@@ -57,3 +57,12 @@ div.itemName {
 div.itemValue {
 	display: inline;
 }
+
+div.olLayerWaterFowlsTitle{
+	font-weight: bold;
+	font-size: 13px;
+}
+
+div.olLayerWaterFowlsText{
+	font-size: 13px;
+}
