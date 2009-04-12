@@ -61,16 +61,4 @@ public class WaterRegionStart extends ProcessStart {
 		return "success";
 	}
 	
-	private Processing createProcess(ProcessLibrary library, JSONObject param) throws ProcessingException{
-		Processing _p = library.createProcess(param.getString("id"));
-		
-		JSONObject _params = param.getJSONObject("params");
-		Iterator _keys = _params.keys();
-		while(_keys.hasNext()){
-			String _k = (String) _keys.next();
-			library.setInput(_p, _k, _params.get(_k));
-		}
-		
-		return _p;
-	}
 }

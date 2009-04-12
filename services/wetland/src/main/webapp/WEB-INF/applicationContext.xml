@@ -58,7 +58,7 @@
 	<bean id="processView" class="cn.geodata.models.wetland.actions.map.ProcessView" scope="prototype">
 		<property name="manage" ref="processManage"></property>
 	</bean>
-	<bean id="saterFowlStart" class="cn.geodata.models.wetland.actions.map.WaterFowlStart" scope="prototype">
+	<bean id="waterFowlsStart" class="cn.geodata.models.wetland.actions.map.WaterFowlsStart" scope="prototype">
 		<constructor-arg ref="catchment"></constructor-arg>
 		<property name="manage" ref="processManage"></property>
 	</bean>

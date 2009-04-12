@@ -38,11 +38,13 @@
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<s:property value="key" />" type="text/javascript"></script>
 
 <!-- Load OpenLayers library -->
-<!--<script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>-->
+<script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>
+<!-- 
 <script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
-
+ -->
 <!-- Load customized libraries -->
 <script type="text/javascript" src="scripts/LayerSwitcher.js"></script>
+<script type="text/javascript" src="controls/js/layer/WaterFowls.js"></script>
 <script type="text/javascript" src="scripts/models.js"></script>
 <script type="text/javascript" src="scripts/map.js"></script>
 
@@ -80,10 +82,14 @@
 						<div id="progressPanel" class="progressReady">
 							<div id="progressText">Ready</div>
 						</div>
-						<div style="position: absolute;z-index: 5000;">
-							<div id="waterLevelPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 0px; background-color: #EEEEEE;visibility: hidden; overflow: hidden;">
+						<div style="position: absolute;z-index: 1001;">
+							<div id="waterLevelPanel" style="position: absolute;margin-left: 50px;margin-top: 0px;width: 280px; height: 0px; background-color: #EEEEEE;visibility: hidden; overflow: hidden; padding-left: 5px; padding-top: 0px; cursor: default; line-height: 22px; ">
+								<div class="panelTitle">Water region simulation</div>
+								<div>
 								Date <input id='dateWaterLevel' value="1990-01-01" dojoType='dijit.form.DateTextBox' trim="true" style="width: 80px;" onchange="changeWaterLevel();" />
 								Water Level <input id='valWaterLevel' value="0" dojoType='dijit.form.TextBox' trim="true" style="width: 60px;" />
+								</div>
+								<div>
 								Animation Type <select id='listAnimationType' dojoType="dijit.form.ComboBox" style="width: 100px;height: 15px;">
 									<option value="1">daily</option>
 					                <option value="7" selected="selected">weekly</option>
@@ -91,7 +97,33 @@
 					                <option value="[year]">yearly</option>
 								</select>
 								<button id='btnStartAnimation' dojoType="dijit.form.Button" style="height: 20px;" onclick="wetland.waterAnimation.switchAnimation();">Start</button>
+								</div>
+								<img style="position: absolute; left: 260px; top: 1px;" src="images/fold.png" onclick="wetland.waterAnimation.hide();"></img>
 							</div>
+						</div>
+						<div style="position: absolute;z-index: 1000;">
+							<img id="waterLevelShow" style="position: absolute; left: 310px; top: 0px; visibility: hidden; " src="images/unfold.png" onclick="wetland.waterAnimation.show();"></img>
+						</div>
+						<div style="position: absolute;z-index: 1003;">
+							<!-- 
+							<div id="waterFowlsPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 90px; background-color: #EEEEEE; overflow: auto; padding-left: 5px; cursor: default;">
+							 -->
+							<div id="waterFowlsPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 0px; background-color: #EEEEEE;visibility: hidden; overflow: auto; padding-left: 5px; cursor: default;">
+								<div class="panelTitle">Water fowls simulation</div>
+								<div>
+								<span> </span>
+								Year <input id='valWaterFowlsYear' value="1990" dojoType='dijit.form.TextBox' trim="true" style="width: 80px;" />
+								<button id='btnWaterFowlsPreviousYear' dojoType="dijit.form.Button" style="height: 20px;" onclick="wetland.waterFowlsAnimation.movePrevious();">Previous Year</button>
+								<button id='btnWaterFowlsNextYear' dojoType="dijit.form.Button" style="height: 20px;" onclick="wetland.waterFowlsAnimation.moveNext();">Next Year</button>
+								<img style="position: absolute; left: 540px; top: 1px;" src="images/fold.png" onclick="wetland.waterFowlsAnimation.hide();"></img>
+								</div>
+								<div id="waterFowlsNumsPanel">
+								
+								</div>
+							</div>
+						</div>
+						<div style="position: absolute;z-index: 1002;">
+							<img id="waterFowlsShow" style="position: absolute; left: 640px; top: 0px; visibility: hidden; " src="images/unfold.png" onclick="wetland.waterFowlsAnimation.show();"></img>
 						</div>
 					</div>
 				</td>
@@ -135,6 +167,9 @@
 							<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
 								<div class="viewItem"><div class="viewTitle">Water Region</div><input id="modelWaterRegion" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelWaterRegion');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelWaterRegion');">Change</a></div>
 							</div>
+							<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
+								<div class="viewItem"><div class="viewTitle">Water Fowls</div><input id="modelWaterFowls" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelWaterFowls');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelWaterFowls');">Change</a></div>
+							</div>
 						</div>
 					</div>
 				</td>
@@ -157,12 +192,15 @@
 		
 		<div style="line-height: 25px;"><button dojoType="dijit.form.Button" type="submit">Save</button></div>
 	</div>
-	<div id="Setting.WaterTableModel" style="width: 300px;" dojoType="dijit.Dialog" title="Water Table Model Parameters" execute="wetland.saveSetting('WaterTableModel');">
+	<div id="Setting.WaterTableModel" style="width: 300px;" dojoType="dijit.Dialog" title="Water Table Parameters" execute="wetland.saveSetting('WaterTableModel');">
 		<div class="viewItem"><div class="viewTitle2">Saturation Prcp</div><div id="WaterTableModel.SaturationPrcp" dojoType="dijit.form.NumberTextBox"" style="width: 70px;" value="0.003"></div></div>
 		
 		<div style="line-height: 25px;"><button dojoType="dijit.form.Button" type="submit">Save</button></div>
 	</div>
-	<div id="Setting.WaterRegionModel" style="width: 300px;" dojoType="dijit.Dialog" title="Water Region Model Parameters" execute="wetland.saveSetting('WaterRegionModel');">
+	<div id="Setting.WaterRegionModel" style="width: 300px;" dojoType="dijit.Dialog" title="Water Region Parameters" execute="wetland.saveSetting('WaterRegionModel');">
+		<div style="line-height: 25px;"><button dojoType="dijit.form.Button" type="submit">Save</button></div>
+	</div>
+	<div id="Setting.WaterFowlsModel" style="width: 300px;" dojoType="dijit.Dialog" title="Water Fowls Parameters" execute="wetland.saveSetting('WaterFowlsModel');">
 		<div style="line-height: 25px;"><button dojoType="dijit.form.Button" type="submit">Save</button></div>
 	</div>
 </body>

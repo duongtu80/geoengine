@@ -8,7 +8,7 @@ function WetlandModel (map){
 	};
 	
 	this.models = {
-			'ETModel': new WpsModel ('ETModel', dijit.byId('Setting.ETModel'),
+				'ETModel': new WpsModel ('ETModel', dijit.byId('Setting.ETModel'),
 					function() {
 						var _p = {};
 						if(!isNaN(dijit.byId('ETModel.Albedo').getValue())){
@@ -72,6 +72,14 @@ function WetlandModel (map){
 							var _p = {};
 							
 							return {id: 'WaterRegionModel', params: _p};
+						}
+						,null
+				)
+				, 'WaterFowlsModel': new WpsModel ('WaterFowlsModel', dijit.byId('Setting.WaterFowlsModel'),
+						function() {
+							var _p = {};
+							
+							return {id: 'WaterFowlsModel', params: _p};
 						}
 						,null
 				)
@@ -179,6 +187,7 @@ function WetlandModel (map){
 		        	wetland.initModelList(response, 'et', 'modelET');
 		        	wetland.initModelList(response, 'water table', 'modelWaterTable');
 		        	wetland.initModelList(response, 'water region', 'modelWaterRegion');
+		        	wetland.initModelList(response, 'birds', 'modelWaterFowls');
 		        }
 		        finally{
 		        	wetland.progressBar.popProgress();
@@ -312,6 +321,66 @@ function WetlandModel (map){
 	        error: this.errorFunction
 		});
 	};
+
+	this.loadWaterFowlsOnMap = function(e){
+		var _t = e.target;
+		
+		var _params = {'id': _t.processId};
+		wetland.progressBar.pushProgress('Load water level');
+		dojo.xhrGet({ //
+//	        url: "test.txt",
+	        url: "model/processData.do",
+	        handleAs: "json",
+	        content: _params,
+	        timeout: 60000,
+	        load: function(response, ioArgs) {
+				wetland.progressBar.popProgress();
+				
+				if(wetland.waterFowlsAnimation){
+					wetland.waterFowlsAnimation.clean();
+				}
+				
+				if(response.date.length == 0)
+					alert('No level');
+				else{
+					var _waterLevels = response.waterLevel;
+					var _dates = response.date;
+					
+					var _levels = [];
+			        var _countMay = 0;
+			        var _waterLevelMay = 0;
+
+					var i = 0;
+			        for(i=0;i<_waterLevels.length;i++){
+			        	var _date = new Date(_dates[i]);
+			        	
+			        	if(_date.getMonth() == 4){
+			        		_countMay++;
+			        		_waterLevelMay = Math.max(_waterLevelMay, _waterLevels[i]);
+			        	}
+			        	else if(_countMay > 0){
+			            	//Simulate water fowls for May
+			        		_levels.push({'year': _date.getYear() + 1900, 'level': _waterLevelMay});
+			        		
+			        		_countMay = 0;
+			        		_waterLevelMay = 0;
+			        	}
+			        }
+					
+					if(_levels.length == 0){
+						alert('Warning: no water level record for May.');
+						return false;
+					}
+					else{
+						wetland.waterFowlsAnimation = new WaterFowlsAnimation(response.inputs.basin, _levels);
+						wetland.waterFowlsAnimation.show();
+						wetland.waterFowlsAnimation.moveToPosition(0);
+					}
+				}
+			},
+	        error: this.errorFunction
+		});
+	};
 }
 
 function WpsModel (id, dialog, saveSetting , execute) {
@@ -362,17 +431,25 @@ function ModelResult() {
      	_textDiv.className = 'resultItem';
      	_textDiv.style["textAlign"] = 'right';
 
+     	var _waterFowlsDiv = document.createElement('span');
+     	_textDiv.appendChild(_waterFowlsDiv);
+     	_waterFowlsDiv.className = 'resultLink';
+     	_waterFowlsDiv.processId = param.id;
+     	_waterFowlsDiv.innerHTML = 'Map Water Fowls';
+
+     	var _spaceDiv1 = document.createElement('span');
+     	_spaceDiv1.innerHTML = '  ';
+     	_textDiv.appendChild(_spaceDiv1);
+
      	var _viewDiv = document.createElement('span');
      	_textDiv.appendChild(_viewDiv);
-//     	_viewDiv.target = '_blank';
      	_viewDiv.className = 'resultLink';
-//     	_viewDiv.href = '#';
      	_viewDiv.processId = param.id;
-     	_viewDiv.innerHTML = 'Animation on map';
+     	_viewDiv.innerHTML = 'Map Water Levels';
 
-     	var _spaceDiv = document.createElement('span');
-     	_spaceDiv.innerHTML = '  ';
-     	_textDiv.appendChild(_spaceDiv);
+     	var _spaceDiv2 = document.createElement('span');
+     	_spaceDiv2.innerHTML = '  ';
+     	_textDiv.appendChild(_spaceDiv2);
 
      	var _dataDiv = document.createElement('a');
      	_textDiv.appendChild(_dataDiv);
@@ -382,6 +459,8 @@ function ModelResult() {
      	_dataDiv.innerHTML = 'Download results';
      	
      	dojo.connect(_viewDiv, "onclick", wetland, 'loadWaterLevelOnMap');
+     	dojo.connect(_waterFowlsDiv, "onclick", wetland, 'loadWaterFowlsOnMap');
+     	
 //     	_viewDiv.onclick = wetland.loadWaterLevelOnMap;
 
 //     	var _linkDiv = document.createElement('a');
@@ -523,7 +602,9 @@ function ModelProcess() {
 function WaterLevelAnimation(basin, dates, levels) {
 	this.panel = dojo.byId('waterLevelPanel');
 	this.button = dijit.byId('btnStartAnimation');
-	this.animationType = dijit.byId('listAnimationType');
+	this.animationType = dijit.byId('listAnimationType');	
+	this.unfold = dojo.byId('waterLevelShow');
+
 	this.basin = basin;
 	this.dates = dates;
 	this.levels = levels;	
@@ -539,9 +620,15 @@ function WaterLevelAnimation(basin, dates, levels) {
 	
 	this.show = function() {
 		this.panel.style.visibility = 'visible';
-		this.panel.style.height = '26px';
+		this.panel.style.height = '70px';
 	};
-	
+
+	this.hide = function() {
+		this.panel.style.visibility = 'hidden';
+		this.panel.style.height = '0px';
+		this.unfold.style.visibility = 'visible';
+	};
+
 	this.moveToPosition = function(pos){
 		if(this.running == true){
 			return false;
@@ -753,6 +840,153 @@ function WaterLevelAnimation(basin, dates, levels) {
 		else{
 			return false;
 		}
+	};
+}
+
+
+//Basin: basin ID
+//Levels: array of ['year': year, 'level': level]
+
+function WaterFowlsAnimation(basin, levels) {
+	this.panel = dojo.byId('waterFowlsPanel');
+	this.previousButton = dojo.byId('btnWaterFowlsPreviousYear');
+	this.nextButton = dijit.byId('btnWaterFowlsNextYear');
+	this.unfold = dojo.byId('waterFowlsShow');
+	
+	this.basin = basin;
+	this.levels = levels;
+	this.pos = -1;
+	this.running = false;
+	this.layer = null;
+	
+	this.clean = function() {
+		this.removeLayer();
+		this.panel.style.visibility = 'hidden';
+		this.panel.style.height = '0px';
+	};
+	
+	this.removeLayer = function() {
+		if(this.layer != null){
+			wetland.waterLayer.removeFeatures(wetland.map.removeLayer(this.layer), null);
+		}
+	};
+	
+	this.addLayer = function(lyr) {
+		this.removeLayer();
+		this.layer = lyr;
+		wetland.map.addLayer(lyr);
+	}
+	
+	this.show = function() {
+		this.panel.style.visibility = 'visible';
+		this.panel.style.height = '110px';
+		this.unfold.style.visibility = 'hidden';
+	};
+	
+	this.hide = function() {
+		this.panel.style.visibility = 'hidden';
+		this.panel.style.height = '0px';
+		this.unfold.style.visibility = 'visible';
+	};
+	
+	this.moveToPosition = function(pos){
+		if(this.running == true){
+			return false;
+		}
+		
+		if(this.levels.length == 0){
+			alert('No water level record');
+			return false;
+		}
+		
+		var _pos = pos;
+		if(_pos < 0){
+			_pos = 0;
+		}
+		else if(_pos >= this.levels.length && this.levels.length > 0){
+			_pos = this.levels.length-1;
+			
+			return false;
+		}
+		if(_pos == this.pos){
+			return false;
+		}
+		
+		this.pos = _pos;
+		
+		dijit.byId('valWaterFowlsYear').setValue(this.levels[this.pos].year);
+//		dijit.byId('valWaterFowlsYearWaterLevel').setValue(this.levels[this.pos].level);
+		
+		var _v = this.levels[this.pos];
+		if(_v <= 0){
+			this.removeLayer();
+			wetland.progressBar.popProgress();
+
+			return true;
+		}
+		
+		this.running = true;
+		wetland.progressBar.pushProcess('Execute model', this.loadWaterLayer, this, [_v.year, _v.level]);
+		
+		return true;
+	};
+	
+	this.moveNext = function() {
+		wetland.waterFowlsAnimation.moveToPosition(this.pos + 1);
+	};
+	
+	this.movePrevious = function () {
+		wetland.waterFowlsAnimation.moveToPosition(this.pos - 1);
+	};
+	
+	this.loadWaterLayer = function(year, level){
+		var _modelParam = {};
+		_modelParam['WaterFowls'] = wetland.models[wetland.getItemFromCombox(dijit.byId('modelWaterFowls')).id].saveSetting();
+		_modelParam['WaterRegion'] = wetland.models[wetland.getItemFromCombox(dijit.byId('modelWaterRegion')).id].saveSetting();
+
+		var _params = {
+				'basin': this.basin,
+				'level': level,
+				'year': year,
+				'params': _modelParam
+			};
+		
+		dojo.xhrGet({ //
+	        url: "model/waterFowlsStart.do", 
+	        handleAs: "json",
+	        content: {"params": dojo.toJson(_params)},
+	        timeout: 60000,
+	        'load': function(response, ioArgs) {
+				if(response != null){
+					var _types = response.params.types;
+					var _txt = "";
+					var i=0;
+					for(_b in response.params.birdNums){
+						_txt += '<span><img src="' + _types[_b].icon + '"/>' + response.params.birdNums[_b] + '</span>';
+					}
+					
+					if(_txt == ''){
+						_txt = '<div style="margin-top: 5px;">No bird for this year</div>';
+					}
+					
+					dojo.byId('waterFowlsNumsPanel').innerHTML = _txt;
+					
+					var _layer = new OpenLayers.Layer.WaterFowls( "text", { data: response.text} );
+					wetland.waterFowlsAnimation.addLayer(_layer);
+				}
+				else{
+					alert('Failed to water fowls.');
+				}
+				wetland.progressBar.popProgress();
+				wetland.waterFowlsAnimation.running = false;
+	        }
+	        ,'error': function(response, ioArgs){
+	        	wetland.errorFunction(response, ioArgs);
+	        	wetland.waterFowlsAnimation.running = false;
+	        	
+	        	wetland.waterFowlsAnimation.stopAnimation();
+	        }
+		});
 	};
 }
 
