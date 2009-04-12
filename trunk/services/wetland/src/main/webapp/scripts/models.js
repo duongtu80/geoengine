@@ -314,8 +314,13 @@ function WetlandModel (map){
 					alert('No level');
 				else{
 					wetland.waterAnimation = new WaterLevelAnimation(response.inputs.basin, response.date, response.waterLevel);
-					wetland.waterAnimation.show();
-					wetland.waterAnimation.moveToPosition(0);
+					if(wetland.waterAnimation.moveToPosition(0)){
+						wetland.waterAnimation.show();
+					}
+					else{
+						wetland.waterAnimation.clean();
+						wetland.waterAnimation = null;
+					}
 				}
 			},
 	        error: this.errorFunction
@@ -373,8 +378,13 @@ function WetlandModel (map){
 					}
 					else{
 						wetland.waterFowlsAnimation = new WaterFowlsAnimation(response.inputs.basin, _levels);
-						wetland.waterFowlsAnimation.show();
-						wetland.waterFowlsAnimation.moveToPosition(0);
+						if(wetland.waterFowlsAnimation.moveToPosition(0)){
+							wetland.waterFowlsAnimation.show();
+						}
+						else{
+							wetland.waterFowlsAnimation.clean();
+							wetland.waterFowlsAnimation = null;
+						}
 					}
 				}
 			},
@@ -438,7 +448,8 @@ function ModelResult() {
      	_waterFowlsDiv.innerHTML = 'Map Water Fowls';
 
      	var _spaceDiv1 = document.createElement('span');
-     	_spaceDiv1.innerHTML = '  ';
+     	_spaceDiv1.innerHTML = '|';
+     	_spaceDiv1.style['margin'] = '0px 2px 0px 2px';
      	_textDiv.appendChild(_spaceDiv1);
 
      	var _viewDiv = document.createElement('span');
@@ -448,8 +459,9 @@ function ModelResult() {
      	_viewDiv.innerHTML = 'Map Water Levels';
 
      	var _spaceDiv2 = document.createElement('span');
-     	_spaceDiv2.innerHTML = '  ';
-     	_textDiv.appendChild(_spaceDiv2);
+     	_spaceDiv2.innerHTML = ' | ';
+     	_spaceDiv2.style['margin'] = '0px 2px 0px 2px';
+    	_textDiv.appendChild(_spaceDiv2);
 
      	var _dataDiv = document.createElement('a');
      	_textDiv.appendChild(_dataDiv);
@@ -849,7 +861,7 @@ function WaterLevelAnimation(basin, dates, levels) {
 
 function WaterFowlsAnimation(basin, levels) {
 	this.panel = dojo.byId('waterFowlsPanel');
-	this.previousButton = dojo.byId('btnWaterFowlsPreviousYear');
+	this.previousButton = dijit.byId('btnWaterFowlsPreviousYear');
 	this.nextButton = dijit.byId('btnWaterFowlsNextYear');
 	this.unfold = dojo.byId('waterFowlsShow');
 	
@@ -893,7 +905,7 @@ function WaterFowlsAnimation(basin, levels) {
 		if(this.running == true){
 			return false;
 		}
-		
+
 		if(this.levels.length == 0){
 			alert('No water level record');
 			return false;
@@ -913,6 +925,26 @@ function WaterFowlsAnimation(basin, levels) {
 		}
 		
 		this.pos = _pos;
+		
+		//Enable and disable next and previous buttons
+		if(this.levels.length <= 1){
+			this.previousButton.attr('disabled', true);
+			this.nextButton.attr('disabled', true);
+		}
+		else{
+			if(this.pos <= 0){
+				this.previousButton.attr('disabled', true);
+				this.nextButton.attr('disabled', false);
+			}
+			else if(this.pos >= this.levels.length - 1){
+				this.previousButton.attr('disabled', false);
+				this.nextButton.attr('disabled', true);
+			}
+			else{
+				this.previousButton.attr('disabled', false);
+				this.nextButton.attr('disabled', false);
+			}
+		}
 		
 		dijit.byId('valWaterFowlsYear').setValue(this.levels[this.pos].year);
 //		dijit.byId('valWaterFowlsYearWaterLevel').setValue(this.levels[this.pos].level);
@@ -955,6 +987,7 @@ function WaterFowlsAnimation(basin, levels) {
 	        url: "model/waterFowlsStart.do", 
 	        handleAs: "json",
 	        content: {"params": dojo.toJson(_params)},
+	        basin: this.basin,
 	        timeout: 60000,
 	        'load': function(response, ioArgs) {
 				if(response != null){
@@ -971,7 +1004,7 @@ function WaterFowlsAnimation(basin, levels) {
 					
 					dojo.byId('waterFowlsNumsPanel').innerHTML = _txt;
 					
-					var _layer = new OpenLayers.Layer.WaterFowls( "text", { data: response.text} );
+					var _layer = new OpenLayers.Layer.WaterFowls("Waterfowls in " + ioArgs.args.basin, { data: response.text} );
 					wetland.waterFowlsAnimation.addLayer(_layer);
 				}
 				else{

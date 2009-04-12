@@ -5,6 +5,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- Avoid the incompatibilities with IE8 -->
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
 <title>Prairie Pothole Models</title>
 
 <style type="text/css">
@@ -83,7 +86,7 @@
 							<div id="progressText">Ready</div>
 						</div>
 						<div style="position: absolute;z-index: 1001;">
-							<div id="waterLevelPanel" style="position: absolute;margin-left: 50px;margin-top: 0px;width: 280px; height: 0px; background-color: #EEEEEE;visibility: hidden; overflow: hidden; padding-left: 5px; padding-top: 0px; cursor: default; line-height: 22px; ">
+							<div id="waterLevelPanel" style="position: absolute;margin-left: 50px;margin-top: 0px;width: 280px; height: 0px; background-color: #EEEEEE;visibility: hidden; overflow: hidden; padding-left: 5px; padding-top: 0px; cursor: default; line-height: 22px;border-bottom: 1px solid #999999;border-left: 1px solid #999999;border-right: 1px solid #999999; border-top: 0px;">
 								<div class="panelTitle">Water region simulation</div>
 								<div>
 								Date <input id='dateWaterLevel' value="1990-01-01" dojoType='dijit.form.DateTextBox' trim="true" style="width: 80px;" onchange="changeWaterLevel();" />
@@ -108,7 +111,7 @@
 							<!-- 
 							<div id="waterFowlsPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 90px; background-color: #EEEEEE; overflow: auto; padding-left: 5px; cursor: default;">
 							 -->
-							<div id="waterFowlsPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 0px; background-color: #EEEEEE;visibility: hidden; overflow: auto; padding-left: 5px; cursor: default;">
+							<div id="waterFowlsPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 0px; background-color: #EEEEEE;visibility: hidden; overflow: auto; padding-left: 5px; cursor: default; border-bottom: 1px solid #999999;border-left: 1px solid #999999;border-right: 1px solid #999999; border-top: 0px;">
 								<div class="panelTitle">Water fowls simulation</div>
 								<div>
 								<span> </span>
