@@ -33,7 +33,7 @@
 		<property name="wetlandCode" value="P4"></property>
  -->
 	</bean>
-	<bean id="WaterFowlModel" class="cn.geodata.models.wetland.WaterFowlModel" scope="prototype">
+	<bean id="WaterFowlsModel" class="cn.geodata.models.wetland.WaterFowlsModel" scope="prototype">
 	</bean>
 <!-- 
 	<bean id="LoadWetlands" class="cn.geodata.models.wetland.LoadWetlands" scope="singleton">
