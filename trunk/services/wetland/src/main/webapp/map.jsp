@@ -41,9 +41,9 @@
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<s:property value="key" />" type="text/javascript"></script>
 
 <!-- Load OpenLayers library -->
-<script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>
-<!-- 
 <script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js" ></script>
+<!-- 
+<script type="text/javascript" src="/public/openlayers/OpenLayers.js" ></script>
  -->
 <!-- Load customized libraries -->
 <script type="text/javascript" src="scripts/LayerSwitcher.js"></script>
