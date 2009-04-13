@@ -2,6 +2,7 @@ package cn.geodata.models.wetland.actions.map;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,11 +44,12 @@ import com.vividsolutions.jts.geom.Point;
 public class WaterFowlsStart extends ProcessStart {
 	private static Logger log = Logger.getAnonymousLogger();
 	private Catchment catchment;
-	private String[] waterFowls;
+	private JSONObject waterFowls;
 	
-	public WaterFowlsStart(Catchment catchment){
+	public WaterFowlsStart(Catchment catchment) throws IOException{
 		this.catchment = catchment;
-		this.waterFowls = new String[] {"Mallard", "Gadwall", "American Wigeon", "Green Winged Teal", "Blue Winged Teal", "Northern Shoveler", "Northern Pintail", "Redhead", "Canvasback", "Lesser Scaup", "Ring Necked Duck", "Ruddy Duck"};
+		this.waterFowls = JSONObject.fromString(IOUtils.toString(WaterFowlsStart.class.getResourceAsStream("/wetland-data/waterfowls.txt")));
+//		this.waterFowls = new String[] {"Mallard", "Gadwall", "American Wigeon", "Green Winged Teal", "Blue Winged Teal", "Northern Shoveler", "Northern Pintail", "Redhead", "Canvasback", "Lesser Scaup", "Ring Necked Duck", "Ruddy Duck"};
 	}
 	
 	public void setCatchment(Catchment catchment) {
@@ -74,16 +76,14 @@ public class WaterFowlsStart extends ProcessStart {
 		int _birdNum = 0;
 		JSONObject _birdNums = new JSONObject();
 		
-		JSONObject _types = new JSONObject();
-		for(String _waterFowl : this.waterFowls){
-			String _image = "images/waterfowls/" + _waterFowl.toLowerCase().replace(" ", "_") + ".png";
+		for(int i=0;i<this.waterFowls.names().length();i++){
+			String _name = this.waterFowls.names().getString(i);
+			String _image = this.waterFowls.getJSONObject(_name).getString("icon");
 
 			JSONObject _infos = new JSONObject();
 			_infos.put("icon", _image);
 			
-			_types.put(_waterFowl, _infos);
-			
-			int _waterFowlNum = this.calculateWaterFowlNum(_library, _params.getJSONObject("WaterFowls"), _waterFowl, _area);
+			int _waterFowlNum = this.calculateWaterFowlNum(_library, _params.getJSONObject("WaterFowls"), _name, _area);
 			
 			for(int j=0;j<_waterFowlNum;j++){
         		Point _pt = this.pickupLocation(_basin, null);
@@ -92,14 +92,14 @@ public class WaterFowlsStart extends ProcessStart {
 //        				_image = _waterFowl.toLowerCase().replace(" ", "_") + ".png";
 //        			}
         			
-        			if(_birdNums.has(_waterFowl)){
-        				_birdNums.put(_waterFowl, _birdNums.getInt(_waterFowl) + 1);
+        			if(_birdNums.has(_name)){
+        				_birdNums.put(_name, _birdNums.getInt(_name) + 1);
         			}
         			else{
-        				_birdNums.put(_waterFowl, 1);
+        				_birdNums.put(_name, 1);
         			}
         			
-        			_lines.add(_pt.getX() + "\t" + _pt.getY() + "\t" + _waterFowl + "\t" + _waterFowl + "\t" + "30,30" + "\t" + "-12.5,-12.5" + "\t" + _image);
+        			_lines.add(_pt.getX() + "\t" + _pt.getY() + "\t" + _name + "\t" + _name + "\t" + "30,30" + "\t" + "-12.5,-12.5" + "\t" + _image);
         			_birdNum++;
         		}
 			}
@@ -111,14 +111,12 @@ public class WaterFowlsStart extends ProcessStart {
 		
 		_birds.put("birdNum", _birdNum);
 		_birds.put("birdNums", _birdNums);
-		_birds.put("types", _types);
+		_birds.put("types", this.waterFowls);
 
 		JSONObject _data = new JSONObject();
 		_data.put("params", _birds);
 		
-		
 		_data.put("text", StringUtils.join(_lines.iterator(), "\n"));
-		
 		stream = new ByteArrayInputStream(_data.toString().getBytes("utf-8"));
 
 		return "success";

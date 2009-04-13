@@ -405,9 +405,7 @@ function ModelResult() {
    	this.panelDiv.className = 'resultPanel';
 
 	this.closeResult = function() {
-//		if(confirm('确定关闭该结果吗?') == true){
-			dojo.byId('resultPanel').removeChild(this.parentNode.parentNode.parentNode);
-//		}
+		dojo.byId('resultPanel').removeChild(this.parentNode.parentNode.parentNode);
 	};
 	
 	this.createTitlePanel = function(title){
@@ -995,7 +993,7 @@ function WaterFowlsAnimation(basin, levels) {
 					var _txt = "";
 					var i=0;
 					for(_b in response.params.birdNums){
-						_txt += '<span><img src="' + _types[_b].icon + '"/>' + response.params.birdNums[_b] + '</span>';
+						_txt += '<span><img src="' + _types[_b].icon + '" title="' + _b + '" onclick="window.open(\'' + _types[_b].link + '\');"/>' + response.params.birdNums[_b] + '</span>';
 					}
 					
 					if(_txt == ''){
