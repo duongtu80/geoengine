@@ -66,7 +66,7 @@ public class WaterRegionCalc {
 		_extent.setMaxY(this.raster.getRaster().getRowCount());
 		
 		Envelope _env2 = this.catchment.getEnvelopeInternal();
-		log.info("ENV:" + _env2.toString());
+//		log.info("ENV:" + _env2.toString());
 		
 		if(_env.getMinX() < _env2.getMinX()){
 			_extent.setMinX((int) Math.floor((_env2.getMinX() - _env.getMinX()) / this.raster.getRaster().getCellSize()));
@@ -95,7 +95,52 @@ public class WaterRegionCalc {
 		
 		return waterRegion;
 	}
-	
+
+	public MultiPolygon calculate2() throws NumberFormatException, Exception{
+//		MultiPolygon _polygon = this.catchment.findCatchmentByTag(this.wetlandTag);
+//		
+		if(this.waterLevel <= 0){
+			return null;
+		}
+		
+		Envelope2D _env = this.raster.getRaster().getEnvelope();
+		
+		Extent _extent = new Extent();
+		_extent.setMinX(0);
+		_extent.setMinY(0);
+		_extent.setMaxX(this.raster.getRaster().getColCount());
+		_extent.setMaxY(this.raster.getRaster().getRowCount());
+		
+		Envelope _env2 = this.catchment.getEnvelopeInternal();
+		log.info("ENV:" + _env2.toString());
+		
+		if(_env.getMinX() < _env2.getMinX()){
+			_extent.setMinX((int) Math.floor((_env2.getMinX() - _env.getMinX()) / this.raster.getRaster().getCellSize()));
+		}
+		if(_env.getMaxX() > _env2.getMaxX()){
+			_extent.setMaxX((int) Math.ceil((_env2.getMaxX() - _env.getMinX()) / this.raster.getRaster().getCellSize()));
+		}
+		if(_env.getMaxY() > _env2.getMaxY()){
+			_extent.setMinY((int) Math.floor((_env.getMaxY() - _env2.getMaxY())/ this.raster.getRaster().getCellSize()));
+		}
+		if(_env.getMinY() < _env2.getMinY()){
+			_extent.setMaxY((int) Math.floor((_env.getMaxY() - _env2.getMinY()) / this.raster.getRaster().getCellSize()));
+		}
+		
+		WetlandDemPixel[] _range = this.getPixelRange(this.catchment, _extent);
+//		log.info("Range:" + _range[0].toString() + " - " + _range[1].toString());
+		
+		if(this.waterLevel >= _range[1].getVal()){
+			log.warning("Over float");
+			this.waterRegion = this.catchment;
+		}
+		else{
+			this.waterRegion = this.generateBoundary(this.catchment, _extent, this.waterLevel);
+		}
+		
+		return waterRegion;
+	}
+
 	private WetlandDemPixel[] getPixelRange(MultiPolygon polygon, Extent extent) throws IOException{
 		WetlandDemPixel _min = null;
 		WetlandDemPixel _max = null;
@@ -134,7 +179,7 @@ public class WaterRegionCalc {
 				double _distance = polygon.distance(factory.createPoint(new Coordinate(_x, _y)));
 				if(_distance <= 0){
 					float _val = this.raster.getRaster().readFloat(_row, _col);
-					if(_val <= evl && isBoundary(_col, _row, polygon, _val, evl)){
+					if(_val >= evl && isBoundary(_col, _row, polygon, _val, evl)){
 						_list.add(new WetlandDemPixel(_row, _col, _val, _x, _y, true));
 					}
 					
@@ -370,14 +415,14 @@ public class WaterRegionCalc {
 					if(_row != row || _col != col){
 						float _val = this.raster.getRaster().readFloat(_row, _col);
 	
-						if(_val > evl){
+						if(_val < evl){
 							return true;
 						}
 
-						double _distance = polygon.distance(factory.createPoint(this.raster.getRaster().getLocation(_row, _col)));
-						if(_distance > 0){
-							return true;
-						}
+//						double _distance = polygon.distance(factory.createPoint(this.raster.getRaster().getLocation(_row, _col)));
+//						if(_distance > 0){
+//							return true;
+//						}
 					}
 				}
 				else{

@@ -33,7 +33,7 @@ public class RunoffModelTest extends TestCase {
 //	private GlacierPrepareModel prepareModel;
 //	private ProjectTransformModel projectModel;
 	
-	public void testTest1() throws Exception {
+	public void atestTest1() throws Exception {
 		String _txt = "{0.52, -0.52, 0.52, -0.52, 0.54, 0.52, 0.52},\r\n{0.48, 0.5, 0.48, 0.5, 0.48, 0.5, 0.5},\r\n{0.54, 0.52, 0.54, 0.54, 0.54, 0.54, 0.54},\r\n{0.46, 0.44, 0.46, 0.46, 0.46, 0.46, 0.46},\r\n{0.48, 0.46, 0.48, 0.46, 0.48, 0.48, 0.46}";
 		Pattern _p = Pattern.compile("(-{0,1}[\\d\\.]+)");
 		
@@ -46,6 +46,84 @@ public class RunoffModelTest extends TestCase {
 		}
 	}
 	
+	public void testTest2() throws Exception {
+		String _temperatureM = "{\n				{0.52, 0.52, 0.52, 0.52, 0.54, 0.52, 0.52},\n				{0.48, 0.5, 0.48, 0.5, 0.48, 0.5, 0.5},\n				{0.54, 0.52, 0.54, 0.54, 0.54, 0.54, 0.54},\n				{0.46, 0.44, 0.46, 0.46, 0.46, 0.45, 0.46},\n				{0.48, 0.46, 0.48, 0.46, 0.48, 0.48, 0.46}				\n				}";
+		String _temperatureV = "{28, 30, 32, 34, 36}";
+		String _temperatureL = "{2000, 2500, 3000, 3500, 4000, 4500, 5000}";
+		
+		this.temperature4Band(30, 2000, 4000, _temperatureM, _temperatureV, _temperatureL);
+	}
+	
+	/**
+	 * 计算分带的气温
+	 * 
+	 * @param val
+	 * @param sourceLat
+	 * @param targetLat
+	 * @return
+	 */
+	private double temperature4Band(double val, double sourceLat, double targetLat, String temperatureM, String temperatureV, String temperatureL) {
+		double[][] _m = new double[5][7];
+		List<Double> _mm = this.searchNumbers(temperatureM);
+		System.out.println("Len:" + _mm.size());
+		for(int _col=0;_col<5;_col++){
+			for(int _row=0;_row<7;_row++){
+				_m[_col][_row] = _mm.get(_col * 7 + _row);
+			}
+		}
+		
+		for(int i=0;i<5;i++){
+			System.out.println(Arrays.toString(_m[i]));
+		}
+		
+		List<Double> _v = this.searchNumbers(temperatureV);
+		System.out.println(Arrays.toString(_v.toArray()));
+		List<Double> _l = this.searchNumbers(temperatureL);
+		System.out.println(Arrays.toString(_l.toArray()));
+		
+		double _lat = 40;
+		int _y = _v.size() - 1;
+		for(int i=0;i<_v.size();i++){
+			if(_lat <= _v.get(i)){
+				_y = i;
+				break;
+			}
+		}
+		System.out.println("Y:" + _y);
+		
+		double _d = _m[_y][_l.size() - 1];
+		for(int i=0;i<_l.size() - 1;i++){
+			if(targetLat <= _m[_y][i]){
+				_d = _m[_y][i];
+				System.out.println(i);
+				break;
+			}
+		}
+		System.out.println("D:" + _d);
+		
+		return val + _d * (sourceLat - targetLat) / 100.0;
+	}
+
+	/**
+	 * 从数值字符串列表中提取数值数组
+	 * 
+	 * @param txt
+	 * @return
+	 */
+	private List<Double> searchNumbers(String txt){
+		Pattern _p = Pattern.compile("(-{0,1}[\\d\\.]+)");
+		
+		List<Double> _list = new ArrayList<Double>();
+		Matcher _m = _p.matcher(txt);
+		int _pos = 0;
+		while(_m.find(_pos)){
+			_list.add(Double.parseDouble(_m.group(1)));
+			_pos = _m.end(1);
+		}
+		
+		return _list;
+	}
+
 	public void atestCalculate() throws Exception {
 //		double[] _levels = new double[0];
 //		
