@@ -150,6 +150,10 @@ public class EnviRasterReader {
 				_len = _gridLen - _pos;
 			}
 			
+			if(_len <= 0){
+				throw new IndexOutOfBoundsException("Out of bound");
+			}
+			
 			_stream.skip(_pos);
 			this.bufferLen = _stream.read(this.buffer, 0, (int)_len);
 			if(this.bufferLen != _len){

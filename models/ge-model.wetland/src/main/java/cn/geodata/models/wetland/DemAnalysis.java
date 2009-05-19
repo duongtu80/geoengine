@@ -38,7 +38,7 @@ public class DemAnalysis {
 	 */
 	public Extent calculateExtent(Envelope env){
 		Envelope _env2 = env;
-		log.info("ENV:" + _env2.toString());
+//		log.info("ENV:" + _env2.toString());
 		
 		Envelope2D _env = this.raster.getRaster().getEnvelope();
 		

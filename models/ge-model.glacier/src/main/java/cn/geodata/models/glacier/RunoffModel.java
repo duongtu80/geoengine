@@ -365,6 +365,46 @@ public class RunoffModel implements Calculate{
 		return _list;
 	}
 
+//	/**
+//	 * 计算分带的气温
+//	 * 
+//	 * @param val
+//	 * @param sourceLat
+//	 * @param targetLat
+//	 * @return
+//	 */
+//	private double temperature4Band(double val, double sourceLat, double targetLat, int month) {
+//		double[][] _m = new double[5][7];
+//		List<Double> _mm = this.searchNumbers(this.temperatureM);
+//		for(int _col=0;_col<5;_col++){
+//			for(int _row=0;_row<7;_row++){
+//				_m[_col][_row] = _mm.get(_col * 5 + _row);
+//			}
+//		}
+//		
+//		List<Double> _v = this.searchNumbers(this.temperatureV);
+//		List<Double> _l = this.searchNumbers(this.temperatureL);
+//		
+//		double _lat = location.getY();
+//		int _y = _v.size() - 1;
+//		for(int i=0;i<_v.size();i++){
+//			if(_lat <= _v.get(i)){
+//				_y = i;
+//				break;
+//			}
+//		}
+//		
+//		double _d = _m[_y][_l.size() - 1];
+//		for(int i=0;i<_l.size() - 1;i++){
+//			if(targetLat <= _m[_y][i]){
+//				_d = _m[_y][i];
+//				break;
+//			}
+//		}
+//		
+//		return val + _d * (sourceLat - targetLat) / 100.0;
+//	}
+
 
 	/**
 	 * 计算分带的气温
@@ -379,7 +419,7 @@ public class RunoffModel implements Calculate{
 		List<Double> _mm = this.searchNumbers(this.temperatureM);
 		for(int _col=0;_col<5;_col++){
 			for(int _row=0;_row<7;_row++){
-				_m[_col][_row] = _mm.get(_col * 5 + _row);
+				_m[_col][_row] = _mm.get(_col * 7 + _row);
 			}
 		}
 		
@@ -389,22 +429,68 @@ public class RunoffModel implements Calculate{
 		double _lat = location.getY();
 		int _y = _v.size() - 1;
 		for(int i=0;i<_v.size();i++){
-			if(_lat >= _v.get(i)){
+			if(_lat <= _v.get(i)){
 				_y = i;
 				break;
 			}
 		}
 		
-		double _d = _m[_y][_l.size() - 1];
-		for(int i=0;i<_l.size() - 1;i++){
-			if(targetLat >= _m[_y][i]){
-				_d = _m[_y][i];
+		double _d = val + this.calculateGap(_l, _m[_y], sourceLat, targetLat);
+		return _d;
+		// int _sourceZone = this.locateZone(_l, sourceLat);
+		// int _targetZone = this.locateZone(_l, targetLat);
+		
+		// double _d = _m[_y][_l.size() - 1];
+		// for(int i=0;i<_l.size() - 1;i++){
+			// if(targetLat <= _l.get(i)){
+				// _d = _m[_y][i];
+				// break;
+			// }
+		// }
+		// System.out.println("y:" + _y + " d:" + _d + " lat:" + targetLat + " src:" + sourceLat);
+		
+		// return val + _d * (sourceLat - targetLat) / 100.0;
+	}
+	
+	private double calculateGap(List<Double> list, double[] values, double start, double end){
+		if(start == end){
+			return 0;
+		}
+	
+		double _start = Math.min(start, end);
+		double _end = Math.max(start, end);
+	
+		int _startZ = this.locateZone(list, _start);
+		int _endZ = this.locateZone(list, _end);
+		
+		double _v = 0;
+		double _t = _start;
+		for(int i=_startZ; i < _endZ;i++){
+			_v += (list.get(i) - _t) * values[i];
+			_t = list.get(i);
+		}
+		
+		_v += (_end - _t) * values[_endZ];
+		
+		if(start > end){
+			return _v * -1 / 100;
+		}
+		else{
+			return _v / 100;
+		}
+	}
+	
+	private int locateZone(List<Double> list, double v){
+		int _y = list.size() - 1;
+		for(int i=0;i<list.size();i++){
+			if(v <= list.get(i)){
+				_y = i;
 				break;
 			}
 		}
 		
-		return val + _d * (sourceLat - targetLat) / 100.0;
-	}
+		return _y;
+	}	
 
 	/**
 	 * 计算分带的降水
