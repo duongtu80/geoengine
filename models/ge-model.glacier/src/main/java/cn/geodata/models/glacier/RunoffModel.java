@@ -82,7 +82,9 @@ public class RunoffModel implements Calculate{
 
 			//计算分带的气温、降水和积温
 			double _precBand = precipitation4Band(precipitation, precElevation, _level);
-			double _tempBand = temperature4Band(temperature, _alt, _level);
+			//调用新的基于月份和纬度的气温梯度算法
+			double _tempBand = temperature4Band(temperature, _alt, _level, date.getMonth());
+			//double _tempBand = temperature4Band(temperature, _alt, _level);
 			double _acmtBand = this.computerAT(location.getY(), date.getMonth(), _tempBand, days); //temperature4Band(accumulatedTemperature, _alt, _level);
 			
 			temperatures[i] = _tempBand;
@@ -365,45 +367,36 @@ public class RunoffModel implements Calculate{
 		return _list;
 	}
 
-//	/**
-//	 * 计算分带的气温
-//	 * 
-//	 * @param val
-//	 * @param sourceLat
-//	 * @param targetLat
-//	 * @return
-//	 */
-//	private double temperature4Band(double val, double sourceLat, double targetLat, int month) {
-//		double[][] _m = new double[5][7];
-//		List<Double> _mm = this.searchNumbers(this.temperatureM);
-//		for(int _col=0;_col<5;_col++){
-//			for(int _row=0;_row<7;_row++){
-//				_m[_col][_row] = _mm.get(_col * 5 + _row);
-//			}
-//		}
-//		
-//		List<Double> _v = this.searchNumbers(this.temperatureV);
-//		List<Double> _l = this.searchNumbers(this.temperatureL);
-//		
-//		double _lat = location.getY();
-//		int _y = _v.size() - 1;
-//		for(int i=0;i<_v.size();i++){
-//			if(_lat <= _v.get(i)){
-//				_y = i;
-//				break;
-//			}
-//		}
-//		
-//		double _d = _m[_y][_l.size() - 1];
-//		for(int i=0;i<_l.size() - 1;i++){
-//			if(targetLat <= _m[_y][i]){
-//				_d = _m[_y][i];
-//				break;
-//			}
-//		}
-//		
-//		return val + _d * (sourceLat - targetLat) / 100.0;
-//	}
+	/**
+	 * 计算分带的气温, 调用基于月份和纬度的气温梯度算法 (05/19/09)
+	 * 
+	 * @param val
+	 * @param sourceLat
+	 * @param targetLat
+	 * @return
+	 */
+	private double temperature4Band(double val, double sourceLat, double targetLat, int month) {
+		List<Double> _v = this.searchNumbers(this.temperatureV);
+		double[][] _m = new double[_v.size()][12];
+		List<Double> _mm = this.searchNumbers(this.temperatureM);
+		for(int _col=0;_col<_v.size();_col++){
+			for(int _row=0;_row<12;_row++){
+				_m[_col][_row] = _mm.get(_col * 12 + _row);
+			}
+		}
+		
+		double _lat = location.getY();
+		int _y = _v.size() - 1;
+		for(int i=0;i<_v.size();i++){
+			if(_lat <= _v.get(i)){
+				_y = i;
+				break;
+			}
+		}
+		
+		double _d = _m[_y][month];
+		return val + _d * (targetLat - sourceLat) / 100.0;
+	}
 
 
 	/**
