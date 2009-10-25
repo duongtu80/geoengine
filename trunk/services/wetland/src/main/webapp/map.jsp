@@ -112,7 +112,7 @@
 							<div id="waterFowlsPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 90px; background-color: #EEEEEE; overflow: auto; padding-left: 5px; cursor: default;">
 							 -->
 							<div id="waterFowlsPanel" style="position: absolute;margin-left: 100px;margin-top: 0px;width: 560px; height: 0px; background-color: #EEEEEE;visibility: hidden; overflow: auto; padding-left: 5px; cursor: default; border-bottom: 1px solid #999999;border-left: 1px solid #999999;border-right: 1px solid #999999; border-top: 0px;">
-								<div class="panelTitle">Water fowls simulation</div>
+								<div class="panelTitle">Waterfowl simulation</div>
 								<div>
 								<span> </span>
 								Year <input id='valWaterFowlsYear' value="1990" dojoType='dijit.form.TextBox' trim="true" style="width: 80px;" />
@@ -162,16 +162,16 @@
 							
 							<button dojoType="dijit.form.Button" onclick="wetland.selectWpsModel();">Load Models</button>
 							<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
-								<div class="viewItem"><div class="viewTitle">ET</div><input id="modelET" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelET');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelET');">Change</a></div>
+								<div class="viewItem"><div class="viewTitle">ET</div><input id="modelET" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelET');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelET');">Params</a>|<a class="settingParameter" href="#" onclick="wetland.modelMetadata('modelET');">Metadata</a></div>
 							</div>
 							<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
-								<div class="viewItem"><div class="viewTitle">Water Table</div><input id="modelWaterTable" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelWaterTable');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelWaterTable');">Change</a></div>
+								<div class="viewItem"><div class="viewTitle">Water Table</div><input id="modelWaterTable" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelWaterTable');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelWaterTable');">Params</a>|<a class="settingParameter" href="#" onclick="wetland.modelMetadata('modelWaterTable');">Metadata</a></div>
 							</div>
 							<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
-								<div class="viewItem"><div class="viewTitle">Water Region</div><input id="modelWaterRegion" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelWaterRegion');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelWaterRegion');">Change</a></div>
+								<div class="viewItem"><div class="viewTitle">Water Region</div><input id="modelWaterRegion" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelWaterRegion');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelWaterRegion');">Params</a>|<a class="settingParameter" href="#" onclick="wetland.modelMetadata('modelWaterRegion');">Metadata</a></div>
 							</div>
 							<div class="blockBody" style="border: 1px solid #EEEEEE; margin: 1px; padding: 2px;">
-								<div class="viewItem"><div class="viewTitle">Water Fowls</div><input id="modelWaterFowls" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelWaterFowls');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelWaterFowls');">Change</a></div>
+								<div class="viewItem"><div class="viewTitle">Waterfowl</div><input id="modelWaterFowls" dojoType="dijit.form.ComboBox" style="width: 160px;" onchange="wetland.changeModel('modelWaterFowls');"></input><a class="settingParameter" href="#" onclick="wetland.modelSetting('modelWaterFowls');">Params</a>|<a class="settingParameter" href="#" onclick="wetland.modelMetadata('modelWaterFowls');">Metadata</a></div>
 							</div>
 						</div>
 					</div>
@@ -203,7 +203,7 @@
 	<div id="Setting.WaterRegionModel" style="width: 300px;" dojoType="dijit.Dialog" title="Water Region Parameters" execute="wetland.saveSetting('WaterRegionModel');">
 		<div style="line-height: 25px;"><button dojoType="dijit.form.Button" type="submit">Save</button></div>
 	</div>
-	<div id="Setting.WaterFowlsModel" style="width: 300px;" dojoType="dijit.Dialog" title="Water Fowls Parameters" execute="wetland.saveSetting('WaterFowlsModel');">
+	<div id="Setting.WaterFowlsModel" style="width: 300px;" dojoType="dijit.Dialog" title="Waterfowl Parameters" execute="wetland.saveSetting('WaterFowlsModel');">
 		<div style="line-height: 25px;"><button dojoType="dijit.form.Button" type="submit">Save</button></div>
 	</div>
 </body>

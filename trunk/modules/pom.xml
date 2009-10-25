@@ -18,5 +18,6 @@
     <module>ge-models</module>
     <module>ge-library</module>
     <module>ge-wps</module>
+    <module>ge-raster</module>
   </modules>
 </project>

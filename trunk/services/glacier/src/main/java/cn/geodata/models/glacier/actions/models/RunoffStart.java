@@ -27,6 +27,8 @@ public class RunoffStart extends AbstractRunoff {
 	private int endYear;
 	private String basin;
 	private BasinArea areas;
+	//Add land areas, to be implemented
+	private BasinArea landAreas;
 	private BasinDataset basins;
 	private boolean async;
 	
@@ -79,7 +81,7 @@ public class RunoffStart extends AbstractRunoff {
 		MultiPolygon _border = this.basins.getBasin(basin);
 		Point _pt = _border.getCentroid();
 		
-		RunoffProcess _process = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _inputs, areas.getLevels(), areas.getBasinArea(basin));
+		RunoffProcess _process = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _inputs, areas.getLevels(), areas.getBasinArea(basin), landAreas.getBasinArea(basin));
 
 		if(this.async){
 			this.manage.pushProcess(_process);

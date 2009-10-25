@@ -14,5 +14,6 @@
     <module>rest</module>
     <module>glacier</module>
     <module>wetland</module>
+    <module>ecoserv</module>
   </modules>
 </project>

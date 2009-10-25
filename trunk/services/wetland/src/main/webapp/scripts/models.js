@@ -40,7 +40,7 @@ function WetlandModel (map){
 						        error: wetland.errorFunction
 							}
 						);
-					}
+					}, '52'
 				)
 				, 'WaterTableModel': new WpsModel ('WaterTableModel', dijit.byId('Setting.WaterTableModel'),
 						function() {
@@ -65,7 +65,7 @@ function WetlandModel (map){
 								,error: wetland.errorFunction
 							}
 						);
-					}
+					}, '57'
 				)				
 				, 'WaterRegionModel': new WpsModel ('WaterRegionModel', dijit.byId('Setting.WaterRegionModel'),
 						function() {
@@ -73,7 +73,7 @@ function WetlandModel (map){
 							
 							return {id: 'WaterRegionModel', params: _p};
 						}
-						,null
+						,null, '58'
 				)
 				, 'WaterFowlsModel': new WpsModel ('WaterFowlsModel', dijit.byId('Setting.WaterFowlsModel'),
 						function() {
@@ -81,7 +81,7 @@ function WetlandModel (map){
 							
 							return {id: 'WaterFowlsModel', params: _p};
 						}
-						,null
+						,null, '59'
 				)
 			};
 
@@ -169,7 +169,17 @@ function WetlandModel (map){
 			alert('No model selected.');
 		}
 	};
-	
+
+	this.modelMetadata = function (modelVal) {
+		var _val = this.getItemFromCombox(dijit.byId(modelVal));
+		if(_val != null){
+			window.open('http://159.226.111.8:50000/Portal/geomodel/metadata/view.action?id=' + this.models[_val.id].metadata);
+		}
+		else{
+			alert('No model selected.');
+		}
+	};
+
 	this.saveSetting = function (modelId) {
 		this.models[modelId].saveSetting()
 	};
@@ -393,11 +403,12 @@ function WetlandModel (map){
 	};
 }
 
-function WpsModel (id, dialog, saveSetting , execute) {
+function WpsModel (id, dialog, saveSetting , execute, metadata) {
 	this.id = id;
 	this.dialog = dialog;
 	this.saveSetting = saveSetting;
 	this.execute = execute;
+	this.metadata = metadata;
 }
 
 function ModelResult() {
@@ -443,7 +454,7 @@ function ModelResult() {
      	_textDiv.appendChild(_waterFowlsDiv);
      	_waterFowlsDiv.className = 'resultLink';
      	_waterFowlsDiv.processId = param.id;
-     	_waterFowlsDiv.innerHTML = 'Map Water Fowls';
+     	_waterFowlsDiv.innerHTML = 'Map Waterfowl';
 
      	var _spaceDiv1 = document.createElement('span');
      	_spaceDiv1.innerHTML = '|';
@@ -1002,11 +1013,11 @@ function WaterFowlsAnimation(basin, levels) {
 					
 					dojo.byId('waterFowlsNumsPanel').innerHTML = _txt;
 					
-					var _layer = new OpenLayers.Layer.WaterFowls("Waterfowls in " + ioArgs.args.basin, { data: response.text} );
+					var _layer = new OpenLayers.Layer.WaterFowls("Waterfowl in " + ioArgs.args.basin, { data: response.text} );
 					wetland.waterFowlsAnimation.addLayer(_layer);
 				}
 				else{
-					alert('Failed to water fowls.');
+					alert('Failed to waterfowl.');
 				}
 				wetland.progressBar.popProgress();
 				wetland.waterFowlsAnimation.running = false;

@@ -57,9 +57,9 @@ public class HydrologicalModelTest extends TestCase {
 		List<WaterTable> _waters = null;
 		for(int i=0;i<10;i++){
 			_waters = _model.calculate(1, 1, 1, 100, 0.3, 0.5, 0.0015, 0.00001);
-			this.writeWaters1(_waters, new File(new File("D:\\Tank\\Temp\\test8"), "levels" + (i + 1) + ".csv"));
-			this.writeWaters2(_waters, new File(new File("D:\\Tank\\Temp\\test8"), "water" + (i + 1) + ".shp"));
-			this.writeWaters3(_waters, new File(new File("D:\\Tank\\Temp\\test8"), "basin" + (i + 1) + ".shp"));
+			this.writeWaters1(_waters, new File(new File("c:\\mfeng\\test\\wetland\\m_watertable"), "levels" + (i + 1) + ".csv"));
+			this.writeWaters2(_waters, new File(new File("c:\\mfeng\\test\\wetland\\m_watertable"), "water" + (i + 1) + ".shp"));
+			this.writeWaters3(_waters, new File(new File("c:\\mfeng\\test\\wetland\\m_watertable"), "basin" + (i + 1) + ".shp"));
 		}
 	}
 

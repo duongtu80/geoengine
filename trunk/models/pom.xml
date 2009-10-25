@@ -13,5 +13,6 @@
   <modules>
     <module>ge-model.glacier</module>
     <module>ge-model.wetland</module>
+    <module>ge-model.landfire</module>
   </modules>
 </project>

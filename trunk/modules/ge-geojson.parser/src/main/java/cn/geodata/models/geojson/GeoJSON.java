@@ -1,5 +1,6 @@
 package cn.geodata.models.geojson;
 
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -23,14 +24,24 @@ import org.apache.commons.io.IOUtils;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.FactoryRegistryException;
 import org.geotools.factory.GeoTools;
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.AttributeTypeFactory;
-import org.geotools.feature.Feature;
+import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureFactory;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.FeatureType;
 import org.geotools.feature.IllegalAttributeException;
+import org.geotools.feature.NameImpl;
 import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.feature.type.FeatureTypeFactoryImpl;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.FeatureTypeFactory;
+import org.opengis.feature.type.GeometryDescriptor;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -166,7 +177,7 @@ public class GeoJSON {
 	 */
 	public MultiLineString parseMultiLineString(JSONObject obj){
 		JSONArray _c = obj.getJSONArray("coordinates");
-		LineString[] _lines = new LineString[_c.length()];
+		LineString[] _lines = new LineString[_c.size()];
 		for (int i = 0; i < _lines.length; i++) {
 			_lines[i] = this.parseCoordinateLineString(_c.getJSONArray(i));
 		}
@@ -181,7 +192,7 @@ public class GeoJSON {
 	 */
 	public MultiPolygon parseMultiPolygon(JSONObject obj){
 		JSONArray _c = obj.getJSONArray("coordinates");
-		Polygon[] _polys = new Polygon[_c.length()];
+		Polygon[] _polys = new Polygon[_c.size()];
 		for (int i = 0; i < _polys.length; i++) {
 			_polys[i] = this.parseCoordinatePolygon(_c.getJSONArray(i));
 		}
@@ -215,7 +226,7 @@ public class GeoJSON {
 		}
 		
 		JSONArray _list = obj.getJSONArray("members");
-		Geometry[] _cols = new Geometry[_list.length()];
+		Geometry[] _cols = new Geometry[_list.size()];
 		for (int i = 0; i < _cols.length; i++) {
 			_cols[i] = this.parseGeometry(_list.getJSONObject(i));
 		}
@@ -231,25 +242,25 @@ public class GeoJSON {
 	 * @throws IllegalAttributeException
 	 * @throws UnsupportedGeoJSONType
 	 */
-	public Feature parseFeature(FeatureType featureType, JSONObject obj) throws IllegalAttributeException, UnsupportedGeoJSONType{
+	public SimpleFeature parseFeature(SimpleFeatureType featureType, JSONObject obj) throws IllegalAttributeException, UnsupportedGeoJSONType{
 		if(obj.getString("type").equalsIgnoreCase("Feature") == false){
 			throw new UnsupportedOperationException("Not Feature type");
 		}
 		
 		JSONObject _props = obj.getJSONObject("properties");
-		
+		SimpleFeatureBuilder _builder = new SimpleFeatureBuilder(featureType);
 		Geometry _geo = this.parseGeometry(obj.getJSONObject("geometry"));
-		Object[] _attrs = new Object[featureType.getAttributeCount()];
-		for(int i=0;i<_attrs.length;i++){
-			if(featureType.getAttributeType(i).equals(featureType.getDefaultGeometry())){
-				_attrs[i] = _geo;
+		
+		for(AttributeDescriptor _t: featureType.getAttributeDescriptors()){
+			if(_t.getLocalName().equals(featureType.getGeometryDescriptor().getLocalName())){
+				_builder.add(_geo);
 			}
 			else{
-				_attrs[i] = _props.get(featureType.getAttributeType(i).getLocalName());
+				_builder.add(_props.get(_t.getLocalName()));
 			}
 		}
 		
-		return featureType.create(_attrs, obj.getString("id"));
+		return _builder.buildFeature(obj.getString("id"));
 	}
 	
 	/**
@@ -259,12 +270,12 @@ public class GeoJSON {
 	 * @throws IllegalAttributeException
 	 * @throws IOException
 	 */
-	public FeatureCollection parseFeatureCollection(JSONObject obj) throws IllegalAttributeException, IOException{
-		FeatureType _featureType = this.parseFeatureType(obj.getJSONArray("features"));
+	public FeatureCollection<SimpleFeatureType, SimpleFeature> parseFeatureCollection(JSONObject obj) throws IllegalAttributeException, IOException{
+		SimpleFeatureType _featureType = this.parseFeatureType(obj.getJSONArray("features"));
 		
 		JSONArray _members = obj.getJSONArray("features");
-		FeatureCollection _featureCollection = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
-		for (int i = 0; i < _members.length(); i++) {
+		FeatureCollection<SimpleFeatureType, SimpleFeature> _featureCollection = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
+		for (int i = 0; i < _members.size(); i++) {
 			_featureCollection.add(this.parseFeature(_featureType, _members.getJSONObject(i)));
 		}
 		
@@ -272,7 +283,7 @@ public class GeoJSON {
 	}
 	
 	protected Coordinate parseCoordinate(JSONArray obj){
-		if(obj.length() < 2){
+		if(obj.size() < 2){
 			throw new IndexOutOfBoundsException("Not enough coordinates");
 		}
 		
@@ -280,8 +291,8 @@ public class GeoJSON {
 	}
 
 	protected Coordinate[] parseCoordinates(JSONArray obj){
-		Coordinate[] _cs = new Coordinate[obj.length()];
-		for(int i=0;i<obj.length();i++){
+		Coordinate[] _cs = new Coordinate[obj.size()];
+		for(int i=0;i<obj.size();i++){
 			_cs[i] = this.parseCoordinate(obj.getJSONArray(i));
 		}
 		
@@ -301,12 +312,12 @@ public class GeoJSON {
 	}
 	
 	protected Polygon parseCoordinatePolygon(JSONArray obj){
-		if(obj.length() < 0){
+		if(obj.size() < 0){
 			throw new IndexOutOfBoundsException("Not enough line string");
 		}
 		
 		LinearRing _out = this.parseCoordinateLineRing(obj.getJSONArray(0));
-		LinearRing[] _inners = new LinearRing[obj.length() - 1];
+		LinearRing[] _inners = new LinearRing[obj.size() - 1];
 		for(int i=0;i<_inners.length;i++){
 			_inners[i] = this.parseCoordinateLineRing(obj.getJSONArray(i+1));
 		}
@@ -314,14 +325,17 @@ public class GeoJSON {
 		return this.geometryFactory.createPolygon(_out, _inners);		
 	}
 	
-	public FeatureType parseFeatureType(JSONArray obj) throws IOException{
-		if(obj.length() == 0){
+	public SimpleFeatureType parseFeatureType(JSONArray obj) throws IOException{
+		if(obj.size() == 0){
 			throw new NullPointerException("No element inside");
 		}
 		
-		List<AttributeType> _attributes = new ArrayList<AttributeType>();
-		_attributes.add(parseComplexElement(obj));
-
+		FeatureTypeFactory _factory = new FeatureTypeFactoryImpl();
+		GeometryDescriptor _geometry = parseComplexElement(obj);
+		
+		List<AttributeDescriptor> _attributes = new ArrayList<AttributeDescriptor>();
+		_attributes.add(_geometry);
+		
 		JSONObject _ele = obj.getJSONObject(0).getJSONObject("properties");
 		Iterator<String> _it = _ele.keys();
 		while(_it.hasNext()){
@@ -330,22 +344,20 @@ public class GeoJSON {
 		}
 		
 		try {
-			return CommonFactoryFinder.getFeatureTypeFactory(GeoTools.getDefaultHints()).newFeatureType((AttributeType[])_attributes.toArray(new AttributeType[0]), "geometry");
+			return (new FeatureTypeFactoryImpl()).createSimpleFeatureType(new NameImpl("shape"), _attributes, _geometry, true, null, null, null);
 		} catch (FactoryRegistryException e) {
-			throw new IOException(e.getMessage());
-		} catch (SchemaException e) {
 			throw new IOException(e.getMessage());
 		}
 	}
 	
-	protected AttributeType parseSimpleElement(JSONArray fs, String eleName) throws IOException{
+	protected AttributeDescriptor parseSimpleElement(JSONArray fs, String eleName) throws IOException{
 		//int 0
 		//double 1
 		//string 2
 		
 		int _type = 0;
 		int _len = 0;
-		for(int i=0;i<fs.length();i++){
+		for(int i=0;i<fs.size();i++){
 			String _val = fs.getJSONObject(i).getJSONObject("properties").getString(eleName);
 
 			int _newType = evaluateSimpleType(_val);
@@ -358,17 +370,27 @@ public class GeoJSON {
 			}
 		}
 		
+		AttributeTypeBuilder _builder = new AttributeTypeBuilder();
 		switch (_type) {
 			case 0:
-				return AttributeTypeFactory.newAttributeType(eleName, Integer.class);
+				_builder.setBinding(Integer.class);
+				break;
 			case 1:
-				return AttributeTypeFactory.newAttributeType(eleName, Double.class);
+				_builder.setBinding(Double.class);
+				break;
 			case 2:
-				return AttributeTypeFactory.newAttributeType(eleName, String.class, true, _len);
+				_builder.setBinding(String.class);
+				_builder.setLength(_len);
+				break;
 			default:
 				throw new IOException("Unknown type:" + _type);
 		}
+		
+		_builder.setName(eleName);
+		
+		return _builder.buildDescriptor(eleName);
 	}
+
 	
 	protected int evaluateSimpleType(String val){
 		if(Pattern.matches("\\d+", val)){
@@ -380,27 +402,29 @@ public class GeoJSON {
 		return 2;
 	}
 
-	protected AttributeType parseComplexElement(JSONArray obj) throws UnsupportedGeoJSONType{
+	protected GeometryDescriptor parseComplexElement(JSONArray obj) throws UnsupportedGeoJSONType{
+		FeatureTypeFactory _factory = new FeatureTypeFactoryImpl();
+		
 		String _eleName = "geometry";
 		JSONObject _obj = obj.getJSONObject(0).getJSONObject(_eleName);
 		
 		if(_obj.getString("type").equalsIgnoreCase("Point")){
-			return AttributeTypeFactory.newAttributeType(_eleName, Point.class);
+			return _factory.createGeometryDescriptor(_factory.createGeometryType(new NameImpl(_eleName), Point.class, null, false, false, null, null, null), new NameImpl("shape"), 0, 1, true, null);
 		}
 		if(_obj.getString("type").equalsIgnoreCase("LineString")){
-			return AttributeTypeFactory.newAttributeType(_eleName, LineString.class);
+			return _factory.createGeometryDescriptor(_factory.createGeometryType(new NameImpl(_eleName), LineString.class, null, false, false, null, null, null), new NameImpl("shape"), 0, 1, true, null);
 		}
 		if(_obj.getString("type").equalsIgnoreCase("Polygon")){
-			return AttributeTypeFactory.newAttributeType(_eleName, Polygon.class);
+			return _factory.createGeometryDescriptor(_factory.createGeometryType(new NameImpl(_eleName), Polygon.class, null, false, false, null, null, null), new NameImpl("shape"), 0, 1, true, null);
 		}
 		if(_obj.getString("type").equalsIgnoreCase("MultiPoint")){
-			return AttributeTypeFactory.newAttributeType(_eleName, MultiPoint.class);
+			return _factory.createGeometryDescriptor(_factory.createGeometryType(new NameImpl(_eleName), MultiPoint.class, null, false, false, null, null, null), new NameImpl("shape"), 0, 1, true, null);
 		}
 		if(_obj.getString("type").equalsIgnoreCase("MultiLineString")){
-			return AttributeTypeFactory.newAttributeType(_eleName, MultiLineString.class);
+			return _factory.createGeometryDescriptor(_factory.createGeometryType(new NameImpl(_eleName), MultiLineString.class, null, false, false, null, null, null), new NameImpl("shape"), 0, 1, true, null);
 		}
 		if(_obj.getString("type").equalsIgnoreCase("MultiPolygon")){
-			return AttributeTypeFactory.newAttributeType(_eleName, MultiPolygon.class);
+			return _factory.createGeometryDescriptor(_factory.createGeometryType(new NameImpl(_eleName), MultiPolygon.class, null, false, false, null, null, null), new NameImpl("shape"), 0, 1, true, null);
 		}
 		
 		throw new UnsupportedGeoJSONType(_obj.getString("type"));
@@ -520,28 +544,30 @@ public class GeoJSON {
 		throw new UnsupportedGeoJSONType(geo.getGeometryType());
 	}
 	
-	public JSONObject encodeFeature(Feature f) throws UnsupportedGeoJSONType{
+	public JSONObject encodeFeature(SimpleFeature f) throws UnsupportedGeoJSONType{
 		JSONObject _f = new JSONObject();
 		_f.put("type", "Feature");
 		_f.put("id", f.getID());
 		
-		FeatureType _featureType = f.getFeatureType();
+		SimpleFeatureType _featureType = f.getFeatureType();
 		JSONObject _props = new JSONObject();
-		for(int i=0;i<_featureType.getAttributeCount();i++){
-			if(_featureType.getAttributeType(i).equals(_featureType.getDefaultGeometry()) == false){
+		
+		List<AttributeDescriptor> _attrs = _featureType.getAttributeDescriptors();
+		for(int i=0;i<_attrs.size();i++){
+			if(_attrs.get(i).equals(_featureType.getGeometryDescriptor()) == false){
 //				log.info(_featureType.getAttributeType(i).getLocalName() + ":" + f.getAttribute(i).getClass().toString());
-				_props.put(_featureType.getAttributeType(i).getLocalName(), f.getAttribute(i));
+				_props.put(_attrs.get(i).getLocalName(), f.getAttribute(i));
 			}
 		}
 		_f.put("properties", _props);
-		_f.put("geometry", this.encodeGeometry(f.getDefaultGeometry()));
+		_f.put("geometry", this.encodeGeometry((Geometry)f.getDefaultGeometry()));
 		
 		return _f;
 	}
 	
-	public JSONObject encodeFeatureCollection(FeatureCollection fs) throws UnsupportedGeoJSONType{
+	public JSONObject encodeFeatureCollection(FeatureCollection<SimpleFeatureType, SimpleFeature> fs) throws UnsupportedGeoJSONType{
 		List<JSONObject> _f = new ArrayList<JSONObject>();
-		FeatureIterator _it = fs.features();
+		FeatureIterator<SimpleFeature> _it = fs.features();
 		try{
 			while(_it.hasNext()){
 				_f.add(this.encodeFeature(_it.next()));
@@ -583,11 +609,11 @@ public class GeoJSON {
 			return this.encodeGeometry(_geo);
 		}
 		else if(obj instanceof FeatureCollection){
-			FeatureCollection _fs = (FeatureCollection) obj;
+			FeatureCollection<SimpleFeatureType, SimpleFeature> _fs = (FeatureCollection<SimpleFeatureType, SimpleFeature>) obj;
 			return this.encodeFeatureCollection(_fs);
 		}
-		else if(obj instanceof Feature){
-			Feature _f = (Feature) obj;
+		else if(obj instanceof SimpleFeature){
+			SimpleFeature _f = (SimpleFeature) obj;
 			return this.encodeFeature(_f);
 		}
 		else if(obj instanceof Envelope){

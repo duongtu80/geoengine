@@ -28,22 +28,22 @@ public class ETModel implements Calculate {
 		this.et = _et * coefficient;
 	}
 
-	@GeoOutput(title="ET")
+	@GeoOutput(title="ET", units={"m"})
 	public double getEt() {
 		return et;
 	}
 
-	@GeoInput(title="Albedo")
+	@GeoInput(title="Albedo", units={""})
 	public void setAlbedo(double albedo) {
 		this.albedo = albedo;
 	}
 
-	@GeoInput(title="Height")
+	@GeoInput(title="Height", units={"m"})
 	public void setHeight(double height) {
 		this.height = height;
 	}
 
-	@GeoInput(title="Wind Speed")
+	@GeoInput(title="Wind Speed", units="km/h")
 	public void setWindSpeed(double windSpeed) {
 		this.windSpeed = windSpeed;
 	}
@@ -53,17 +53,17 @@ public class ETModel implements Calculate {
 		this.coefficient = coefficient;
 	}
 
-	@GeoInput(title="Daily Temperature")
+	@GeoInput(title="Daily Temperature", units={"C degree"})
 	public void setTday(double tday) {
 		this.tday = tday;
 	}
 
-	@GeoInput(title="Srad")
+	@GeoInput(title="Srad", units={"W m-2"})
 	public void setSrad(double srad) {
 		this.srad = srad;
 	}
 
-	@GeoInput(title="Vpd")
+	@GeoInput(title="Vpd", units={"pa"})
 	public void setVpd(double vpd) {
 		this.vpd = vpd;
 	}

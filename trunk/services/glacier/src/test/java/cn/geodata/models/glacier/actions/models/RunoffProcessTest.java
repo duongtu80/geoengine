@@ -91,7 +91,7 @@ public class RunoffProcessTest extends TestCase {
 		
 		MultiPolygon _border = this.getCatchment(basin, new File(this.folder, "data\\basin.shp"));
 		Point _pt = _border.getCentroid();
-		RunoffProcess _p = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _param, levels, areas);
+		RunoffProcess _p = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _param, levels, areas, null);
 		
 		_p.run();
 		

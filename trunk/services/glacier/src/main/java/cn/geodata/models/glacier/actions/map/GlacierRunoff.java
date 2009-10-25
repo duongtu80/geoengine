@@ -63,10 +63,13 @@ public class GlacierRunoff {
 	}
 	
 	public void run(int startYear, int endYear) throws Exception {
-		Map<String, double[]> _map = new HashMap<String, double[]>();
-		List<String> _list = FileUtils.readLines(new File(this.dataFolder, "areas.csv"), "gb2312");
+		Map<String, double[]> _areaMap = new HashMap<String, double[]>();
+		Map<String, double[]> _landMap = new HashMap<String, double[]>();
 		
-		for(String _l : _list){
+		List<String> _areaList = FileUtils.readLines(new File(this.dataFolder, "areas.csv"), "gb2312");
+		List<String> _landlist = FileUtils.readLines(new File(this.dataFolder, "landAreas.csv"), "gb2312");
+		
+		for(String _l : _areaList){
 			String[] _parts = _l.split(",");
 			String _n = _parts[0];
 			
@@ -76,13 +79,28 @@ public class GlacierRunoff {
 			}
 
 			log.info("Adding key " + _n);
-			_map.put(_n, _vs);
+			_areaMap.put(_n, _vs);
 		}
+
+		for(String _l : _landlist){
+			String[] _parts = _l.split(",");
+			String _n = _parts[0];
+			
+			double[] _vs = new double[_parts.length - 1];
+			for(int i=1;i<_parts.length;i++){
+				_vs[i-1] = Double.parseDouble(_parts[i]);
+			}
+
+			log.info("Adding key " + _n);
+			_landMap.put(_n, _vs);
+		}
+
+		double[] _levels = _areaMap.remove("Levels");
+		_landMap.remove("Levels");
 		
-		double[] _levels = _map.remove("Levels");
-		
-		for(String _b : _map.keySet()){
-			double[] _areas = _map.get(_b);
+		for(String _b : _areaMap.keySet()){
+			double[] _areas = _areaMap.get(_b);
+			double[] _landAreas = _landMap.get(_b);
 			
 			double _a = 0.0;
 			for(double _aa : _areas){
@@ -90,7 +108,7 @@ public class GlacierRunoff {
 			}
 			
 			if(_a > 0){
-				this.calculateRunoff(_b, startYear, endYear, _levels, _areas);
+				this.calculateRunoff(_b, startYear, endYear, _levels, _areas, _landAreas);
 			}
 			else{
 				log.warning("Skip basin:" + _b);
@@ -98,7 +116,7 @@ public class GlacierRunoff {
 		}
 	}
 	
-	protected void calculateRunoff(String basin, int startYear, int endYear, double[] levels, double[] areas) throws Exception {
+	protected void calculateRunoff(String basin, int startYear, int endYear, double[] levels, double[] areas, double[] landAreas) throws Exception {
 		log.info("Calculating basin:" + basin);
 		File _path = new File(this.dataFolder, basin);
 		
@@ -116,7 +134,7 @@ public class GlacierRunoff {
 //		JSONObject _param = JSONObject.fromString("{\"Temperature\":{\"id\":\"TemperatureModelEx\",\"params\":{\"Power\":2,\"Stand\":3000,\"Grads\":-0.006}},\"Precipitation\":{\"id\":\"PrecipitationModel\",\"params\":{\"Power\":2}},\"SnowDDF\":{\"id\":\"SnowDDFModel\",\"params\":{\"Power\":2}},\"IceDDF\":{\"id\":\"IceDDFModel\",\"params\":{\"Power\":2}},\"Runoff\":{\"id\":\"RunoffModel\",\"params\":{\"RainCritical\":2,\"SnowCritical\":-0.5,\"SnowFrozenRatio\":0.1}}}");
 		JSONObject _param = JSONObject.fromString("{\"Temperature\":{\"id\":\"TemperatureModelEx\",\"params\":{}},\"Precipitation\":{\"id\":\"PrecipitationModel\",\"params\":{}},\"SnowDDF\":{\"id\":\"SnowDDFModel\",\"params\":{}},\"IceDDF\":{\"id\":\"IceDDFModel\",\"params\":{}},\"Runoff\":{\"id\":\"RunoffModel\",\"params\":{}}}");
 		
-		RunoffProcess _p = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _param, levels, areas);
+		RunoffProcess _p = new RunoffProcess(_pt.getX(), _pt.getY(), startYear, endYear, basin, _param, levels, areas, landAreas);
 		
 		_p.run();
 		
@@ -126,8 +144,8 @@ public class GlacierRunoff {
 			return;
 		}
 		
-		String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "Accumulations", "AccumulationSnows", "Balances"};
-		String[] _valuCols = new String[] {"Temperature", "Precipitation", "Runoff"};
+		String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "AccumulationSnows", "Accumulations", "Balances", "Areas"};
+		String[] _valuCols = new String[] {"Temperature", "Precipitation", "Runoff", "AverageSnowHeight"};
 
 		SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM");
 		DecimalFormat _numbFormat = new DecimalFormat("0.00");

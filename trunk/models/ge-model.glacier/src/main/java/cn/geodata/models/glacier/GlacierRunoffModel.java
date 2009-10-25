@@ -76,7 +76,7 @@ public class GlacierRunoffModel {
 		Calendar _calendar = Calendar.getInstance();
 		_calendar.setTime(startDate);
 		
-		Map<Integer, Integer> _areas = this.prepareModel.calculate(catchment, cellSize, null); 
+		Map<Integer, Integer> _areas = this.prepareModel.calculateGlacierArea(catchment, cellSize, null); 
 		List<BandInfo> _pixels = new ArrayList<BandInfo>();
 		for(int i=0;i<levels.length;i++){
 			BandInfo _band = new BandInfo();

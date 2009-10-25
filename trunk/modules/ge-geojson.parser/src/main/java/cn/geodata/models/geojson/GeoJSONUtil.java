@@ -77,8 +77,7 @@ public class GeoJSONUtil {
 	}
 
 	public static void joinArray(JSONArray obj, String separator, OutputStream stream) throws IOException {
-		
-		int len = obj.length();
+		int len = obj.size();
 		for (int i = 0; i < len; i += 1) {
 			if (i > 0) {
 				IOUtils.write(separator, stream);
