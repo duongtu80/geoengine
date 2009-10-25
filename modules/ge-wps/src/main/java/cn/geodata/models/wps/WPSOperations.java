@@ -60,6 +60,8 @@ import net.opengis.wps.x100.ResponseDocumentType;
 import net.opengis.wps.x100.StatusType;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
+import net.opengis.wps.x100.SupportedUOMsType;
+import net.opengis.wps.x100.UOMsType;
 import net.opengis.wps.x100.WPSCapabilitiesType;
 import net.opengis.wps.x100.ExecuteDocument.Execute;
 import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse;
@@ -496,6 +498,7 @@ public class WPSOperations {
 		
 		briefNode.addNewIdentifier().setStringValue(modelId);
 		briefNode.addNewTitle().setStringValue(_metadata.title());
+		
 		briefNode.addNewAbstract().setStringValue(_metadata.description());
 	}
 	
@@ -607,6 +610,14 @@ public class WPSOperations {
 			if(this.literalParser.isLiteral(_type)) {
 				LiteralInputType _literalData = _inputNode.addNewLiteralData();
 				_literalData.addNewDataType().setStringValue(_type.getSimpleName());
+				
+				if(_mi.units() != null && _mi.units().length > 0){
+					SupportedUOMsType _uoms = _literalData.addNewUOMs();
+					UOMsType _supported_uoms = _uoms.addNewSupported();
+					for(String _unit : _mi.units()){
+						_supported_uoms.addNewUOM().setStringValue(_unit);
+					}
+				}
 			}
 			else{
 				for(MimeType _m: this.complexParser.getMimes(_type)){
@@ -635,6 +646,14 @@ public class WPSOperations {
 			if(this.literalParser.isLiteral(_type)) {
 				LiteralOutputType _literalData = _outputNode.addNewLiteralOutput();
 				_literalData.addNewDataType().setStringValue(_type.getSimpleName());
+				
+				if(_mo.units() != null && _mo.units().length > 0){
+					SupportedUOMsType _uoms = _literalData.addNewUOMs();
+					UOMsType _supported_uoms = _uoms.addNewSupported();
+					for(String _unit : _mo.units()){
+						_supported_uoms.addNewUOM().setStringValue(_unit);
+					}
+				}
 			}
 			else{
 				for(MimeType _m: this.complexParser.getMimes(_type)){

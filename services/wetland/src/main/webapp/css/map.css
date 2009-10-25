@@ -66,3 +66,7 @@ div.olLayerWaterFowlsTitle{
 div.olLayerWaterFowlsText{
 	font-size: 13px;
 }
+
+.olLayerGoogleCopyright, .olLayerGooglePoweredBy{
+	display: none;	
+}

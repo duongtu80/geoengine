@@ -8,6 +8,8 @@ public @interface GeoOutput {
 	String title();
 	boolean required() default false;
 	String description() default "";
-	String[] keywords() default "";
-	String[] metadata() default "";
+	String[] keywords() default {};
+	String[] metadata() default {};
+	String[] units() default {};
+	String[] srid() default {};
 }

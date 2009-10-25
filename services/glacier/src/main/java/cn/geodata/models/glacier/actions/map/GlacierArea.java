@@ -77,8 +77,10 @@ public class GlacierArea {
 		ProcessLibrary _library = ProcessLibrary.createInstance();
 
 		List<String> _lines = new ArrayList<String>();
+		List<String> _landLines = new ArrayList<String>();
 		
 		_lines.add(arrayToString("Levels", _levels));
+		_landLines.add(arrayToString("Levels", _levels));
 		for(String _b : _basins){
 			System.out.print("Basin" + _b + "\t");
 			MultiPolygon _catchment = this.getCatchment(_b);
@@ -91,15 +93,20 @@ public class GlacierArea {
 			
 			_library.executeProcess(_areaModel);
 			double[] _areas = (double[]) _library.getOutput(_areaModel, "Areas");
-			
 			String _l = arrayToString(_b, _areas);
 			_lines.add(_l);
-			
+
+			double[] _landAreas = (double[]) _library.getOutput(_areaModel, "LandAreas");
+			_landLines.add(arrayToString(_b, _landAreas));
+
 			System.out.println(_l);
 		}
 		
 		System.out.println("Output to " + new File(path, "areas.csv").getAbsolutePath());
 		FileUtils.writeLines(new File(path, "areas.csv"), "gb2312", _lines);
+
+		System.out.println("Output to " + new File(path, "landAreas.csv").getAbsolutePath());
+		FileUtils.writeLines(new File(path, "landAreas.csv"), "gb2312", _landLines);
 	}
 
 	private int getDaysOfMonth(Calendar c){

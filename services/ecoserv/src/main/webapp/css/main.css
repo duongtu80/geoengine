@@ -1,0 +1,41 @@
+@CHARSET "UTF-8";
+
+body {
+	font-family: Calibri, Times New Roman, Verdana;
+	font-size: 12px;
+	padding: 0px;
+	margin: auto 0px auto 0px;
+}
+
+#bodyPanel {
+	margin: 0px auto 0px auto;
+	border: 1px soild #999999;
+	width: 1000px;
+}
+
+#topPanel {
+	height: 100px;
+	width: 1000px;
+	background-image: url('../img/EcoServ_Logo7.jpg');
+}
+
+#chartCell {
+	margin: 0px;
+	padding: 0px;
+	border-width: 0px;
+	border-spacing: 0px;
+}
+
+#chartPanel {
+	margin: 0px;
+	padding: 0px;
+	border-width: 0px;
+	border-spacing: 0px;
+}
+
+#chartImage {
+	margin: 0px;
+	padding: 0px;
+	border-width: 0px;
+	border-spacing: 0px;
+}

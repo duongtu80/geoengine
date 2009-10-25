@@ -1,0 +1,45 @@
+@CHARSET "UTF-8";
+
+.mapResetExtentCls{
+	background-image: url(../img/map/tbar/nav_fullextent.png) !important;
+}
+
+.mapPanCls{
+	background-image: url(../img/map/tbar/nav_pan.png) !important;
+}
+
+.mapPreviousCls{
+	background-image: url(../img/map/tbar/nav_previous.png) !important;
+}
+
+.mapNextCls{
+	background-image: url(../img/map/tbar/nav_next.png) !important;
+}
+
+.mapZoominCls{
+	background-image: url(../img/map/tbar/nav_zoomin.png) !important;
+}
+
+.mapZoomoutCls{
+	background-image: url(../img/map/tbar/nav_zoomout.png) !important;
+}
+
+.modelHydroCls{
+	background-image: url(../img/map/tbar/setting.gif) !important;
+}
+
+.modelWaterfowlCls{
+	background-image: url(../img/map/tbar/run_exc.png) !important;
+}
+
+.settingHydrologyCls{
+	background-image: url(../img/map/tbar/lake.gif) !important;
+}
+
+.settingWaterfowlCls{
+	background-image: url(../img/map/tbar/waterfowl_icon2.gif) !important;
+}
+
+.settingFloristicCls{
+	background-image: url(../img/map/tbar/floristicquality_icon.gif) !important;
+}

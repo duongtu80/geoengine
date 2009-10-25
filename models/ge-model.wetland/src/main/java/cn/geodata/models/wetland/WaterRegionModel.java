@@ -19,7 +19,7 @@ import cn.geodata.models.annotation.GeoProcess;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
-@GeoProcess(title="Water Region", keywords={"water region"})
+@GeoProcess(title="Water Surface Extent", keywords={"water surface", "water region", "geospatial extent"}, description="")
 public class WaterRegionModel implements Calculate  {
 	private String wetlandCode;
 	private double waterLevel;
@@ -57,33 +57,29 @@ public class WaterRegionModel implements Calculate  {
 		this.waterRegion = _fs;
 	}
 
-	@GeoInput(title="Catchment")
+	@GeoInput(title="Catchment", srid={"EPSG:4326"})
 	public void setCatchment(MultiPolygon catchment) {
 		this.catchment = catchment;
 	}
 
-	@GeoOutput(title="Water Region")
+	@GeoOutput(title="Water Region", srid={"EPSG:4326"})
 	public FeatureCollection getWaterRegion() {
 		return waterRegion;
 	}
 	
-	@GeoInput(title="Water Level")
+	@GeoInput(title="Water Level", units={"meters"})
 	public void setWaterLevel(double waterLevel) {
 		this.waterLevel = waterLevel;
 	}
 
 	public int getPercent() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	public void cancel() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public String getStatus() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

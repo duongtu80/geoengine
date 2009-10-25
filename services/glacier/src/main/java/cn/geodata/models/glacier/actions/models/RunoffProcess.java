@@ -2,6 +2,7 @@ package cn.geodata.models.glacier.actions.models;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
@@ -50,12 +51,13 @@ public class RunoffProcess implements Process, Runnable {
 //	private String fileGlacier;
 	private double[] levels;
 	private double[] areas;
+	private double[] landAreas;
 	private Map<String, List<Object>> map;
 	
 //	private double temperaturePower;
 //	private double precipitationPower;
 //
-	public RunoffProcess(double x, double y, int startYear, int endYear, String basin, JSONObject input, double[] levels, double[] areas) {
+	public RunoffProcess(double x, double y, int startYear, int endYear, String basin, JSONObject input, double[] levels, double[] areas, double[] landAreas) {
 		this.id = Long.toHexString((new Date()).getTime());
 		this.x = x;
 		this.y = y;
@@ -67,6 +69,7 @@ public class RunoffProcess implements Process, Runnable {
 		
 		this.levels = levels;
 		this.areas = areas;
+		this.landAreas = landAreas;
 		
 //		this.fileCatchment = fileCatchment;
 //		this.fileGlacier = fileGlacier;
@@ -150,7 +153,10 @@ public class RunoffProcess implements Process, Runnable {
 			Processing _runoModel = this.createProcess(_library, input.getJSONObject("Runoff"));
 			_library.setInput(_runoModel, "Levels", levels);
 			_library.setInput(_runoModel, "Areas", areas);
+			_library.setInput(_runoModel, "GlacierAreas", areas);
+			_library.setInput(_runoModel, "LandAreas", landAreas);
 			_library.setInput(_runoModel, "Location", _pt);
+			_library.setInput(_runoModel, "AverageSnowHeight", 90);
 
 			Date _startDate = new Date(this.startYear - 1900, 9, 1);
 			Date _endDate = new Date(this.endYear - 1900, 9, 1);
@@ -171,8 +177,8 @@ public class RunoffProcess implements Process, Runnable {
 			ArrayList<Double> _listRuno = new ArrayList<Double>();
 			ArrayList<Double> _listAcut = new ArrayList<Double>();
 			
-			String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "AccumulationSnows", "Accumulations", "Balances"};
-			String[] _valuCols = new String[] {"Temperature", "Precipitation", "Runoff"};
+			String[] _listCols = new String[] {"Temperatures", "AccumulatedTemperatures", "Precipitations", "Runoffs", "AccumulationSnows", "Accumulations", "Balances", "Areas"};
+			String[] _valuCols = new String[] {"Temperature", "Precipitation", "Runoff", "AverageSnowHeight"};
 			
 			//临时存储计算结果
 			map = new HashMap<String, List<Object>>();
@@ -214,6 +220,7 @@ public class RunoffProcess implements Process, Runnable {
 				_accumulationSnows = (double[]) _library.getOutput(_runoModel, "AccumulationSnows");
 				_accumulationSnows = _accumulationSnows.clone();
 
+				areas = (double[]) _library.getOutput(_runoModel, "Areas");
 				//修改总径流为 mm (2009-01-12)
 				double _runoff = 0;
 				double[] _runoffs = (double[]) _library.getOutput(_runoModel, "Runoffs");
@@ -232,12 +239,13 @@ public class RunoffProcess implements Process, Runnable {
 				_listRuno.add(_runoff);
 				
 				for(String _key : _listCols){
-					map.get(_key).add(_library.getOutput(_runoModel, _key));
+					map.get(_key).add(((double[])_library.getOutput(_runoModel, _key)).clone());
 				}
 				map.get("Dates").add(_date);
 				map.get("Temperature").add((Double)_library.getOutput(_tempModel, "Temperature"));
 				map.get("Precipitation").add((Double)_library.getOutput(_precModel, "Precipitation"));
 				map.get("Runoff").add(_runoff);
+				map.get("AverageSnowHeight").add((Double)_library.getOutput(_runoModel, "AverageSnowHeight"));
 
 				// Jump to next month
 				_calendar.add(Calendar.MONTH, 1);
@@ -259,6 +267,8 @@ public class RunoffProcess implements Process, Runnable {
 			this.status.put("percent", 100);
 			this.status.put("message", "计算完毕");
 		} catch (Exception e) {
+			e.printStackTrace();
+			
 			this.status.put("percent", -1);
 			this.status.put("message", "计算失败:" + e.getMessage());
 		}

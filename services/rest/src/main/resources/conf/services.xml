@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <services>
 	<global>
-		<host>192.168.17.108</host>
+		<host>159.226.111.3</host>
 		<port>59080</port>
 	</global>
 	<identification>
-		<title>地理空间模型共享平台</title>
-		<abstract>开放式地理空间模型的共享平台</abstract>
+		<title>GeoEngine (Geospatial Model Sharing Service)</title>
+		<abstract>Share geospatial models as model services that compliant with OGC WPS</abstract>
 		<keywords>
 			<keyword>geospatial</keyword>
 			<keyword>model</keyword>
@@ -17,19 +17,19 @@
 		<accessConstraints>NONE</accessConstraints>
 	</identification>
 	<provider>
-		<name>中国科学院地理科学与资源研究所</name>
+		<name>Institute of Geographic Sciences and Natural Resources Research, CAS</name>
 		<site>http://www.igsnrr.ac.cn</site>
 		<contact>
-			<name>冯敏</name>
+			<name>Min Feng</name>
 			<position></position>
 			<email>fengm@lreis.ac.cn</email>
 			<phone>+86-10-64889045</phone>
 			<address>
-				<deliveryPoint>朝阳区大屯路甲11号</deliveryPoint>
-				<city>北京</city>
-				<administrativeArea>北京</administrativeArea>
+				<deliveryPoint>Datun Road, Chaoyang District</deliveryPoint>
+				<city>Beijing</city>
+				<administrativeArea>Beijing</administrativeArea>
 				<postCode>100101</postCode>
-				<country>中华人民共和国</country>
+				<country>China</country>
 			</address>
 		</contact>
 	</provider>

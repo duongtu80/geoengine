@@ -33,6 +33,7 @@ public class GlacierAreaModel implements Calculate {
 	private double cellSize;
 	private double[] levels;
 	private double[] areas;
+	private double[] landAreas;
 	
 	public void calculate() throws Exception {
 		GlacierPrepareModel _m = new GlacierPrepareModel(demModel.getRasterManager(), glaciers);
@@ -41,7 +42,8 @@ public class GlacierAreaModel implements Calculate {
 //		writePixels(_pixels);
 		
 //		Map<Integer, Integer> _pixels = _m.calculate(catchment, cellSize, new File("D:\\Temp\\data3\\20081010\\dem3.tif"));
-		Map<Integer, Integer> _pixels = _m.calculate(catchment, cellSize, null);
+		Map<Integer, Integer> _pixels = _m.calculateGlacierArea(catchment, cellSize, null);
+		Map<Integer, Integer> _landPixels = _m.calculateLandArea(catchment, cellSize, null);
 //		Map<Integer, Integer> _pixels = this.readPixels();
 		
 		Point _pt = this.catchment.getCentroid();
@@ -61,6 +63,7 @@ public class GlacierAreaModel implements Calculate {
 //		
 //		System.out.println("Pixel Area:" + _pixelArea);
 		double[] _areas = new double[levels.length];
+		double[] _landAreas = new double[levels.length];
 		for(int i=0;i<levels.length;i++){
 			long _pixelCount = 0;
 			for(Integer _k : _pixels.keySet()){
@@ -76,32 +79,48 @@ public class GlacierAreaModel implements Calculate {
 				}
 			}
 			
+			long _landPixelCount = 0;
+			for(Integer _k : _landPixels.keySet()){
+				if(i < levels.length - 1){
+					if(_k >= levels[i] && _k < levels[i + 1]){
+						_landPixelCount += _landPixels.get(_k).longValue();
+					}
+				}
+				else{
+					if(_k >= levels[i]){
+						_landPixelCount += _landPixels.get(_k).longValue();
+					}
+				}
+			}
+
 			_areas[i] = _pixelCount * _pixelArea;
+			_landAreas[i] = _landPixelCount * _pixelArea;
 		}
 		
 		this.areas = _areas;
+		this.landAreas = _landAreas;
 	}
 
-	private Map<Integer, Integer> readPixels() throws NumberFormatException, IOException {
-		Map<Integer, Integer> _map = new HashMap<Integer, Integer>();
-		for(String _line : (List<String>)FileUtils.readLines(new File("D:\\Temp\\ttt2.txt"))){
-			String[] _ps = _line.split("\t");
-			_map.put(Integer.parseInt(_ps[0]), Integer.parseInt(_ps[1]));
-		}
-		
-		return _map;
-	}
-
-	private void writePixels(Map<Integer, Integer> pixels) throws NumberFormatException, IOException {
-		ArrayList<String> _lines = new ArrayList<String>();
-		for(Integer _k : pixels.keySet()){
-			Integer _v = pixels.get(_k);
-			
-			_lines.add(_k.toString() + "\t" + _v.toString());
-		}
-		
-		FileUtils.writeLines(new File("D:\\Temp\\ttt2.txt"), _lines, "\n");
-	}
+//	private Map<Integer, Integer> readPixels() throws NumberFormatException, IOException {
+//		Map<Integer, Integer> _map = new HashMap<Integer, Integer>();
+//		for(String _line : (List<String>)FileUtils.readLines(new File("D:\\Temp\\ttt2.txt"))){
+//			String[] _ps = _line.split("\t");
+//			_map.put(Integer.parseInt(_ps[0]), Integer.parseInt(_ps[1]));
+//		}
+//		
+//		return _map;
+//	}
+//
+//	private void writePixels(Map<Integer, Integer> pixels) throws NumberFormatException, IOException {
+//		ArrayList<String> _lines = new ArrayList<String>();
+//		for(Integer _k : pixels.keySet()){
+//			Integer _v = pixels.get(_k);
+//			
+//			_lines.add(_k.toString() + "\t" + _v.toString());
+//		}
+//		
+//		FileUtils.writeLines(new File("D:\\Temp\\ttt2.txt"), _lines, "\n");
+//	}
 
 	public int getPercent() {
 		return 0;
@@ -110,6 +129,11 @@ public class GlacierAreaModel implements Calculate {
 	@GeoOutput(title="冰川面积")
 	public double[] getAreas() {
 		return areas;
+	}
+
+	@GeoOutput(title="陆地面积")
+	public double[] getLandAreas() {
+		return landAreas;
 	}
 
 	@GeoInput(title="冰川分布")
