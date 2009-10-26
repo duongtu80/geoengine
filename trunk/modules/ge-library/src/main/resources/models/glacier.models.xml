@@ -74,6 +74,17 @@
 		<property name="atTx"><value>0.02</value></property>
 	</bean>
 	
+	<!-- 雪深模型参数 -->
+	<bean id="SnowDepthModel" class="cn.geodata.models.glacier.SnowDepthModel" scope="prototype">
+		<property name="model">
+			<bean class="cn.geodata.models.glacier.InvertDistanceWeightModel" scope="prototype">
+				<property name="maxDistance" value="0"></property>
+				<property name="maxCount" value="0"></property>
+				<property name="power" value="2"></property>
+			</bean>
+		</property>
+	</bean>
+	
 	<!-- 冰度日因子模型参数 -->
 	<bean id="IceDDFModel" class="cn.geodata.models.glacier.IceDDFModel" scope="prototype">
 		<property name="model">
