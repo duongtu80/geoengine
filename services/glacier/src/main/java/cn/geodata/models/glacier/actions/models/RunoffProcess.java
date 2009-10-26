@@ -149,15 +149,7 @@ public class RunoffProcess implements Process, Runnable {
 			for(double _a : areas){
 				_area += _a;
 			}
-
-			Processing _runoModel = this.createProcess(_library, input.getJSONObject("Runoff"));
-			_library.setInput(_runoModel, "Levels", levels);
-			_library.setInput(_runoModel, "Areas", areas);
-			_library.setInput(_runoModel, "GlacierAreas", areas);
-			_library.setInput(_runoModel, "LandAreas", landAreas);
-			_library.setInput(_runoModel, "Location", _pt);
-			_library.setInput(_runoModel, "AverageSnowHeight", 90);
-
+			
 			Date _startDate = new Date(this.startYear - 1900, 9, 1);
 			Date _endDate = new Date(this.endYear - 1900, 9, 1);
 			
@@ -167,6 +159,22 @@ public class RunoffProcess implements Process, Runnable {
 			_calendar.setTime(_startDate);
 
 			DateFormat _format = new SimpleDateFormat("yyyy-MM");
+
+			Processing _snowDepthModel = this.createProcess(_library, input.getJSONObject("SnowDepth"));
+			_library.setInput(_snowDepthModel, "Date", _startDate);
+			_library.setInput(_snowDepthModel, "Point", _pt);
+			_library.executeProcess(_snowDepthModel);
+			
+			double _snowDepth = (Double)_library.getOutput(_snowDepthModel, "Depth");
+			log.info("Snow depth:" + _snowDepth);
+
+			Processing _runoModel = this.createProcess(_library, input.getJSONObject("Runoff"));
+			_library.setInput(_runoModel, "Levels", levels);
+			_library.setInput(_runoModel, "Areas", areas);
+			_library.setInput(_runoModel, "GlacierAreas", areas);
+			_library.setInput(_runoModel, "LandAreas", landAreas);
+			_library.setInput(_runoModel, "Location", _pt);
+			_library.setInput(_runoModel, "AverageSnowHeight", _snowDepth);
 
 			int _month = 0;
 			double[] _accumulationSnows = null;

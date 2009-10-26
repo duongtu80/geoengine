@@ -63,5 +63,10 @@
         <artifactId>jai_imageio</artifactId>
         <version>1.1</version>
       </dependency>
+      <dependency>
+      	<groupId>cn.geodata.models</groupId>
+      	<artifactId>ge-raster</artifactId>
+      	<version>1.0-SNAPSHOT</version>
+      </dependency>
   </dependencies>
 </project>
