@@ -43,3 +43,23 @@
 .settingFloristicCls{
 	background-image: url(../img/map/tbar/floristicquality_icon.gif) !important;
 }
+
+.loadLandCoverCls {
+	background-image: url(../img/landcover/wetland.png) !important;
+}
+
+.logginCls {
+	background-image: url(../img/login.png) !important;
+}
+
+.helpCls {
+	background-image: url(../img/help.png) !important;
+}
+
+.layersCls {
+	background-image: url(../img/map/tbar/layers.png) !important;
+}
+
+.downloadCls{
+	background-image: url(../img/map/tbar/download.png) !important;
+}

@@ -1,15 +1,20 @@
-package cn.geodata.models.wetland.actions;
+package cn.geodata.models.ecoserv.actions;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import cn.geodata.models.ecoserv.simulate.RandomModel;
+import cn.geodata.models.ecoserv.simulate.Scenario;
 import cn.geodata.models.ecoserv.simulate.Scenarios;
 
 public class Operations {
@@ -29,14 +34,22 @@ public class Operations {
 	}
 	
 	public String loadScenario() throws IOException{
-		Scenarios _output = new RandomModel().calculate(Arrays.asList(new String[]{"Wetland", "Crop", "Developed"}));
+		log.info(this.param);
+		
+		JSONObject _param = JSONObject.fromString(this.param);
+
+		Date _startDate = new Date(_param.getLong("startDate"));
+		Date _endDate = new Date(_param.getLong("endDate"));
+		String _landcover = _param.getString("landCover");
+		
+		Scenario _output = new RandomModel().calculate(_startDate, _endDate, Arrays.asList(new String[] {_landcover}));
 		this.outputJSON(_output.toJSON());
 		
 		return "success";
 	}
 	
 	public String loadParam() throws Exception {
-		Scenarios _output = Scenarios.load(this.txt);
+		Scenario _output = Scenario.load(this.txt);
 		
 		ByteArrayOutputStream _s = new ByteArrayOutputStream();
 		_output.generateLineChart(this.param, _s, 195, 99);
@@ -45,11 +58,50 @@ public class Operations {
 		return "success";
 	}
 
+	public String loadParams() throws Exception {
+		List<Scenario> _outputs = new ArrayList<Scenario>();
+		for(String _t : this.txt.split("\\s*,\\s*")){
+			_outputs.add(Scenario.load(_t));
+		}
+		
+		ByteArrayOutputStream _s = new ByteArrayOutputStream();
+		new Scenarios().generateLineChart(_outputs, this.param, _s, 195, 99);
+
+		this.outputPNG(_s.toByteArray());
+		return "success";
+	}
+
 	public String loadSpider() throws Exception {
-		Scenarios _output = Scenarios.load(this.txt);
+		Scenario _output = Scenario.load(this.txt);
 		
 		ByteArrayOutputStream _s = new ByteArrayOutputStream();
 		_output.generateSpiderChart(_s, 398, 400);
+		
+		this.outputPNG(_s.toByteArray());
+		return "success";
+	}
+	
+	public String download() throws Exception {
+		Scenario _output = Scenario.load(this.txt);
+		
+		ByteArrayOutputStream _s = new ByteArrayOutputStream();
+		_output.output(_s);
+		
+		this.stream = new ByteArrayInputStream(_s.toByteArray());
+		this.contentType = "application/vnd.ms-excel";
+		this.contentDisposition = "attachment;filename=" + this.txt.replaceAll("\\s+", "_") + ".csv";
+		
+		return "success";
+	}
+
+	public String loadSpiders() throws Exception {
+		List<Scenario> _outputs = new ArrayList<Scenario>();
+		for(String _t : this.txt.split("\\s*,\\s*")){
+			_outputs.add(Scenario.load(_t));
+		}
+		
+		ByteArrayOutputStream _s = new ByteArrayOutputStream();
+		new Scenarios().generateSpiderChart(_outputs, _s, 398, 400);
 		
 		this.outputPNG(_s.toByteArray());
 		return "success";

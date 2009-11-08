@@ -26,7 +26,14 @@ public class RandomModel {
 		this.params = Arrays.asList(new String[]{"Water Storage", "Soil Erosion", "Water Quality", "GW Recharge", "Flor Quality", "Biomass", "CarbonSeq", "GHG", "Amphibians", "Waterfowl", "Shorebirds", "Pollinators"});
 	}
 
-	public Scenarios calculate(List<String> scenarios) throws IOException {
+	public Scenario calculate(Date startDate, Date endDate, List<String> scenarios) throws IOException {
+		this.dates = new ArrayList<Long>();
+		for(int _year=startDate.getYear() + 1900;_year<endDate.getYear() + 1900;_year++){
+			for(int _month=0;_month<12;_month+=3){
+				dates.add(new Date(_year - 1900, _month, 1).getTime());
+			}
+		}
+		
 		CSVReader _modelData = new CSVReader(RandomModel.class.getResourceAsStream("/conf/simulation-params.txt"));
 		List<Map<String, String>> _modelParams = _modelData.getRecords();
 
@@ -52,6 +59,6 @@ public class RandomModel {
 			values.put(_s, _vals);
 		}
 		
-		return new Scenarios(scenarios, dates, params, values);
+		return new Scenario(scenarios, dates, params, values);
 	}
 }
