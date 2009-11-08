@@ -29,7 +29,7 @@ function Main() {
 				bbar : this.initMapStatusBar()
 			}, {
 				id: 'panelOutput',
-//				title : 'Output',
+// title : 'Output',
 				height: 460,
 				xtype: 'panel',
 				tbar: ['-'],
@@ -171,7 +171,7 @@ function Main() {
 		}
 		this.results.remove(_name);
 		
-		//Add the result to result collection
+		// Add the result to result collection
 		this.results.push(_name);
 		_toolbar.add({text: _name, pressed: true, isScenario: true, dataId: _p.id, scope: this, handler: function(b, e){
 			b.toggle();
@@ -209,7 +209,7 @@ function Main() {
 				if (i % 3 == 0 && i > 0) {
 					_txt += '<tr>';
 				}
-				_txt += '<td class="chartCell"><img class="chartImage" src="_loadParams.do?' + Ext
+				_txt += '<td class="chartCell"><img onclick="main.showChart(\'' + _outputs.join(',') + '\', \'' + this.chartParams[i] + '\');" class="chartImage" src="_loadParams.do?' + Ext
 						.urlEncode( {
 							'param' : this.chartParams[i],
 							'txt' : _outputs.join(',')
@@ -227,9 +227,73 @@ function Main() {
 		if(_panel.collapsed == true && _outputs.length > 0){
 			_panel.expand(true);
 		}
-//		else{
-//			_panel.collapse(true);
-//		}
+// else{
+// _panel.collapse(true);
+// }
+	};
+	
+	this.showChart = function(ids, param) {
+		 this.progressQueue.pushTask('Load Time Line Chart',
+		 '_loadParamData.do', {txt: ids, param: param}, this,
+		 function(response){
+			var _p = Ext.decode(response.responseText);
+			
+            var _data = new google.visualization.DataTable();
+            
+            // Add columns
+            _data.addColumn('date', 'Date');
+            
+            var i = 0;
+            for(i=0;i<_p.columns.length;i++){
+            	_data.addColumn('number', _p.columns[i]);
+            }
+            
+            // Add rows
+            _data.addRows(_p.data.length);
+            
+            var _r = 0;
+            for(_r=0;_r < _p.data.length;_r++){
+            	_data.setValue(_r, 0, new Date(_p.data[_r][0]));
+            	
+            	for(i=0;i<_p.columns.length;i++){
+            		if(_p.data[_r][i] != -9999){
+            			_data.setValue(_r, i+1, _p.data[_r][i + 1]);
+            		}
+            	}
+            }
+            
+            var _colors = _p.colors[i];
+
+            var _panel = new Ext.FormPanel({
+                bodyStyle:'padding:5px; background-color: #FFFFFF;',
+                region: 'center',
+                style: 'width: 100%; height: 100%;',
+                border: false,
+                items: []
+            });
+            
+    		var _win = new Ext.Window({
+                layout:'border',
+                title: 'Model Result',
+                width:700,
+                height:400,
+                closeAction:'hide',
+                buttonAlign: 'right',
+                plain: true,
+                items: _panel,
+                buttons: [{
+                    text: 'Close',
+                    handler: function(){
+                        _win.hide();
+                    }
+                }]
+            });
+    		_win.show();
+
+            //Create chart
+            var _chart = new google.visualization.AnnotatedTimeLine(document.getElementById(_panel.getId()));
+            _chart.draw(_data, {displayAnnotations: true, colors: _colors}); 
+		 });
 	};
 
 	this.initOutputPanel = function() {
