@@ -19,7 +19,7 @@ function Utils() {
 					_txt = "No error message";
 				}
 
-				model.unwait();
+				this.unwait();
 				Ext.Msg.show( {
 					title : 'Error',
 					msg : _txt,

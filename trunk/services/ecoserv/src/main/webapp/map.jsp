@@ -22,6 +22,9 @@
 	src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<s:property value="key" />"
 	type="text/javascript"></script>
 
+<!-- Load google ajax api -->
+<script type='text/javascript' src='http://www.google.com/jsapi'></script>
+
 <link rel="stylesheet" type="text/css"
 	href="/public/ext/resources/css/ext-all.css">
 <script type="text/javascript" src="/public/ext/adapter/ext/ext-base.js"></script>
@@ -43,6 +46,7 @@
 <script type="text/javascript" src="js/Main.js"></script>
 <SCRIPT type="text/javascript">
 	var username = 'test';
+	google.load('visualization', '1', {'packages':['annotatedtimeline']});
 </SCRIPT>
 
 </head>

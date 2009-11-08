@@ -37,6 +37,7 @@ import org.omg.stub.java.rmi._Remote_Stub;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import cn.geodata.models.csv.CSVReader;
+import cn.geodata.models.ecoserv.actions.Operations;
 import junit.framework.TestCase;
 
 public class OperationsTest extends TestCase {
@@ -132,7 +133,7 @@ public class OperationsTest extends TestCase {
 		return jfreechart;
 	}
 	
-	public void atestGenerateSpider() throws Exception {
+	public void testGenerateSpider() throws Exception {
 		DecimalFormat _format = new DecimalFormat("00");
 
 		List<CSVReader> _readers = new ArrayList<CSVReader>();
@@ -213,6 +214,8 @@ public class OperationsTest extends TestCase {
 		
 		JFreeChart _plot = new JFreeChart(null,
 				TextTitle.DEFAULT_FONT, _spider, false);
+
+		_plot.setTitle(new TextTitle("Scenarios", new Font("Arial", Font.BOLD, 13)));
 		
 		LegendTitle _legend = new LegendTitle(_spider);
 		_legend.setPosition(RectangleEdge.TOP);
