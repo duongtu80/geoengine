@@ -39,3 +39,8 @@ body {
 	border-width: 0px;
 	border-spacing: 0px;
 }
+
+.imgLogo{
+	border: 0px solid #000000;
+	margin: 1px;
+}

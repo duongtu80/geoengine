@@ -41,22 +41,25 @@
 <script type="text/javascript" src="js/Maps.js"></script>
 <script type="text/javascript" src="js/Model.js"></script>
 <script type="text/javascript" src="js/Main.js"></script>
+<SCRIPT type="text/javascript">
+	var username = 'test';
+</SCRIPT>
 
 </head>
 <body>
 <div id="bodyPanel">
 <div id="topPanel"></div>
 <div id="mainPanel"></div>
-<div id="bottomPanel" style="height: 100px;">
-	<img src="img/logo/usgs-logo.gif" />
-	<img src="img/logo/usda-logo.jpg" />
-	<img src="img/logo/NRCS-logo.jpg" />
-	<img src="img/logo/us-fish-wildlife-logo.jpg" />
-	<img src="img/logo/CAS-logo.jpg	" />
-	<img src="img/logo/FSA-logo.jpg" />
-	<img src="img/logo/NASA-logo.gif" />
-	<img src="img/logo/TNC-logo.jpg" />
-	<img src="img/logo/UMD-logo.jpg" />
+<div id="bottomPanel" style="height: 120px; text-align: center; padding-top: 10px;">
+	<a href="http://www.usgs.gov/"><img class="imgLogo" src="img/logo/usgs-logo.gif" /></a>
+	<a href="http://www.usgs.gov/"><img class="imgLogo" src="img/logo/usda-logo.jpg" /></a>
+	<a href="http://www.usgs.gov/"><img class="imgLogo" src="img/logo/NRCS-logo.jpg" /></a>
+	<a href="http://www.usgs.gov/"><img class="imgLogo" src="img/logo/us-fish-wildlife-logo.jpg" /></a>
+	<a href="http://www.usgs.gov/"><img class="imgLogo" src="img/logo/CAS-logo.jpg	" /></a>
+	<a href="http://www.usgs.gov/"><img class="imgLogo" src="img/logo/FSA-logo.jpg" /></a>
+	<a href="http://www.usgs.gov/"><img class="imgLogo" src="img/logo/NASA-logo.gif" /></a>
+	<a href="http://www.usgs.gov/"><img class="imgLogo" src="img/logo/TNC-logo.jpg" /></a>
+	<a href="http://www.umd.edu/"><img class="imgLogo" src="img/logo/UMD-logo.jpg" /></a>
 </div>
 </div>
 </body>

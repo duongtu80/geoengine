@@ -6,7 +6,7 @@ function Main() {
 	this.progressQueue = new ProgressQueue();
 	this.settingWindow = initModelSetting();
 	this.model = new Model();
-	this.map = new Maps(-99.096349011162, 47.103407185113, 12);
+	this.map = new Maps(-99.096349011162, 47.1, 14);
 
 	this.init = function() {
 		// this.map.init();
@@ -17,7 +17,7 @@ function Main() {
 			collapsible : false,
 			renderTo : 'mainPanel',
 			width : 1000,
-		 // items : [ this.initMapPanel() ],
+			// items : [ this.initMapPanel() ],
 			items : [ {
 				collapsible : false,
 				layout : 'table',
@@ -27,18 +27,53 @@ function Main() {
 				items : [ this.initMultipleMaps() ],
 				tbar : this.initMapToolBar(),
 				bbar : this.initMapStatusBar()
+			}, {
+				id: 'panelOutput',
+//				title : 'Output',
+				height: 460,
+				xtype: 'panel',
+				tbar: ['-'],
+				collapsed: true,
+				bbar: [{text: 'Download', iconCls: 'downloadCls', scope: this, handler: this.downloadData}],
+				html : '<div>Simulation result...</div>'
+			} ],
+			tbar : [{
+				text: '<b>EcoServ Simulation</b>'
+			}, '->', {
+				text : 'Land Cover Editor',
+				iconCls : 'loadLandCoverCls',
+				scope : this,
+				handler : function() {
+					window.open('~landcover.do');
+				}
+			}, {
+				text : 'Login',
+				iconCls : 'logginCls',
+				scope : this,
+				handler : function() {
+					Ext.Msg.alert('Login...');
+				}
+			}, {
+				text : 'Help',
+				iconCls : 'helpCls',
+				scope : this,
+				handler : function() {
+					window.open('http://ecoserv.pbworks.com/');
+				}
 			} ]
 		});
-
+		
+		this.results = [];
+		
 		this.utils.init();
 		this.progressQueue.init(this);
 		this.model.init(this);
-
 		this.map.resetExtent();
 
-		this.progressQueue.pushTask('test',
-				'http://127.0.0.1:59080/ecoserv/_loadScenario.do', null, this,
-				this.initOutput);
+		// this.progressQueue.pushTask('test',
+		// 'http://127.0.0.1:59080/ecoserv/_loadScenario.do', null, this,
+		// this.initOutput);
+
 		// this.map.map.setCenter(this.map.transformGeo(new OpenLayers.LonLat(
 		// -99.096349011162, 47.103407185113)), 12);
 
@@ -47,38 +82,154 @@ function Main() {
 		// this.progressQueue.pushProcess('Load models', wetland.loadWpsModel,
 		// null);
 	};
+	
+	this.downloadData = function() {
+		var _data = [];
+
+		var _toolbar = Ext.getCmp('panelOutput').getTopToolbar();
+		var _t = _toolbar.find('isScenario', true);
+		
+		for(var i=0;i<_t.length;i++){
+			_data.push([_t[i].dataId, _t[i].text]);
+		}
+
+		var _store = new Ext.data.ArrayStore( {
+				idIndex: 0,
+				fields : [ 'id', 'title'],
+				data : _data
+			});
+		
+		var _combo = new Ext.form.ComboBox( {
+			fieldLabel : 'Simulation',
+			typeAhead : true,
+			forceSelection : true,
+			name : 'landcover',
+			triggerAction : 'all',
+			lazyRender : true,
+			mode : 'local',
+			store : _store,
+			valueField : 'id',
+			displayField : 'title'
+		});
+
+		var _win = new Ext.Window(
+				{
+					layout : 'fit',
+					title : 'Download Simulation Result',
+					width : 500,
+					height : 200,
+					closeAction : 'hide',
+					plain : true,
+					items : new Ext.FormPanel( {
+						bodyStyle : 'padding:5px; background-color: #FFFFFF;',
+						border : false,
+						labelAlign : 'right',
+						items : [ _combo]
+					}),
+
+					buttons : [
+							{
+								text : 'Download',
+								scope : this,
+								handler : function() {
+									var _val = _combo.store
+											.getAt(_combo.selectedIndex);
+									if (!_val) {
+										Ext.Msg
+												.alert('Warning',
+														'Please select a item from the list');
+										return;
+									}
+									window.open('_download.do?txt=' + _val.get('id'));
+									_win.hide();
+								}
+							}, {
+								text : 'Close',
+								handler : function() {
+									_win.hide();
+								}
+							} ]
+				});
+		_win.show();
+	};
 
 	this.initOutput = function(response) {
 		var _p = Ext.decode(response.responseText);
+		var _name = _p.scenarios[0];
+		
+		if(! this.chartParams){
+			this.chartParams = _p.params;
+		}
+		
+		var _panel = Ext.getCmp('panelOutput');
+		var _toolbar = _panel.getTopToolbar();
+		
+		var _t = _toolbar.find('text', _name);
+		for(var i=0;i<_t.length;i++){
+			_toolbar.remove(_t[i]);
+			_t[i].destroy();
+		}
+		this.results.remove(_name);
+		
+		//Add the result to result collection
+		this.results.push(_name);
+		_toolbar.add({text: _name, pressed: true, isScenario: true, dataId: _p.id, scope: this, handler: function(b, e){
+			b.toggle();
+			this.updateResult();
+		}});
+		
+		this.updateResult();
+	};
+	
+	this.updateResult = function() {
+		var _panel = Ext.getCmp('panelOutput');
+		var _toolbar = _panel.getTopToolbar();
 
-		var _txt = '';
-		_txt += '<tr><td class="chartCell" rowspan="4"><img class="chartImage" src="_loadSpider.do?' + Ext.urlEncode({'txt': _p.id}) + '" /></td>';
-		for ( var i = 0; i < _p.params.length; i++) {
-			if(i%3 == 0 && i > 0){
-				_txt += '<tr>';
-			}
-			_txt += '<td class="chartCell"><img class="chartImage" src="_loadParam.do?' + Ext.urlEncode( {
-				'param' : _p.params[i], 'txt': _p.id
-			}) + '"/></td>';
-			if(i%3 == 2){
-				_txt += '</tr>';
+		var _outputs = [];
+		for(var i=0;i<this.results.length;i++){
+			_t = _toolbar.find('text', this.results[i]);
+			if(_t.length > 0){
+				if(_t[0].pressed){
+					_outputs.push(_t[0].dataId);
+				}
 			}
 		}
-
-		var _html = '<table class="chartPanel">' + _txt + '</table>';
-		var _panel = new Ext.Panel( {
-			title : 'Output',
-			heigth : 400,
-			collapsible : false,
-			// layout : 'table',
-			// layoutConfig : {
-			// columns : 5
-			// },
-			html : _html
-		});
-
-		this.mainPanel.add(_panel);
-		this.mainPanel.doLayout();
+		
+		var _html = '';
+		if(_outputs.length == 0){
+			_html = '<div>No result has been selected</div>';
+		}
+		else{
+			var _txt = '';
+			_txt += '<tr><td class="chartCell" rowspan="4"><img class="chartImage" src="_loadSpiders.do?' + Ext
+					.urlEncode( {
+						'txt' : _outputs.join(',')
+					}) + '" /></td>';
+			for ( var i = 0; i < this.chartParams.length; i++) {
+				if (i % 3 == 0 && i > 0) {
+					_txt += '<tr>';
+				}
+				_txt += '<td class="chartCell"><img class="chartImage" src="_loadParams.do?' + Ext
+						.urlEncode( {
+							'param' : this.chartParams[i],
+							'txt' : _outputs.join(',')
+						}) + '"/></td>';
+				if (i % 3 == 2) {
+					_txt += '</tr>';
+				}
+			}
+			_html = '<table class="chartPanel">' + _txt + '</table>';
+		}
+		
+		_panel.body.update(_html);
+		_panel.doLayout();
+		
+		if(_panel.collapsed == true && _outputs.length > 0){
+			_panel.expand(true);
+		}
+//		else{
+//			_panel.collapse(true);
+//		}
 	};
 
 	this.initOutputPanel = function() {
@@ -105,8 +256,8 @@ function Main() {
 	this.initMultipleMapPanel = function(map) {
 		var mapPanel = new GeoExt.MapPanel( {
 			id : map.id,
-			title : map.title,
-			height : 350,
+			// title : map.title,
+			height : 400,
 			width : 500,
 			map : map,
 			items : [ {
@@ -116,10 +267,86 @@ function Main() {
 				x : 10,
 				y : 20,
 				plugins : new GeoExt.ZoomSliderTip()
-			} ]
+			} ],
+			tbar : [ {
+				text : 'Layers',
+				iconCls : 'layersCls',
+				map : map,
+				handler : function() {
+					main.selectLandcover(this.map);
+				}
+			},new Ext.Toolbar.Separator() ]
 		});
 
 		return mapPanel;
+	};
+
+	this.selectLandcover = function(map) {
+		var _store = new Ext.data.JsonStore( {
+			root : 'landcover',
+			idProperty : 'id',
+			fields : [ 'title', 'id' ],
+			url : 'landcover/_listLand.do?username=' + username
+		});
+		_store.load();
+
+		var _combo = new Ext.form.ComboBox( {
+			fieldLabel : 'Land Cover',
+			typeAhead : true,
+			forceSelection : true,
+			name : 'landcover',
+			triggerAction : 'all',
+			lazyRender : true,
+			mode : 'local',
+			store : _store,
+			valueField : 'id',
+			displayField : 'title'
+		});
+
+		var _win = new Ext.Window(
+				{
+					layout : 'fit',
+					title : 'Load Land Cover Scenario',
+					width : 500,
+					height : 200,
+					closeAction : 'hide',
+					plain : true,
+					items : new Ext.FormPanel( {
+						bodyStyle : 'padding:5px; background-color: #FFFFFF;',
+						border : false,
+						labelAlign : 'right',
+						items : [ _combo]
+					}),
+
+					buttons : [
+							{
+								text : 'Load',
+								scope : this,
+								handler : function() {
+									var _val = _combo.store
+											.getAt(_combo.selectedIndex);
+									if (!_val) {
+										Ext.Msg
+												.alert('Warning',
+														'Please select a item from the list');
+										return;
+									}
+									_win.hide();
+
+									main.progressQueue.pushTask(
+											'Load Land Cover Sceniaro',
+											'landcover/_loadLand.do', {
+												id : _val.get('id')
+											}, map, main.map.parseLandcover);
+								}
+							}, {
+								text : 'Close',
+								handler : function() {
+									_win.hide();
+								}
+							} ]
+				});
+		_win.show();
 	};
 
 	this.initMapPanel = function() {
@@ -142,114 +369,175 @@ function Main() {
 	};
 
 	this.initMapToolBar = function() {
-		var _bar = [ {
-			// title : 'Navigation',
-			xtype : 'buttongroup',
-			// columns : 9,
-			width : 200,
-			defaults : {
-				scale : 'small'
-			},
+		var _store = new Ext.data.JsonStore( {
+			root : 'landcover',
+			idProperty : 'id',
+			fields : [ 'title', 'id' ],
+			url : 'landcover/_listLand.do?username=' + username
+		});
+		_store.load();
+
+		var _landcover = new Ext.form.ComboBox( {
+			id: 'modelLandCover',
+			fieldLabel : 'Land Cover',
+			typeAhead : true,
+			forceSelection : true,
+			name : 'landcover',
+			triggerAction : 'all',
+			lazyRender : true,
+			width: 120,
+			mode : 'local',
+			store : _store,
+			valueField : 'title',
+			displayField : 'title'
+		});
+
+		var _bar = new Ext.Toolbar( {
 			items : [ {
-				text : 'Reset',
-				iconCls : 'mapResetExtentCls',
-				scope : this,
-				handler : function() {
-					this.map.resetExtent();
-				}
-			}, new Ext.Toolbar.Separator(), {
-				text : 'Pan',
-				iconCls : 'mapPanCls',
-				scope : this,
-				handler : function() {
-					this.map.resetExtent();
-				}
-			}, new Ext.Toolbar.Separator(), {
-				text : 'Previous',
-				iconCls : 'mapPreviousCls',
-				scope : this,
-				handler : function() {
-					this.map.resetExtent();
-				}
-			}, {
-				text : 'Next',
-				iconCls : 'mapNextCls',
-				scope : this,
-				handler : function() {
-					this.map.resetExtent();
-				}
-			}, new Ext.Toolbar.Separator(), {
-				text : 'Zoom',
-				iconCls : 'mapZoominCls',
-				scope : this,
-				xtype : 'splitbutton',
-				menu : [ {
-					text : 'Zoomin',
-					iconCls : 'mapZoominCls',
+				// title : 'Navigation',
+				xtype : 'buttongroup',
+				// columns : 9,
+				width : 200,
+				defaults : {
+					scale : 'small'
+				},
+				items : [ {
+					text : 'Navigate',
+					isTool : true,
+					toolGroup : 'navigation',
+					toolName : 'navigation',
+					map : this.map,
+					iconCls : 'mapPanCls',
+					handler : this.toolInvoke
+				}, new Ext.Toolbar.Separator(), {
+					text : 'Reset',
+					iconCls : 'mapResetExtentCls',
 					scope : this,
 					handler : function() {
 						this.map.resetExtent();
 					}
 				}, {
-					text : 'Zoomout',
-					iconCls : 'mapZoomoutCls',
+					text : 'Previous',
+					iconCls : 'mapPreviousCls',
 					scope : this,
 					handler : function() {
-						this.map.resetExtent();
+						this.map.previousExtent();
 					}
+				}, {
+					text : 'Next',
+					iconCls : 'mapNextCls',
+					scope : this,
+					handler : function() {
+						this.map.nextExtent();
+					}
+				} /*
+					 * , new Ext.Toolbar.Separator(), { text : 'Select', isTool :
+					 * true, toolGroup : 'navigation', toolName :
+					 * 'selectFeature', map : this.map, iconCls :
+					 * 'mapZoomoutCls', handler : this.toolInvoke }
+					 */]
+			}, {
+				// title : 'Models',
+				xtype : 'buttongroup',
+				// columns : 10,
+				defaults : {
+					scale : 'small'
+				},
+				items : [ {
+					text : 'Setting',
+					iconCls : 'modelHydroCls',
+					scope : this,
+					handler : function() {
+						this.settingWindow.show();
+					}
+				}, new Ext.Toolbar.Separator(), {
+					text : 'Period:',
+					xtype : 'tbtext'
+				}, {
+					id : 'modelRunStartDate',
+					xtype : 'datefield'
+				}, {
+					text : '-',
+					xtype : 'tbtext'
+				}, {
+					id : 'modelRunEndDate',
+					xtype : 'datefield'
+				}, new Ext.Toolbar.Separator(), {
+					text : 'Region:',
+					xtype : 'tbtext'
+				}, {
+					id : 'modelRunWetland',
+					xtype : 'combo',
+					width : 100,
+					typeAhead : true,
+					triggerAction : 'all',
+					lazyRender : true,
+					mode : 'local',
+					store : new Ext.data.ArrayStore( {
+						id : 0,
+						fields : [ 'myId', 'displayText' ],
+						data : [ [ 'basin1', 'Basin 1' ] ]
+					}),
+					valueField : 'myId',
+					displayField : 'displayText'
+				}, new Ext.Toolbar.Separator(), {
+					text : 'Land Cover:',
+					xtype : 'tbtext'
+				}, _landcover, {
+					text : 'Run',
+					iconCls : 'modelWaterfowlCls',
+					scope : this.model,
+					handler : this.model.runModel
 				} ]
 			} ]
-		}, {
-			// title : 'Models',
-			xtype : 'buttongroup',
-			// columns : 10,
-			defaults : {
-				scale : 'small'
-			},
-			items : [ {
-				text : 'Setting',
-				iconCls : 'modelHydroCls',
-				scope : this,
-				handler : function() {
-					this.settingWindow.show();
-				}
-			}, new Ext.Toolbar.Separator(), {
-				text : 'Period:',
-				xtype : 'tbtext'
-			}, {
-				id : 'modelRunStartDate',
-				xtype : 'datefield'
-			}, {
-				text : '-',
-				xtype : 'tbtext'
-			}, {
-				id : 'modelRunEndDate',
-				xtype : 'datefield'
-			}, new Ext.Toolbar.Separator(), {
-				text : 'Wetland:',
-				xtype : 'tbtext'
-			}, {
-				id : 'modelRunWetland',
-				xtype : 'combo',
-				typeAhead : true,
-				triggerAction : 'all',
-				lazyRender : true,
-				mode : 'local',
-				store : new Ext.data.ArrayStore( {
-					id : 0,
-					fields : [ 'myId', 'displayText' ],
-					data : [ [ 'P1', 'P1' ], [ 2, 'item2' ] ]
-				}),
-				valueField : 'myId',
-				displayField : 'displayText'
-			}, {
-				text : 'Run',
-				iconCls : 'modelWaterfowlCls',
-				handler : this.model.runModel
-			} ]
-		} ];
+		});
+
+		_bar.cascade(this.toolConnect, this);
 
 		return _bar;
+	};
+
+	this.toolConnect = function(c) {
+		if (c.isTool == true) {
+			console.debug('++ ' + c.toolName);
+			for ( var i = 0; i < this.map.maps[0].controls.length; i++) {
+				var _c = this.map.maps[0].controls[i];
+				if (_c.tid == c.toolName) {
+					c.pressed = _c.active;
+					// c.toggle(_c.active);
+
+					_c.events.register("activate", c, this.activateEvent);
+					_c.events.register("deactivate", c, this.deactivateEvent);
+
+					break;
+				}
+			}
+		}
+	};
+
+	this.activateEvent = function(object, element) {
+		this.toggle(true);
+	};
+
+	this.deactivateEvent = function(object, element) {
+		this.toggle(false);
+	};
+
+	this.toolInvoke = function() {
+		// alert(this.toolGroup + '|' + this.toolName);
+		for ( var i = 0; i < this.map.maps.length; i++) {
+			var _m = this.map.maps[i];
+			for ( var j = 0; j < _m.controls.length; j++) {
+				if (_m.controls[j].group != this.toolGroup)
+					continue;
+
+				if (_m.controls[j].tid != this.toolName) {
+					_m.controls[j].deactivate();
+				} else {
+					_m.controls[j].activate();
+				}
+			}
+		}
 	};
 
 	this.initMapStatusBar = function() {
