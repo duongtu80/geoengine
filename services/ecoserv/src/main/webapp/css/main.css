@@ -19,14 +19,30 @@ body {
 	background-image: url('../img/EcoServ_Logo7.jpg');
 }
 
-#chartCell {
+.chartCell {
 	margin: 0px;
 	padding: 0px;
-	border-width: 0px;
 	border-spacing: 0px;
+	border-width: 0px;
+	border-collapse: 0px;
 }
 
-#chartPanel {
+.chartSpider {
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid #999999;
+	border-spacing: 0px;
+}
+	
+.chartImage {
+	margin: 0px 0px 0px 1px;
+	padding: 0px;
+	border: 1px solid #999999;
+	border-spacing: 0px;
+	cursor: pointer;
+}
+
+.chartPanel {
 	margin: 0px;
 	padding: 0px;
 	border-width: 0px;

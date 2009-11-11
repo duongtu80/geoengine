@@ -34,7 +34,7 @@ public class Operations {
 		this.contentDisposition = "inline;filename=output.xml";
 	}
 	
-	public String loadScenario() throws IOException{
+	public String loadScenario() throws Exception{
 		log.info(this.param);
 		
 		JSONObject _param = JSONObject.fromString(this.param);
