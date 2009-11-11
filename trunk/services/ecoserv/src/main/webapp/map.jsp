@@ -5,8 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<!-- Avoid the incompatibilities with IE8 -->
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
 
 <title>EcoServ (Prairie Pothole Models)</title>
 
@@ -44,13 +43,21 @@
 <script type="text/javascript" src="js/Maps.js"></script>
 <script type="text/javascript" src="js/Model.js"></script>
 <script type="text/javascript" src="js/Main.js"></script>
+
+<script type="text/javascript" 
+src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"> </script>
 <SCRIPT type="text/javascript">
+	CFInstall.check({
+	    node: "placeholder"
+	  });
+
 	var username = 'test';
 	google.load('visualization', '1', {'packages':['annotatedtimeline']});
 </SCRIPT>
 
 </head>
 <body>
+<div id="placeholder"></div>
 <div id="bodyPanel">
 <div id="topPanel"></div>
 <div id="mainPanel"></div>

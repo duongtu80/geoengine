@@ -272,7 +272,7 @@ function mapInit() {
 	}
 
 	var mainPanel = new Ext.Panel( {
-		title : 'Main',
+//		title : '<b>Land Cover Editor</b>',
 		collapsible : false,
 		layout : 'table',
 		layoutConfig : {
@@ -280,6 +280,7 @@ function mapInit() {
 		},
 		renderTo : 'mainPanel',
 		width : 1000,
+		tbar: [{text: '<b>Land Cover Editor</b>'}, '->', {text: 'EcoServ', handler: function(){window.open('~view.do');}}],
 		items : [ initMapPanel() ]
 	});
 

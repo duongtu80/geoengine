@@ -159,6 +159,42 @@ public class LandCoverMgr {
 	}
 	
 	/**
+	 * Get land cover instance by ID
+	 * 
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 */
+	public LandCover getLandCover(String title) throws SQLException{
+		Connection _con = ConnectionPool.getConnection();
+		PreparedStatement _state = null;
+		try{
+			_state = _con.prepareStatement("SELECT \"owner\", width, height, minx, miny, maxx, maxy, cellx, celly, cells, title, note, id FROM landcover WHERE title=?");
+			_state.setString(1, title);
+
+			_state.execute();
+			ResultSet _rs = _state.getResultSet();
+			
+			if(_rs.next()){
+				Envelope2D _extent = new Envelope2D(null, _rs.getDouble(4), _rs.getDouble(5), _rs.getDouble(6) - _rs.getDouble(4), _rs.getDouble(7) - _rs.getDouble(5));
+				LandCover _landCover = new LandCover(_rs.getInt(13), _rs.getString(11), _rs.getString(12), _extent, _rs.getDouble(8), _rs.getDouble(9), (Integer[])_rs.getArray(10).getArray());
+				
+				return _landCover;
+			}
+			
+			log.warning("Failed to get landcover with title " + title);
+			return null;
+		}
+		finally{
+			if(_state != null){
+				_state.close();
+			}
+			_con.close();
+		}
+	}
+	
+
+	/**
 	 * Save a new land cover instance into database and create new ID for it
 	 * 
 	 * @param landcover

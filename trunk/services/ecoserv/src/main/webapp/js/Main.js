@@ -201,7 +201,7 @@ function Main() {
 		}
 		else{
 			var _txt = '';
-			_txt += '<tr><td class="chartCell" rowspan="4"><img class="chartImage" src="_loadSpiders.do?' + Ext
+			_txt += '<tr><td class="chartCell" rowspan="4"><img class="chartSpider" src="_loadSpiders.do?' + Ext
 					.urlEncode( {
 						'txt' : _outputs.join(',')
 					}) + '" /></td>';
@@ -209,7 +209,7 @@ function Main() {
 				if (i % 3 == 0 && i > 0) {
 					_txt += '<tr>';
 				}
-				_txt += '<td class="chartCell"><img onclick="main.showChart(\'' + _outputs.join(',') + '\', \'' + this.chartParams[i] + '\');" class="chartImage" src="_loadParams.do?' + Ext
+				_txt += '<td class="chartCell"><img class="chartImage " onclick="main.showChart(\'' + _outputs.join(',') + '\', \'' + this.chartParams[i] + '\');" class="chartImage" src="_loadParams.do?' + Ext
 						.urlEncode( {
 							'param' : this.chartParams[i],
 							'txt' : _outputs.join(',')
@@ -227,9 +227,6 @@ function Main() {
 		if(_panel.collapsed == true && _outputs.length > 0){
 			_panel.expand(true);
 		}
-// else{
-// _panel.collapse(true);
-// }
 	};
 	
 	this.showChart = function(ids, param) {
@@ -481,14 +478,14 @@ function Main() {
 						this.map.resetExtent();
 					}
 				}, {
-					text : 'Previous',
+//					text : 'Previous',
 					iconCls : 'mapPreviousCls',
 					scope : this,
 					handler : function() {
 						this.map.previousExtent();
 					}
 				}, {
-					text : 'Next',
+//					text : 'Next',
 					iconCls : 'mapNextCls',
 					scope : this,
 					handler : function() {
@@ -563,7 +560,6 @@ function Main() {
 
 	this.toolConnect = function(c) {
 		if (c.isTool == true) {
-			console.debug('++ ' + c.toolName);
 			for ( var i = 0; i < this.map.maps[0].controls.length; i++) {
 				var _c = this.map.maps[0].controls[i];
 				if (_c.tid == c.toolName) {

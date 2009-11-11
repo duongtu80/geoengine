@@ -1,5 +1,6 @@
 package cn.geodata.models.ecoserv.simulate;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -22,8 +23,10 @@ import org.jfree.ui.RectangleEdge;
 
 public class Scenarios {
 	private List<String> params;
+	private List<Color> colors;
 
 	public Scenarios() {
+		this.colors = Arrays.asList(new Color[] {Color.red, Color.blue, Color.green, Color.gray, Color.yellow, Color.cyan, Color.orange, Color.pink, Color.darkGray});
 		this.params = Arrays.asList(new String[]{"Water Storage", "Soil Erosion", "Water Quality", "GW Recharge", "Flor Quality", "Biomass", "CarbonSeq", "GHG", "Amphibians", "Waterfowl", "Shorebirds", "Pollinators"});
 	}
 	
@@ -71,12 +74,13 @@ public class Scenarios {
 	
 	public void generateLineChart(List<Scenario> scenarios, String param, OutputStream stream, int width, int height) throws Exception {
 	    TimeSeriesCollection _dataset = new TimeSeriesCollection();
-        
 	    List<Date> _dates = new ArrayList<Date>();
+        
+	    List<TimeSeries> _list = new ArrayList<TimeSeries>();
 		for(Scenario _scenario: scenarios){
 			for(String _s: _scenario.getScenarios()){
 		        TimeSeries s1 = new TimeSeries(_s, Month.class);
-		        for(int j=_scenario.getDates().size() - 1;j >= 0;j--){
+		        for(int j=0;j<_scenario.getDates().size();j++){
 		        	Date _date = new Date(_scenario.getDates().get(j));
 		        	Double _val = _scenario.getValues().get(_s).get(j).get(param);
 		        	
@@ -86,7 +90,7 @@ public class Scenarios {
 		        		_dates.add(_date);
 		        	}
 		        }
-		        _dataset.addSeries(s1);
+		        _list.add(s1);
 			}
 		}
 		
@@ -95,12 +99,20 @@ public class Scenarios {
         	Date _date = _dates.get(j);
         	s0.add(new Month(_date.getMonth() + 1, _date.getYear() + 1900), 0.3);
         }
+        
         _dataset.addSeries(s0);
+        for(int i=0;i<_list.size();i++){
+        	_dataset.addSeries(_list.get(i));
+        }
         
 		JFreeChart _plot = ChartFactory.createTimeSeriesChart(param, null, null, _dataset, false, false, false);
 		_plot.getXYPlot().getRangeAxis().setRange(0, 1);
 		_plot.getXYPlot().getRangeAxis().setVisible(false);
 		_plot.getTitle().setFont(new Font("Verdana", Font.PLAIN, 11));
+		
+		for(int i=0;i<scenarios.size() + 1;i++){
+			_plot.getXYPlot().getRenderer(0).setSeriesPaint(i, this.colors.get(i));
+		}
 		
 		ChartUtilities.writeChartAsPNG(stream, _plot, width, height);
 	}
