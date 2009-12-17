@@ -1,0 +1,62 @@
+{
+	"Mallard":{
+		icon:"images/waterfowls/mallard.png",
+		description: "Mallard",
+		link: "http://en.wikipedia.org/wiki/mallard"
+	},
+	"Gadwall":{
+		icon:"images/waterfowls/gadwall.png",
+		description: "Gadwall",
+		link: "http://en.wikipedia.org/wiki/gadwall"
+	},
+	"American Wigeon":{
+		icon:"images/waterfowls/american_wigeon.png",
+		description: "American Wigeon",
+		link: "http://en.wikipedia.org/wiki/american_wigeon"
+	},
+	"Green Winged Teal":{
+		icon:"images/waterfowls/green_winged_teal.png",
+		description: "Green Winged Teal",
+		link: "http://en.wikipedia.org/wiki/green_winged_teal"
+	},
+	"Blue Winged Teal":{
+		icon:"images/waterfowls/blue_winged_teal.png",
+		description: "Blue Winged Teal",
+		link: "http://en.wikipedia.org/wiki/blue_winged_teal"
+	},
+	"Northern Shoveler":{
+		icon:"images/waterfowls/northern_shoveler.png",
+		description: "Northern Shoveler",
+		link: "http://en.wikipedia.org/wiki/northern_shoveler"
+	},
+	"Northern Pintail":{
+		icon:"images/waterfowls/northern_pintail.png",
+		description: "Northern Pintail",
+		link: "http://en.wikipedia.org/wiki/northern_pintail"
+	},
+	"Redhead":{
+		icon:"images/waterfowls/redhead.png",
+		description: "Redhead",
+		link: "http://en.wikipedia.org/wiki/redhead"
+	},
+	"Canvasback":{
+		icon:"images/waterfowls/canvasback.png",
+		description: "Canvasback",
+		link: "http://en.wikipedia.org/wiki/canvasback"
+	},
+	"Lesser Scaup":{
+		icon:"images/waterfowls/lesser_scaup.png",
+		description: "Lesser Scaup",
+		link: "http://en.wikipedia.org/wiki/lesser_scaup"
+	},
+	"Ring Necked Duck":{
+		icon:"images/waterfowls/ring_necked_duck.png",
+		description: "Ring Necked Duck",
+		link: "http://en.wikipedia.org/wiki/ring_necked_duck"
+	},
+	"Ruddy Duck":{
+		icon:"images/waterfowls/ruddy_duck.png",
+		description: "Ruddy Duck",
+		link: "http://en.wikipedia.org/wiki/ruddy_duck"
+	}
+}
