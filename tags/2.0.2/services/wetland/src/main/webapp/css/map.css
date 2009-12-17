@@ -1,0 +1,72 @@
+@CHARSET "UTF-8";
+
+#map {
+	width: 700px;
+	height: 430px;
+	border: 1px solid #AAAAAA;
+	cursor: crosshair;
+}
+
+div.resultItem {
+	line-height: 18px;
+	vertical-align: bottom;
+}
+
+div.progressRunning {
+	margin-left: 0px;
+	margin-top: 410px;
+	line-height: 20px;
+	background: white;
+	position: absolute;
+	z-index: 2000;
+	visibility: visible;
+	width: 500px;
+	height: 20px;
+	padding-left: 30px;
+	padding-top: 0px;
+	background-image: url('../images/running.gif');
+	background-position: left center;
+	background-repeat: no-repeat;
+	filter:alpha(opacity=50);
+	-moz-opacity:0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
+}
+
+div.progressReady {
+	position: absolute;
+	visibility: hidden;
+	z-index: 2000;
+}
+
+div.itemArea {
+	border: 0px solid #AAAAAA;
+	margin: 3px;
+	padding: 2px;
+}
+
+div.itemBar {
+	
+}
+
+div.itemName {
+	font-weight: bolder;
+	display: inline;
+}
+
+div.itemValue {
+	display: inline;
+}
+
+div.olLayerWaterFowlsTitle{
+	font-weight: bold;
+	font-size: 13px;
+}
+
+div.olLayerWaterFowlsText{
+	font-size: 13px;
+}
+
+.olLayerGoogleCopyright, .olLayerGooglePoweredBy{
+	display: none;	
+}

@@ -1,0 +1,15 @@
+lon	lat	title	description	iconSize	iconOffset	icon
+-1.1031295415684914E7	5958454.110172364	Mallard	Mallard<img src="images/waterfowls/mallard.gif"/>	25,25	-12.5,-12.5	images/waterfowls/mallard.gif
+-1.1031387139440848E7	5958670.795935111	Mallard	Mallard	25,25	-12.5,-12.5	images/waterfowls/mallard.gif
+-1.1031111216828387E7	5958459.645159377	Gadwall	Gadwall	25,25	-12.5,-12.5	images/waterfowls/gadwall.gif
+-1.1031249479738763E7	5958603.509068586	Gadwall	Gadwall	25,25	-12.5,-12.5	images/waterfowls/gadwall.gif
+-1.1031137475009566E7	5958471.6855209675	Blue Winged Teal	Blue Winged Teal	25,25	-12.5,-12.5	images/waterfowls/blue_winged_teal.gif
+-1.103111708336074E7	5958401.543353585	Blue Winged Teal	Blue Winged Teal	25,25	-12.5,-12.5	images/waterfowls/blue_winged_teal.gif
+-1.1031259155075543E7	5958772.27686946	Blue Winged Teal	Blue Winged Teal	25,25	-12.5,-12.5	images/waterfowls/blue_winged_teal.gif
+-1.1031141178113148E7	5958762.323286488	Blue Winged Teal	Blue Winged Teal	25,25	-12.5,-12.5	images/waterfowls/blue_winged_teal.gif
+-1.1031283860055218E7	5958684.678629095	Blue Winged Teal	Blue Winged Teal	25,25	-12.5,-12.5	images/waterfowls/blue_winged_teal.gif
+-1.1031140242573854E7	5958580.6875306945	Northern Shoveler	Northern Shoveler	25,25	-12.5,-12.5	images/waterfowls/northern_shoveler.gif
+-1.1030878688751157E7	5958597.850711838	Northern Pintail	Northern Pintail	25,25	-12.5,-12.5	images/waterfowls/northern_pintail.gif
+-1.1031127244570047E7	5958779.0313195735	Redhead	Redhead	25,25	-12.5,-12.5	images/waterfowls/redhead.gif
+-1.1031245113133099E7	5958393.200689821	Redhead	Redhead<img src="images/waterfowls/redhead.gif"/>	25,25	-12.5,-12.5	images/waterfowls/redhead.gif
+-1.1031154682793267E7	5958612.174183686	Ruddy Duck	Ruddy Duck	25,25	-12.5,-12.5	images/waterfowls/ruddy_duck.gif
