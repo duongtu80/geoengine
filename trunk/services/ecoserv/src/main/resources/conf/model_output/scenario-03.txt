@@ -1,6 +1,0 @@
-Water Storage,Soil Erosion,Water Quality,GW Recharge,Flor Quality,Biomass,CarbonSeq,GHG,Amphibians,Waterfowl,Shorebirds,Pollinators
-0,-0.2,0.01,-0.2,-0.1,-80,-0.5,0.2,0,0.1,-0.2,-0.1
-120,20,0.5,30,15,6000,25,50,0,0,10,300
-20,2,0.1,4,2,500,5,5,10,50,20,50
-150,0,0,50,40,10000,50,0,20,60,40,500
-50,30,3,0,0,1500,0,100,0,0,0,0
