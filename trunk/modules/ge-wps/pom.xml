@@ -1,0 +1,21 @@
+<?xml version="1.0"?><project>
+  <parent>
+    <artifactId>modules</artifactId>
+    <groupId>cn.geodata.models</groupId>
+    <version>3.0.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>ge-wps</artifactId>
+  <name>WPS Module</name>
+  <dependencies>
+    <dependency>
+      <groupId>cn.geodata.models</groupId>
+      <artifactId>ge-library</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+    </dependency>
+  </dependencies>
+</project>

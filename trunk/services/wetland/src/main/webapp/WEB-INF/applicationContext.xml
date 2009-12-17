@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="dayMetReader" class="cn.geodata.models.wetland.actions.map.DayMetReader">
+		<property name="url" value="http://www.daymet.org/getRawData.do?lon=%f&amp;lat=%f"></property>
+		<property name="cache" value="c:\mfeng\tmp"></property>
+	</bean>
+	<bean id="catchment" class="cn.geodata.models.wetland.actions.map.Catchment">
+	</bean>
+	<bean id="mapMap" class="cn.geodata.models.wetland.actions.map.Map">
+		<property name="key" value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhRztwXYsXAxqG-DN_Su-vZHpRiMWxRva-fD0G280yw5f8RsOehJAIElTg"></property>
+<!--
+		<property name="key" value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhTOA965fbP1iEkJjttK9hCp_9sAOhSCLIBdM4xM95Gzxw5JBgcIKtGZng"></property>
+-->
+		<property name="wetlandWMS" value="/geoserver/wms?"></property>
+		<property name="wetlandLayers" value="wet:catchment"></property>
+	</bean>
+	<bean id="imageStream" class="cn.geodata.models.wetland.actions.map.ImageStream">
+		<property name="tempDir" value="c:\mfeng\tmp"></property>
+	</bean>
+	<bean id="chartWaterTable" class="cn.geodata.models.wetland.actions.map.ChartWaterTable">
+		<property name="dayMetReader" ref="dayMetReader"></property>
+		<property name="width" value="980"></property>
+		<property name="height" value="300"></property>
+		<property name="tempDir" value="c:\mfeng\tmp"></property>
+	</bean>
+	<bean id="loadDataset" class="cn.geodata.models.wetland.actions.map.LoadDataset">
+		<constructor-arg ref="catchment"></constructor-arg>
+	</bean>
+	<bean id="searchWetland" class="cn.geodata.models.wetland.actions.map.SearchWetland">
+	</bean>
+	<bean id="waterRegion" class="cn.geodata.models.wetland.actions.map.WaterRegion">
+	</bean>
+	
+	<bean id="processManage" class="cn.geodata.models.wetland.actions.map.ProcessManage" scope="singleton">
+	</bean>
+	<bean id="waterLevelStart" class="cn.geodata.models.wetland.actions.map.WaterLevelStart" scope="prototype">
+		<constructor-arg ref="catchment"></constructor-arg>
+		<constructor-arg ref="dayMetReader"></constructor-arg>
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="waterRegionStart" class="cn.geodata.models.wetland.actions.map.WaterRegionStart" scope="prototype">
+		<constructor-arg ref="catchment"></constructor-arg>
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="processQuery" class="cn.geodata.models.wetland.actions.map.ProcessQuery" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="processData" class="cn.geodata.models.wetland.actions.map.ProcessData" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="processOutputExcel" class="cn.geodata.models.wetland.actions.map.ProcessOutputExcel" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="processChart" class="cn.geodata.models.wetland.actions.map.ProcessChart" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="processView" class="cn.geodata.models.wetland.actions.map.ProcessView" scope="prototype">
+		<property name="manage" ref="processManage"></property>
+	</bean>
+	<bean id="waterFowlsStart" class="cn.geodata.models.wetland.actions.map.WaterFowlsStart" scope="prototype">
+		<constructor-arg ref="catchment"></constructor-arg>
+		<property name="manage" ref="processManage"></property>
+	</bean>
+</beans>

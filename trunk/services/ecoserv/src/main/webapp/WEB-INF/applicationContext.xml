@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="operations" class="cn.geodata.models.ecoserv.actions.Operations" scope="prototype">
+	</bean>
+	<bean id="landcoverOp" class="cn.geodata.models.ecoserv.actions.LandcoverOp" scope="prototype">
+	</bean>
+	<bean id="actions" class="cn.geodata.models.ecoserv.actions.Actions">
+		<constructor-arg value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhRZ0h71EejNDbDdGWk164Mwb7a9sxRDuI2F_YB8Wbq3G-zIFsVwNcookQ"></constructor-arg>
+		<!-- EcoServ -->
+		<!-- 
+		<constructor-arg value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhSVdhCGY0N1tIg7F9kosXFLbzLenhRzJ-6hxfWvTHSAjkKzm1rFgIPUHg"></constructor-arg>
+		 -->
+	</bean>
+	<bean id="errorAction" class="cn.geodata.models.ecoserv.actions.ErrorAction" scope="prototype">
+	</bean>
+</beans>

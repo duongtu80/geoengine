@@ -1,0 +1,16 @@
+<?xml version="1.0"?><project>
+  <parent>
+    <artifactId>services</artifactId>
+    <groupId>cn.geodata.models</groupId>
+    <version>3.0.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>wetland</artifactId>
+  <packaging>war</packaging>
+  <name>Wetland Service</name>
+  <build>
+    <finalName>wetland</finalName>
+  </build>
+  <dependencies>
+  </dependencies>
+</project>
