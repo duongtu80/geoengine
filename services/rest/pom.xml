@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <parent>
+    <artifactId>services</artifactId>
+    <groupId>cn.geodata.models</groupId>
+    <version>3.0.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>rest</artifactId>
+  <packaging>war</packaging>
+  <name>Rest Service</name>
+  <build>
+    <finalName>rest</finalName>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>cn.geodata.models</groupId>
+      <artifactId>ge-wps</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>
