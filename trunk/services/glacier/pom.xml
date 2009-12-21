@@ -11,6 +11,19 @@
   <name>Glacier Service</name>
   <build>
     <finalName>glacier</finalName>
+	<plugins>
+        <plugin> 
+          <groupId>org.apache.maven.plugins</groupId> 
+          <artifactId>maven-eclipse-plugin</artifactId> 
+          <configuration> 
+            <downloadSources>false</downloadSources> 
+            <downloadJavadocs>false</downloadJavadocs> 
+            <wtpversion>2.0</wtpversion> 
+            <wtpmanifest>true</wtpmanifest> 
+            <wtpapplicationxml>true</wtpapplicationxml> 
+          </configuration> 
+        </plugin> 
+	</plugins>
   </build>
   <dependencies>
   </dependencies>

@@ -32,7 +32,7 @@ public class CarbonModel {
 	
 	public void initLandCover(LandCover landcover) throws IOException, ParseException {
 		DayMetReader _reader = new DayMetReader(System.getProperty("java.io.tmpdir"));
-		_reader.setUrl("http://www.daymet.org/getRawData.do?lon=%f&amp;lat=%f");
+		_reader.setUrl("http://www.daymet.org/getRawData.do?lon=%f&lat=%f");
 		
 		this.climate = _reader.read(null, null, "p4", landcover.getExtent().getCenterX(), landcover.getExtent().getCenterY());
 		this.counts = new HashMap<Integer, Long>();

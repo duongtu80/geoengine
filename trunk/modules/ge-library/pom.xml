@@ -10,6 +10,23 @@
   <name>Library Module</name>
   <dependencies>
     <dependency>
+      <groupId>cn.geodata.models</groupId>
+      <artifactId>ge-models</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+	<dependency>
+		<groupId>org.geotools</groupId>
+		<artifactId>gt-epsg-hsql</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.geotools</groupId>
+		<artifactId>gt-shapefile</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>commons-io</groupId>
+		<artifactId>commons-io</artifactId>
+	</dependency>
+    <dependency>
       <groupId>net.opengeospatial.wps</groupId>
       <artifactId>wps</artifactId>
     </dependency>
