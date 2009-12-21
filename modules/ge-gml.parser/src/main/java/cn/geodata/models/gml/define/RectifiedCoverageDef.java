@@ -57,10 +57,10 @@ public class RectifiedCoverageDef extends AbstractParser {
 		GridGeometry _grid = coverage.getGridGeometry();
 		
 		Element _low = new Element("low", this.config.getUriGML());
-		_low.setText(this.encodeValueList(_grid.getGridRange().getLower().getCoordinateValues()));
+		_low.setText(this.encodeValueList(_grid.getGridRange().getLow().getCoordinateValues()));
 		
 		Element _high = new Element("high", this.config.getUriGML());
-		_high.setText(this.encodeValueList(_grid.getGridRange().getUpper().getCoordinateValues()));
+		_high.setText(this.encodeValueList(_grid.getGridRange().getHigh().getCoordinateValues()));
 		
 		Element _gridEnvelope = new Element("GridEnvelope", this.config.getUriGML());
 		_gridEnvelope.addContent(_low);
@@ -81,7 +81,7 @@ public class RectifiedCoverageDef extends AbstractParser {
 		_origin.setText(_envelope.getMinX() + "," + _envelope.getMinY());
 		
 		Element _offsetVector = new Element("offsetVector", this.config.getUriGML());
-		_offsetVector.setText(_envelope.getWidth() / _grid.getGridRange().getLength(0) + "," + _envelope.getHeight() / _grid.getGridRange().getLength(1));
+		_offsetVector.setText(_envelope.getWidth() / _grid.getGridRange().getSpan(0) + "," + _envelope.getHeight() / _grid.getGridRange().getSpan(1));
 		
 		Element _rectifiedGrid = new Element("RectifiedGrid", this.config.getUriGML());
 		_rectifiedGrid.addContent(_limits);

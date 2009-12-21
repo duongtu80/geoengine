@@ -9,11 +9,35 @@
   <artifactId>services</artifactId>
   <name>GeoEngine Services</name>
   <packaging>pom</packaging>
-  
   <dependencies>
 		<dependency>
 			<groupId>cn.geodata.models</groupId>
 			<artifactId>ge-library</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.geodata.models</groupId>
+			<artifactId>ge-models</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.geodata.models</groupId>
+			<artifactId>ge-data.parsers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.geodata.models</groupId>
+			<artifactId>ge-geojson.parser</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.geodata.models</groupId>
+			<artifactId>ge-gml.parser</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.geodata.models</groupId>
+			<artifactId>ge-raster</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -45,8 +69,17 @@
 			<artifactId>gt-shapefile</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geotiff</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<classifier>jdk15</classifier>
 		</dependency>
   </dependencies>
 

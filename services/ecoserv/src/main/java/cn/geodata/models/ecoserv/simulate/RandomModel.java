@@ -70,7 +70,11 @@ public class RandomModel {
 						_val.put(_h, _vv);
 					}
 					else if(_h.equals("Soil Erosion")){
+						//Still use the random model before we come up with the new model
+						double _vv = Double.parseDouble(_modelParams.get(0).get(_h)) * _dd + Double.parseDouble(_modelParams.get(1).get(_h)) + Math.random() * Double.parseDouble(_modelParams.get(2).get(_h));
+						_vv = (_vv - Double.parseDouble(_modelParams.get(3).get(_h))) / (Double.parseDouble(_modelParams.get(4).get(_h)) - Double.parseDouble(_modelParams.get(3).get(_h)));
 						
+						_val.put(_h, _vv);
 					}
 					else{
 						double _vv = Double.parseDouble(_modelParams.get(0).get(_h)) * _dd + Double.parseDouble(_modelParams.get(1).get(_h)) + Math.random() * Double.parseDouble(_modelParams.get(2).get(_h));
