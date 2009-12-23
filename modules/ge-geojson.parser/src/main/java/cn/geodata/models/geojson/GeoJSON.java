@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,6 +21,7 @@ import net.sf.json.JSONObject;
 import net.sf.json.JSONString;
 import net.sf.json.util.JSONUtils;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.io.IOUtils;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.FactoryRegistryException;
@@ -545,6 +547,9 @@ public class GeoJSON {
 	}
 	
 	public JSONObject encodeFeature(SimpleFeature f) throws UnsupportedGeoJSONType{
+		if(f.getDefaultGeometry() == null)
+			return null;
+		
 		JSONObject _f = new JSONObject();
 		_f.put("type", "Feature");
 		_f.put("id", f.getID());
@@ -576,6 +581,9 @@ public class GeoJSON {
 		finally{
 			_it.close();
 		}
+		
+		while(_f.contains(null))
+			_f.remove(null);
 		
 		JSONObject _type = new JSONObject();
 		_type.put("type", "FeatureCollection");
