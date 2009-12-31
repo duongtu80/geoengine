@@ -11,6 +11,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.xerces.impl.dv.xs.DayDV;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
@@ -66,11 +67,11 @@ public class HydrologicalModelTest extends TestCase {
 //		}
 //	}
 
-	public void testWaterTable() throws Exception {
+	public void atestWaterTable() throws Exception {
 		GeoRaster _reader = new GeoRaster(new File("d:\\Tank\\Data\\ecoserv\\dem\\ned10mbrwgs84.tif"), 0);
 		assertNotNull(Catchment.class.getResource("/wetland/data/catchment.shp"));
 		
-		List<Catchment> _cats = Catchment.loadCatchments(_reader);
+		List<Catchment> _cats = Catchment.loadCatchments(_reader, new ShapefileDataStore(Catchment.class.getResource("/wetland/data/catchment.shp")).getFeatureSource().getFeatures());
 		for(Catchment _c : _cats){
 			System.out.println(_c.getCode() + " :" + _c.getArea());
 		}
@@ -90,13 +91,13 @@ public class HydrologicalModelTest extends TestCase {
 		
 		List<WaterTable> _waters = null;
 		for(int i=0;i<1;i++){
-			_waters = _model.calculate();
+			_waters = _model.calculateWaterFlow();
 			this.writeWaters1(_waters, new File(new File("d:\\Temp\\test\\wetland\\m_watertable"), "levels" + (i + 1) + ".csv"));
 			this.writeWaters2(_waters, new File(new File("d:\\Temp\\test\\wetland\\m_watertable"), "water" + (i + 1) + ".shp"));
 			this.writeWaters3(_waters, new File(new File("d:\\Temp\\test\\wetland\\m_watertable"), "basin" + (i + 1) + ".shp"));
 		}
 	}
-	
+
 	private void writeWaters3(List<WaterTable> waters, File file) throws IOException, FactoryRegistryException, SchemaException, IllegalAttributeException{
 		SimpleFeatureType _ft = this.createFeatureType(file);
 		(new ShapefileDataStore(file.toURL())).createSchema(_ft);

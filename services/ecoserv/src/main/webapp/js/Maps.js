@@ -4,18 +4,12 @@ function Maps(x, y, level) {
 	this.maps = [];
 
 	this.createStateControls = function(m) {
-		var _catchment = new OpenLayers.Layer.GML(
-				"Catchment",
-				"/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geo:basin&maxFeatures=50&outputFormat=GML2",
-				{
-					projection : new OpenLayers.Projection("EPSG:4326")
-				});
-		m.addLayer(_catchment);
+		m.addControl(new OpenLayers.Control.LayerSwitcher());
 		
 		m.addControl(new OpenLayers.Control.Navigation({group: 'navigation', tid: 'navigation'}));
 		m.addControl(new OpenLayers.Control.ZoomBox({group: 'navigation', tid: 'zoomIn'}));
 		m.addControl(new OpenLayers.Control.ZoomOut({group: 'navigation', tid: 'zoomOut'}));
-		m.addControl(new OpenLayers.Control.SelectFeature(_catchment, {
+		m.addControl(new OpenLayers.Control.SelectFeature(m.commonLayers.catchment, {
 				clickout : false,
 				group: 'navigation', 
 				tid: 'selectFeature',
@@ -43,14 +37,14 @@ function Maps(x, y, level) {
 			maxExtent : new OpenLayers.Bounds(-20037508.34, -20037508.34,
 					20037508.34, 20037508.34),
 			controls : [ 
-			// new OpenLayers.Control.PanZoom(),
-			//new OpenLayers.Control.ArgParser(),
-			//new OpenLayers.Control.Attribution() 
 			]
 		};
 
 		this.maps.push(this.createGoogleSatellite(options));
 		this.maps.push(this.createGoogleTerrain(options));
+		
+		//Add common layers for analysis result
+		this.addCommonLayers();
 		
 		this.histryControl = new OpenLayers.Control.NavigationHistory();
 		this.maps[0].addControl(this.histryControl);
@@ -76,6 +70,43 @@ function Maps(x, y, level) {
 			// this.maps[i].events.register('zoomend', this, this.zoomChange);
 		}
 	};
+	
+	this.addCommonLayers = function(){
+		for ( var i = 0; i < this.maps.length; i++) {
+			var _m = this.maps[i];
+			_m.commonLayers = {};
+			
+			//Add water surface layer
+	        _default_style = OpenLayers.Util.extend({'fill':'#5588FF'}, OpenLayers.Feature.Vector.style['default']);
+	        _default_style.fillColor = '#5588FF';
+	        _default_style.strokeColor = '#5588CC';
+	        _default_style.strokeWidth = 1;
+	        
+	        _selected_style = OpenLayers.Util.extend({'fill':'#2288FF'}, OpenLayers.Feature.Vector.style['default']);
+	        _selected_style.fillColor = '#FF8855';
+	        _selected_style.strokeColor = '#CCCC88';
+	        _selected_style.strokeWidth = 2;
+
+	        var _polyStyles = new OpenLayers.StyleMap({"default": _default_style, "select":_selected_style});
+
+			var _waterLayer = new OpenLayers.Layer.Vector('Water', {'styleMap' : _polyStyles});
+			_waterLayer.setOpacity(0.8);
+			
+			_m.addLayer(_waterLayer);
+			_m.commonLayers['water'] = _waterLayer;
+			
+			//Add catchment layer
+			var _catchment = new OpenLayers.Layer.GML(
+					"Catchment",
+					"/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geo:basin&maxFeatures=50&outputFormat=GML2",
+					{
+						projection : new OpenLayers.Projection("EPSG:4326")
+					});
+			
+			_m.addLayer(_catchment);
+			_m.commonLayers['catchement'] = _catchment; 
+		}
+	}
 
 	this.zoomChange = function(object, element) {
 		for ( var i = 0; i < this.maps.length; i++) {
@@ -200,6 +231,14 @@ function Maps(x, y, level) {
 		map.addLayer(_center);
 
 		return map;
+	};
+	
+	this.parseWaterTable = function(response) {
+		var _layer = this.commonLayers.water; 
+		_layer.removeFeatures(_layer.features);
+		
+		var _parse = new OpenLayers.Format.GeoJSON({internalProjection: this.projection, externalProjection: this.displayProjection});
+		_layer.addFeatures(_parse.read(response.responseText));
 	};
 	
 	this.parseLandcover = function(response) {

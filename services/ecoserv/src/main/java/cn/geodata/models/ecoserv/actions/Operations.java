@@ -2,20 +2,37 @@ package cn.geodata.models.ecoserv.actions;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+
+import org.geotools.feature.FeatureCollection;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import cn.geodata.models.data.DataParser;
+import cn.geodata.models.data.parsers.GeoJsonComplexParser;
+import cn.geodata.models.ecoserv.simulate.DateObject;
+import cn.geodata.models.ecoserv.simulate.MultipleWaterSurfaceModel;
 import cn.geodata.models.ecoserv.simulate.RandomModel;
 import cn.geodata.models.ecoserv.simulate.Scenario;
 import cn.geodata.models.ecoserv.simulate.Scenarios;
+import cn.geodata.models.geojson.GeoJSON;
+import cn.geodata.models.geojson.GeoJSONUtil;
+import cn.geodata.models.geojson.UnsupportedGeoJSONType;
+import cn.geodata.models.raster.GeoRaster;
+import cn.geodata.models.wetland.multiple.WetlandWater;
 
 public class Operations {
 	private Logger log = Logger.getAnonymousLogger();
@@ -28,7 +45,13 @@ public class Operations {
 	private String param;
 	private String txt;
 	
-	public Operations(){
+	private MultipleWaterSurfaceModel waterSurfaceModel;
+	private RandomModel ecoservModel;
+	
+	public Operations(RandomModel ecoservModel, MultipleWaterSurfaceModel multipleWaterSurfaceModel){
+		this.ecoservModel = ecoservModel;
+		this.waterSurfaceModel = multipleWaterSurfaceModel;
+		
 		this.contentType = "text/xml";
 		this.contentDisposition = "inline;filename=output.xml";
 	}
@@ -42,7 +65,8 @@ public class Operations {
 		Date _endDate = new Date(_param.getLong("endDate"));
 		String _landcover = _param.getString("landCover");
 		
-		Scenario _output = new RandomModel().calculate(_startDate, _endDate, Arrays.asList(new String[] {_landcover}));
+		Scenario _output = this.ecoservModel.calculate(_startDate, _endDate, Arrays.asList(new String[] {_landcover}));
+		
 		this.outputJSON(_output.toJSON());
 		
 		return "success";
@@ -152,8 +176,72 @@ public class Operations {
 		this.outputJSON(_root);
 		return "success";
 	}
+	
+	private DateObject<Map<String, Double>> locateWetlandbyDate(Scenario scenario, Date date) throws Exception{
+//		for(DateObject<Map<String, Double>> _wet: scenario.getWaters()){
+//			if(_wet.getDate().equals(date)){
+//				return _wet;
+//			}
+//		}
+
+		//Using the saved data for test
+		ObjectInputStream _stream = new ObjectInputStream(new FileInputStream(new File("/tmp/watertable_7119788779025450908.dat")));
+		
+		List<DateObject<Map<String, Double>>> _data = (List<DateObject<Map<String, Double>>>) _stream.readObject();
+		for(DateObject<Map<String, Double>> _wet: _data){
+			if(_wet.getDate().equals(date)){
+				return _wet;
+			}
+		}
+		
+		throw new Exception("Failed to locate water table simulation result on date:" + date);
+	}
+
+	/**
+	 * Load water table simulation for each catchment on given date from the scenario simulation result
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public String loadWaterTable() throws Exception {
+		log.info(this.param);
+		JSONObject _param = JSONObject.fromObject(this.param);
+		
+		Scenario _s = Scenario.load(_param.getString("scenario"));
+		Date _date = new Date(_param.getLong("date"));
+		
+		this.outputJSON(JSONObject.fromObject(this.locateWetlandbyDate(_s, _date)));
+		
+		return "success";
+	}
+	
+	/**
+	 * Calculate water surface based on the water tables simulated for the scenario on given date
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public String calWaterSurface() throws Exception {
+		log.info(this.param);
+		JSONObject _param = JSONObject.fromObject(this.param);
+		
+		Scenario _s = Scenario.load(_param.getString("scenario"));
+		Date _date = new Date(_param.getLong("date"));
+		
+		DateObject<Map<String, Double>> _wet = this.locateWetlandbyDate(_s, _date);
+
+		this.outputFeatureColJSON(this.waterSurfaceModel.calculate(_wet.getValue()));
+		
+		return "success";
+	}
+	
+	private void outputFeatureColJSON(FeatureCollection<SimpleFeatureType, SimpleFeature> featureCol) throws UnsupportedEncodingException, UnsupportedGeoJSONType{
+		this.outputJSON(new GeoJSON().encode(featureCol));
+	}
 
 	private void outputJSON(JSONObject json) throws UnsupportedEncodingException{
+		log.info("JSON output " + json.toString());
+		
 		this.stream = new ByteArrayInputStream(json.toString().getBytes("utf-8"));
 		this.contentType = "text";
 		this.contentDisposition = "inline;filename=\"output.txt\"";

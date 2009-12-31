@@ -8,13 +8,6 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 public class RandomModelTest extends TestCase {
-	public void atestCalculate() throws Exception {
-		RandomModel _model = new RandomModel();
-		
-		Scenario _vv = _model.calculate(new Date(), new Date(), Arrays.asList(new String[] {"wetland", "crop"}));
-		System.out.println(_vv.getId());
-	}
-	
 	public void testLoadData() throws Exception {
 		Scenario _vv = Scenario.load("mod3232838170594915611");
 		

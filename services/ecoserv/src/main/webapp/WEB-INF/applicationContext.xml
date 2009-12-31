@@ -1,12 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
-	<bean id="operations" class="cn.geodata.models.ecoserv.actions.Operations" scope="prototype">
+	<bean class="cn.geodata.models.raster.GeoRaster" id="dem">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg><value>/home/mfeng/mfeng/data/ecoserv/data/dem/ned10m.tif</value></constructor-arg>
+			</bean>
+		</constructor-arg>
+		<constructor-arg><value type="int">0</value></constructor-arg>
 	</bean>
+	
+	<bean id="ecoservModel" class="cn.geodata.models.ecoserv.simulate.RandomModel" scope="prototype">
+		<constructor-arg ref="dem" />
+	</bean>
+	
+	<bean id="multipleWaterSurfaceModel" class="cn.geodata.models.ecoserv.simulate.MultipleWaterSurfaceModel" scope="prototype">
+		<constructor-arg ref="dem" />
+	</bean>
+	
+	<bean id="operations" class="cn.geodata.models.ecoserv.actions.Operations" scope="prototype">
+		<constructor-arg ref="ecoservModel"></constructor-arg>
+		<constructor-arg ref="multipleWaterSurfaceModel"></constructor-arg>
+	</bean>
+	
 	<bean id="landcoverOp" class="cn.geodata.models.ecoserv.actions.LandcoverOp" scope="prototype">
 	</bean>
 	<bean id="actions" class="cn.geodata.models.ecoserv.actions.Actions">
+		<!-- 192.168.17.68 -->
+		<constructor-arg value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhTWJU3iTM3S7D_jdM2wjgrA5XSJxBS_VlRR5AGcVBTdVAZ4fRrgYQSrXg"></constructor-arg>
+		<!-- 127.0.0.1 -->
+		<!-- 
 		<constructor-arg value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhRZ0h71EejNDbDdGWk164Mwb7a9sxRDuI2F_YB8Wbq3G-zIFsVwNcookQ"></constructor-arg>
+		 -->
 		<!-- EcoServ -->
 		<!-- 
 		<constructor-arg value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhSVdhCGY0N1tIg7F9kosXFLbzLenhRzJ-6hxfWvTHSAjkKzm1rFgIPUHg"></constructor-arg>
