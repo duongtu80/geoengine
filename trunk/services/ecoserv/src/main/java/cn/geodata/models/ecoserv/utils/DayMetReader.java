@@ -33,7 +33,8 @@ public class DayMetReader {
 	}
 
 	public DayMetReader(){
-		
+		this.cache = System.getProperty("java.io.tmpdir");
+		this.url = "http://www.daymet.org/getRawData.do?lon=%f&lat=%f";
 	}
 	
 	public DayMetReader(String cache) {

@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -16,7 +17,7 @@ public class CarbonModel {
 	private Logger log = Logger.getAnonymousLogger();
 	private Map<Integer, Double> fluxs; 
 	private Map<Integer, Long> counts;
-	private ArrayList<DayMet> climate;
+	private List<DayMet> climate;
 	private double max = 8;
 	private double min = 0;
 		
@@ -30,11 +31,8 @@ public class CarbonModel {
 		fluxs.put(new Integer(6), new Double(2));
 	}
 	
-	public void initLandCover(LandCover landcover) throws IOException, ParseException {
-		DayMetReader _reader = new DayMetReader(System.getProperty("java.io.tmpdir"));
-		_reader.setUrl("http://www.daymet.org/getRawData.do?lon=%f&lat=%f");
-		
-		this.climate = _reader.read(null, null, "p4", landcover.getExtent().getCenterX(), landcover.getExtent().getCenterY());
+	public void initLandCover(LandCover landcover, List<DayMet> climate) throws IOException, ParseException {
+		this.climate = climate;
 		this.counts = new HashMap<Integer, Long>();
 
 		for(int _row=0;_row< landcover.getRowCount();_row++){

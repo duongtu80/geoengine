@@ -8,16 +8,25 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import cn.geodata.models.csv.CSVReader;
+import cn.geodata.models.ecoserv.landcover.LandCover;
 import cn.geodata.models.ecoserv.landcover.LandCoverMgr;
+import cn.geodata.models.ecoserv.utils.DayMet;
+import cn.geodata.models.ecoserv.utils.DayMetReader;
+import cn.geodata.models.raster.GeoRaster;
 
 public class RandomModel {
+	private Logger log = Logger.getAnonymousLogger();
 	
 	private List<Long> dates;
 	private List<String> params;
+	private GeoRaster dem;
 	
-	public RandomModel() throws IOException {
+	public RandomModel(GeoRaster dem) throws IOException {
+		this.dem = dem;
+		
 		this.dates = new ArrayList<Long>();
 		for(int _year=1990;_year<2000;_year++){
 			for(int _month=0;_month<12;_month+=3){
@@ -40,9 +49,22 @@ public class RandomModel {
 		List<Map<String, String>> _modelParams = _modelData.getRecords();
 
 		Map<String, List<Map<String, Double>>> values = new HashMap<String, List<Map<String, Double>>>();
+		List<DateObject<Map<String,Double>>> _waters = null;
+		
 		for(String _s: scenarios){
+			log.info("Start scenario " + _s);
+			
+			LandCover _landcover = new LandCoverMgr().getLandCover(_s);
+			ArrayList<DayMet> _climate = new DayMetReader().read(null, null, "p4", _landcover.getExtent().getCenterX(), _landcover.getExtent().getCenterY());
+			
+			log.info("Start water surface model calculation");
+			if(_waters == null)
+				_waters = new MultipleWaterSurfaceModel(dem).calculateWaterTable(new Date(startDate.getYear(), 0, 1), new Date(endDate.getYear(), 11, 31), _climate);
+			
+			log.info("Start rest model calculations");
 			CarbonModel _carbon = new CarbonModel();
-			_carbon.initLandCover(new LandCoverMgr().getLandCover(_s));
+			_carbon.initLandCover(_landcover, _climate);
+			
 			
 			List<Map<String, Double>> _vals = new ArrayList<Map<String, Double>>();
 			for(Long _d: dates){
@@ -87,8 +109,10 @@ public class RandomModel {
 				_vals.add(_val);
 			}
 			values.put(_s, _vals);
+			
+			log.info("End of scenario " + _s);
 		}
 		
-		return new Scenario(scenarios, dates, params, values);
+		return new Scenario(scenarios, dates, params, values, _waters);
 	}
 }

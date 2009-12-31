@@ -23,6 +23,10 @@ public class HydrologicalModel {
 		return wetlands;
 	}
 
+	public void setWetlands(List<WetlandWater> wetlands) {
+		this.wetlands = wetlands;
+	}
+
 	public GeoRaster getDem() {
 		return dem;
 	}
@@ -52,7 +56,7 @@ public class HydrologicalModel {
 		wetland.generateWater(precipitation, saturationPrcp, _et);
 	}
 	
-	public List<WaterTable> calculate(
+	public void calculateWaterTable(
 			double albedo,
 			double windSpeed,
 			double coefficient,
@@ -63,22 +67,13 @@ public class HydrologicalModel {
 			double saturationPrcp
 			) throws IOException{
 		
-		List<WaterTable> _waters = new ArrayList<WaterTable>();
-		
 		//Generate water
 		for(WetlandWater _wetland : this.wetlands){
 			this.generateWaterCatchment(_wetland, albedo, windSpeed, coefficient, tday, srad, vpd, precipitation, saturationPrcp);
-			_waters.add(_wetland);
 		}
-		
-		while(this.waterFlow(_waters)){
-			log.info("Recheck water flow...");
-		}
-		
-		return _waters;
 	}
 
-	public List<WaterTable> calculate(
+	public List<WaterTable> calculateWaterFlow(
 			) throws IOException{
 		List<WaterTable> _waters = new ArrayList<WaterTable>();
 		
@@ -127,7 +122,7 @@ public class HydrologicalModel {
 		return false;
 	}
 
-	public boolean waterFlow(List<WaterTable> waters, WaterTable water) throws IOException{
+	private boolean waterFlow(List<WaterTable> waters, WaterTable water) throws IOException{
 		double _overFlowVol = water.getOverflowVolume();
 		if(_overFlowVol > 0){
 			WaterTable _next = this.findWaterTable(waters, water.getSpillPoint().getCatchment());

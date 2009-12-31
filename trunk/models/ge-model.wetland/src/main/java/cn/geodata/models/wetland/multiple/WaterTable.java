@@ -1,5 +1,6 @@
 package cn.geodata.models.wetland.multiple;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -10,7 +11,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  * @author tank
  *
  */
-public interface WaterTable {
+public interface WaterTable extends Serializable, Cloneable {
 	/**
 	 * Get spill point
 	 * 

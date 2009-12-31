@@ -1,6 +1,7 @@
 package cn.geodata.models.wetland.multiple;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +10,14 @@ import java.util.logging.Logger;
 
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.factory.GeoTools;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.ReferencingFactoryFinder;
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 
@@ -30,7 +34,12 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  * @author tank
  *
  */
-public class Catchment {
+public class Catchment implements Serializable, Cloneable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7068696688996515511L;
+
 	private Logger log = Logger.getAnonymousLogger();
 	
 	private MultiPolygon region;
@@ -131,15 +140,15 @@ public class Catchment {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static List<Catchment> loadCatchments(GeoRaster dem) throws MalformedURLException, IOException{
+	public static List<Catchment> loadCatchments(GeoRaster dem, FeatureCollection<SimpleFeatureType, SimpleFeature> catchments) throws MalformedURLException, IOException{
 		List<Catchment> _cats = new ArrayList<Catchment>();
 		
-		FeatureIterator _it = new ShapefileDataStore(Catchment.class.getResource("/wetland/data/catchment.shp")).getFeatureSource().getFeatures().features();
+		FeatureIterator<SimpleFeature> _it = catchments.features();
 		try{
 			while(_it.hasNext()){
 				Feature _f = _it.next();
 				try{
-					_cats.add(new Catchment(dem, (MultiPolygon) _f.getDefaultGeometryProperty().getValue(), (String)_f.getProperty("NAME").getValue()));
+					_cats.add(new Catchment(dem, (MultiPolygon) _f.getDefaultGeometryProperty().getValue(), (String)_f.getProperty("name").getValue()));
 				}
 				catch(IndexOutOfBoundsException e){
 					Logger.getAnonymousLogger().info("Load " + _f.getProperty("NAME").getValue() + " failed because out the raster boundary");

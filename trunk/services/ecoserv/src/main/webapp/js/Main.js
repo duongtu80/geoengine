@@ -236,17 +236,29 @@ function Main() {
 										return;
 									}
 									
-									_valueField.setValue('23m');
-									_valueField.setHeight(20);
+									//* Change this to real value later
+									var _waterTable = Math.floor(Math.random() * 15 * 100) / 100;
+									
+									_valueField.setValue(_waterTable + 'm');
+									_valueField.setHeight(13);
+									
 									_valueField.show();
 									
-									alert(_val);
-									
-									
+									console.debug('Scenario:' + _val.get('id'));
 									console.debug('Date:' + _dateField.getValue());
 									console.debug('Value:' + _valueField.getValue());
 									console.debug('Map:' + _form.getForm().getValues().map);
 									
+									var _params = {'scenario': _val.get('id'), 'date': _dateField.getValue().getTime()};
+									var _map = this.map.maps[0];
+									if(_form.getForm().getValues().map == 'right')
+										_map = this.map.maps[1];
+									
+									main.progressQueue.pushTask(
+											'Calculate water surface',
+											'_calWaterSurface.do', {
+												param : Ext.encode(_params)
+											}, _map, main.map.parseWaterTable);
 									
 //									_win.hide();
 								}
@@ -639,13 +651,13 @@ function Main() {
 				}, {
 					id : 'modelRunStartDate',
 					xtype : 'datefield',
-					value : '2000-01-01'
+					value : '1998-01-01'
 				}, {
 					text : '-',
 					xtype : 'tbtext'
 				}, {
 					id : 'modelRunEndDate',
-					value : '2009-12-01',
+					value : '2002-12-01',
 					xtype : 'datefield'
 				}, new Ext.Toolbar.Separator(), {
 					text : 'Region:',

@@ -33,6 +33,8 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.ui.RectangleEdge;
 
+import cn.geodata.models.wetland.multiple.WetlandWater;
+
 /**
  * The output object for scenario simulation
  * 
@@ -49,6 +51,7 @@ public class Scenario implements Serializable {
 	private List<String> scenarios;
 	private List<Long> dates;
 	private List<String> params;
+	private List<DateObject<Map<String,Double>>> waters;
 	private Map<String, List<Map<String, Double>>> values;
 	
 	public String getId() {
@@ -106,13 +109,14 @@ public class Scenario implements Serializable {
 //	}
 	
 	public Scenario(List<String> scenarios, List<Long> dates,
-			List<String> params, Map<String, List<Map<String, Double>>> values) throws IOException {
+			List<String> params, Map<String, List<Map<String, Double>>> values, List<DateObject<Map<String,Double>>> waters) throws IOException {
 		super();
 		
 		this.scenarios = scenarios;
 		this.dates = dates;
 		this.params = params;
 		this.values = values;
+		this.waters = waters;
 		
 		this.save();
 	}
@@ -174,6 +178,10 @@ public class Scenario implements Serializable {
 		ChartUtilities.writeChartAsPNG(stream, _plot, width, height);
 	}
 	
+	public List<DateObject<Map<String,Double>>> getWaters() {
+		return waters;
+	}
+
 	private JFreeChart createSpiderChart(CategoryDataset dataset) {
 		SpiderWebPlot _spider = new SpiderWebPlot(dataset);
 		_spider.setStartAngle(54D);
