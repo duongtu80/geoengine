@@ -87,13 +87,14 @@ public class WetlandWater implements WaterTable {
 		double _pore = 1;
 		
 		if(waterLevel < this.bottomElevation)
-			_pore = 0.4;
+			_pore = 0.3;
 		
 		double _waterLevel = 0;
 //		double _waterLevel = 4 * 0.01 * precipitation * _pore - et * 0.001;
 		if(precipitation > saturationPrcp){
 //			_waterLevel = 0.1 * precipitation * _pore - et * 0.001;
-			_waterLevel = 0.01 * precipitation / _pore * (this.getArea() / 10000)  - et * 0.001;
+			_waterLevel = 0.01 * precipitation / _pore * (this.getArea() / 100000)  - et * 0.001;
+//			_waterLevel = 0.01 * precipitation / _pore * (this.getArea() / 10000)  - et * 0.001;
 		}
 		else{
 			_waterLevel = 0.01 * precipitation / _pore - et * 0.001;
