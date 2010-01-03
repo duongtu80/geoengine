@@ -87,7 +87,7 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 		List<DateObject<Map<String, Double>>> _data = new ArrayList<DateObject<Map<String,Double>>>();
 		for(int i=0;i<_recs.size();i++){
 			DayMet _day = _recs.get(i);
-			if(_day.getDate().before(new Date(94, 0, 1)) || _day.getDate().after(new Date(96, 0, 1)))
+			if(_day.getDate().before(new Date(90, 0, 1)) || _day.getDate().after(new Date(103, 0, 1)))
 				continue;
 			
 			System.out.println("Date: " + _day.getDate());
@@ -126,14 +126,14 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 	}
 	
 	public void testReadWaterSurfaceResult() throws Exception {
-		ObjectInputStream _stream = new ObjectInputStream(new FileInputStream(new File("/tmp/watertable_4930023635987740043.dat")));
+		ObjectInputStream _stream = new ObjectInputStream(new FileInputStream(new File("/tmp/watertable_1865936543989816551.dat")));
 		
 		List<DateObject<Map<String, Double>>> _data = (List<DateObject<Map<String, Double>>>) _stream.readObject();
 		System.out.println(_data.size());
 		
 		DateFormat _format = new SimpleDateFormat("yyyy-MM-dd");
 		for(DateObject<Map<String, Double>> _date: _data){
-			System.out.println(_format.format(_date.getDate()) + "\t" + _date.getValue().get("P4"));
+			System.out.println(_format.format(_date.getDate()) + "\t" + _date.getValue().get("P1"));
 		}
 	}
 	

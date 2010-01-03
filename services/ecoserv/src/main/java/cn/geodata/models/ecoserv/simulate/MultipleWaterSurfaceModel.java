@@ -91,6 +91,7 @@ public class MultipleWaterSurfaceModel {
 			}
 
 			if(watertables.containsKey(_code)){
+				log.info("Set " + _code + " water table " + watertables.get(_code));
 				_w.setWaterLevel(watertables.get(_code));
 			}
 		}
