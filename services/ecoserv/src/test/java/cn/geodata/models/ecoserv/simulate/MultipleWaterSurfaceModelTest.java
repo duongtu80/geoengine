@@ -125,7 +125,7 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 		_stream.close();
 	}
 	
-	public void testReadWaterSurfaceResult() throws Exception {
+	public void atestReadWaterSurfaceResult() throws Exception {
 		ObjectInputStream _stream = new ObjectInputStream(new FileInputStream(new File("/tmp/watertable_1865936543989816551.dat")));
 		
 		List<DateObject<Map<String, Double>>> _data = (List<DateObject<Map<String, Double>>>) _stream.readObject();
@@ -153,6 +153,20 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 				_code = _c.getCode();
 			}
 			System.out.println(_w.getCatchments().get(0).getCode() + "->" + _code + " | " + _w.getSpillPoint().getElevation());
+		}
+	}
+	
+	public void testWaterTable() throws Exception {
+		GeoRaster _reader = new GeoRaster(new File("/home/mfeng/mfeng/data/ecoserv/data/dem/ned10m.tif"), 0);
+		List<Catchment> _cats = Catchment.loadCatchments(_reader, ConnectionPool.getPGDataStore().getFeatureSource("catchment").getFeatures());
+		
+		for(Catchment _c : _cats){
+			System.out.println(_c.getCode() + " :" + _c.getArea() + " " + _c.getBottomElevation());
+		}
+		
+		HydrologicalModel _model = new HydrologicalModel(_reader, _cats);
+		for(WetlandWater _w : _model.getWetlands()){
+			_w.setWaterLevel(560.7);
 		}
 	}
 }
