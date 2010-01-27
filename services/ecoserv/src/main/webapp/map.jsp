@@ -34,8 +34,14 @@
 -->
 
 <!-- Load OpenLayers library -->
+<!-- 
 <script type="text/javascript"
 	src="/public/openlayers/lib/OpenLayers.js"></script>
+ -->
+
+<script type="text/javascript" src="js/Common.js"></script>
+<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>
+
 <script type="text/javascript" src="/public/GeoExt/script/GeoExt.js"></script>
 <script type="text/javascript" src="js/Utils.js"></script>
 <script type="text/javascript" src="js/ProgressQueue.js"></script>
@@ -50,12 +56,6 @@
 </script>
 </head>
 <body>
-<div id="placeholder"></div>
-<script type="text/javascript">
-	CFInstall.check({
-	    node: "placeholder"
-	  });
-</script>
 <div id="bodyPanel">
 <div id="topPanel"></div>
 <div id="mainPanel"></div>

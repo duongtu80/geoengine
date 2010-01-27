@@ -171,7 +171,13 @@ function Main() {
 	};
 
 	this.calWaterSurface = function() {
-		var _store = this.loadScenarioData();
+		var _store = new Ext.data.ArrayStore( {
+			idIndex : 0,
+			fields : [ 'id', 'title' ],
+			data : [['a2', 'IPCC a2'], ['b2', 'IPCC b2']]
+		});
+		
+//		var _store = this.loadScenarioData();
 
 		var _combo = new Ext.form.ComboBox( {
 			fieldLabel : 'Scenario',
@@ -188,7 +194,8 @@ function Main() {
 		
 		var _dateField = new Ext.form.DateField({
 			fieldLabel : 'Date',
-			width : 120
+			width : 120,
+			value : Ext.getCmp('modelRunStartDate').getValue()
 		});
 		
 		var _valueField = new Ext.form.DisplayField({
@@ -239,15 +246,15 @@ function Main() {
 									//* Change this to real value later
 									var _waterTable = Math.floor(Math.random() * 15 * 100) / 100;
 									
-									_valueField.setValue(_waterTable + 'm');
-									_valueField.setHeight(13);
+//									_valueField.setValue(_waterTable + 'm');
+//									_valueField.setHeight(13);
+//									
+//									_valueField.show();
 									
-									_valueField.show();
-									
-									console.debug('Scenario:' + _val.get('id'));
-									console.debug('Date:' + _dateField.getValue());
-									console.debug('Value:' + _valueField.getValue());
-									console.debug('Map:' + _form.getForm().getValues().map);
+//									console.debug('Scenario:' + _val.get('id'));
+//									console.debug('Date:' + _dateField.getValue());
+//									console.debug('Value:' + _valueField.getValue());
+//									console.debug('Map:' + _form.getForm().getValues().map);
 									
 									var _params = {'scenario': _val.get('id'), 'date': _dateField.getValue().getTime()};
 									var _map = this.map.maps[0];
@@ -651,13 +658,13 @@ function Main() {
 				}, {
 					id : 'modelRunStartDate',
 					xtype : 'datefield',
-					value : '1998-01-01'
+					value : '2010-01-01'
 				}, {
 					text : '-',
 					xtype : 'tbtext'
 				}, {
 					id : 'modelRunEndDate',
-					value : '2002-12-01',
+					value : '2019-12-01',
 					xtype : 'datefield'
 				}, new Ext.Toolbar.Separator(), {
 					text : 'Region:',
@@ -769,5 +776,6 @@ function Main() {
 
 var main = new Main();
 Ext.onReady(function() {
+	checkBrower();
 	main.init();
 });

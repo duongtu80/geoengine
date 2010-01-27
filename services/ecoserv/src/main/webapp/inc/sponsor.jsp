@@ -7,9 +7,7 @@
 	src="img/logo/usda-logo.jpg" /> </a> <a href="http://www.nrcs.usda.gov/"
 	target="_blank"> <img src="img/logo/NRCS-logo.jpg" /> </a> <a
 	href="http://www.fsa.usda.gov/" target="_blank"> <img
-	src="img/logo/FSA-logo.jpg" /> </a> <a target="_blank"
-	href="http://www.ars.usda.gov/"> <img height="53" width="65"
-	src="/f/1256850186/usda-ars_2.gif" /> </a> <a href="http://www.fws.gov/"
+	src="img/logo/FSA-logo.jpg" /> </a> <a href="http://www.fws.gov/"
 	target="_blank"> <img src="img/logo/us-fish-wildlife-logo.jpg" /> </a>
 <a href="http://www.nature.org/" target="_blank"> <img
 	src="img/logo/TNC-logo.jpg" /> </a> <a href="http://www.nasa.gov/"

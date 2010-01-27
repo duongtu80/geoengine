@@ -47,10 +47,12 @@ public class Operations {
 	
 	private MultipleWaterSurfaceModel waterSurfaceModel;
 	private RandomModel ecoservModel;
+	private String scenarioFolder;
 	
-	public Operations(RandomModel ecoservModel, MultipleWaterSurfaceModel multipleWaterSurfaceModel){
+	public Operations(RandomModel ecoservModel, MultipleWaterSurfaceModel multipleWaterSurfaceModel, String scenarioFolder){
 		this.ecoservModel = ecoservModel;
 		this.waterSurfaceModel = multipleWaterSurfaceModel;
+		this.scenarioFolder = scenarioFolder;
 		
 		this.contentType = "text/xml";
 		this.contentDisposition = "inline;filename=output.xml";
@@ -177,7 +179,7 @@ public class Operations {
 		return "success";
 	}
 	
-	private DateObject<Map<String, Double>> locateWetlandbyDate(Scenario scenario, Date date) throws Exception{
+	private DateObject<Map<String, Double>> locateWetlandbyDate(String scenario, Date date) throws Exception{
 //		for(DateObject<Map<String, Double>> _wet: scenario.getWaters()){
 //			if(_wet.getDate().equals(date)){
 //				return _wet;
@@ -185,11 +187,11 @@ public class Operations {
 //		}
 
 		//Using the saved data for test
-		ObjectInputStream _stream = new ObjectInputStream(new FileInputStream(new File("/tmp/watertable_1865936543989816551.dat")));
+		ObjectInputStream _stream = new ObjectInputStream(new FileInputStream(new File(this.scenarioFolder, scenario + ".dat")));
 		
 		List<DateObject<Map<String, Double>>> _data = (List<DateObject<Map<String, Double>>>) _stream.readObject();
 		for(DateObject<Map<String, Double>> _wet: _data){
-			if(_wet.getDate().equals(date)){
+			if(_wet.getDate().getYear() == date.getYear() && _wet.getDate().getMonth() == date.getMonth()){
 				return _wet;
 			}
 		}
@@ -207,7 +209,8 @@ public class Operations {
 		log.info(this.param);
 		JSONObject _param = JSONObject.fromObject(this.param);
 		
-		Scenario _s = Scenario.load(_param.getString("scenario"));
+//		Scenario _s = Scenario.load(_param.getString("scenario"));
+		String _s = _param.getString("scenario");
 		Date _date = new Date(_param.getLong("date"));
 		
 		this.outputJSON(JSONObject.fromObject(this.locateWetlandbyDate(_s, _date)));
@@ -225,7 +228,9 @@ public class Operations {
 		log.info(this.param);
 		JSONObject _param = JSONObject.fromObject(this.param);
 		
-		Scenario _s = Scenario.load(_param.getString("scenario"));
+//		Scenario _s = Scenario.load(_param.getString("scenario"));
+		String _s = _param.getString("scenario");
+
 		Date _date = new Date(_param.getLong("date"));
 		
 		DateObject<Map<String, Double>> _wet = this.locateWetlandbyDate(_s, _date);

@@ -97,7 +97,7 @@ public class LandcoverOp {
 			
 		this.stream = new ByteArrayInputStream(_landCover.createJSON().toString(2).getBytes("utf-8"));
 		this.contentType = "text";
-		this.contentDisposition = "wetland.txt";
+		this.contentDisposition = "attachment;filename=wetland.txt";
 		
 		return "success";
 	}
@@ -150,7 +150,7 @@ public class LandcoverOp {
 		
 		this.stream = new FileInputStream(_file);
 		this.contentType = "image/tiff";
-		this.contentDisposition = "attachment;filename=data.tif;";
+		this.contentDisposition = "attachment;filename=\"" + _landcover.getTitle().replaceAll("[^\\w\\d]+", "_") + ".tif\"";
 		
 		return "success";
 	}
@@ -163,7 +163,7 @@ public class LandcoverOp {
 		
 		this.stream = new FileInputStream(_file);
 		this.contentType = "image/tiff";
-		this.contentDisposition = "filename=data.tif;";
+		this.contentDisposition = "attachment;filename=\"data.tif\"";
 		
 		return "success";
 	}
@@ -215,7 +215,7 @@ public class LandcoverOp {
 		
 		this.stream = new ByteArrayInputStream(_data.toString().getBytes("UTF-8"));
 		this.contentType = "text";
-		this.contentDisposition = "filename=data.txt;";
+		this.contentDisposition = "attachment;filename=\"data.txt\"";
 		
 		return "success";
 	}

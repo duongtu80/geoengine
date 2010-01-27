@@ -128,7 +128,7 @@ public class MultipleWaterSurfaceModel {
 		return _builder.buildFeatureType();
 	}
 
-	public List<DateObject<Map<String,Double>>> calculateWaterTable(Date startDate, Date endDate, ArrayList<DayMet> climate) throws IOException, ParseException {
+	public List<DateObject<Map<String,Double>>> calculateWaterTable(Date startDate, Date endDate, ArrayList<DayMet> climate) throws Exception {
 		List<Catchment> _cats = Catchment.loadCatchments(dem, ConnectionPool.getPGDataStore().getFeatureSource("catchment").getFeatures());
 		HydrologicalModel _model = new HydrologicalModel(dem, _cats);
 
