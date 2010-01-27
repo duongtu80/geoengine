@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
-	<bean id="dem" class="cn.geodata.models.wetland.DemRaster">
+	<bean class="cn.geodata.models.raster.GeoRaster" id="dem">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg><value>d:\Tank\Data\ecoserv\data\dem\ned10m.tif</value></constructor-arg>
+			</bean>
+		</constructor-arg>
+		<constructor-arg><value type="int">0</value></constructor-arg>
 	</bean>
+	
 	<bean id="demAnalysis" class="cn.geodata.models.wetland.DemAnalysis">
 		<constructor-arg ref="dem"></constructor-arg>
 	</bean>

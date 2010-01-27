@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
-	<bean id="dem" class="cn.geodata.models.wetland.DemRaster">
+	<bean id="dem" class="cn.geodata.models.raster.GeoRaster">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg value="d:\Tank\Save\Java\geoengine\src\3.0\trunk\models\ge-model.wetland\src\main\resources\wetland\data\dem.tif"></constructor-arg>
+			</bean>
+		</constructor-arg>
+		<constructor-arg value="0" type="int"></constructor-arg>
 	</bean>
 	<bean id="demAnalysis" class="cn.geodata.models.wetland.DemAnalysis">
 		<constructor-arg ref="dem"></constructor-arg>
