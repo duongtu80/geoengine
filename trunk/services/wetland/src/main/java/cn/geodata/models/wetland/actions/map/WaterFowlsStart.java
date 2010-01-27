@@ -11,15 +11,19 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.ReferencingFactoryFinder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
@@ -59,7 +63,7 @@ public class WaterFowlsStart extends ProcessStart {
 		
         //Add simulation for water fowls
 		List<String> _lines = new ArrayList<String>();
-		_lines.add("lon	lat	title	description	iconSize	iconOffset	icon");
+		_lines.add("lon	lat	title	description	iconSize	iconOffset	icon	link");
 		
 		JSONObject _params = this.params.getJSONObject("params");
 		
@@ -76,6 +80,7 @@ public class WaterFowlsStart extends ProcessStart {
 		for(int i=0;i<this.waterFowls.names().size();i++){
 			String _name = this.waterFowls.names().getString(i);
 			String _image = this.waterFowls.getJSONObject(_name).getString("icon");
+			String _link = this.waterFowls.getJSONObject(_name).getString("link");
 
 			JSONObject _infos = new JSONObject();
 			_infos.put("icon", _image);
@@ -96,7 +101,7 @@ public class WaterFowlsStart extends ProcessStart {
         				_birdNums.put(_name, 1);
         			}
         			
-        			_lines.add(_pt.getX() + "\t" + _pt.getY() + "\t" + _name + "\t" + _name + "\t" + "30,30" + "\t" + "-12.5,-12.5" + "\t" + _image);
+        			_lines.add(_pt.getX() + "\t" + _pt.getY() + "\t" + _name + "\t" + _name + "\t" + "30,30" + "\t" + "-12.5,-12.5" + "\t" + _image + "\t" + _link);
         			_birdNum++;
         		}
 			}
@@ -119,6 +124,25 @@ public class WaterFowlsStart extends ProcessStart {
 		return "success";
 	}
 	
+	
+	private FeatureCollection<SimpleFeatureType, SimpleFeature> createFeatureCollection(Geometry geom){
+		FeatureCollection<SimpleFeatureType, SimpleFeature> _col = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
+
+		if(geom == null)
+			return _col;
+		
+		SimpleFeatureTypeBuilder _typeBuilder = new SimpleFeatureTypeBuilder();
+		_typeBuilder.setName("Water");
+		_typeBuilder.add("shape", geom.getClass());
+		
+		SimpleFeatureBuilder _featureBuilder = new SimpleFeatureBuilder(_typeBuilder.buildFeatureType());
+		_featureBuilder.add(geom);
+		
+		_col.add(_featureBuilder.buildFeature(null));
+		
+		return _col;
+	}
+
 	private Point pickupLocation(FeatureCollection fs, List<Point> pts) throws MismatchedDimensionException, NoSuchAuthorityCodeException, FactoryException, TransformException{
 		if(fs.size() == 1){
 			return pickupLocation((Feature)fs.toArray(new Feature[0])[0], pts);
@@ -178,7 +202,7 @@ public class WaterFowlsStart extends ProcessStart {
 		library.executeProcess(_regionModel);
 		
 		//Serialize output feature collection
-		return (FeatureCollection) _regionModel.getOutput("WaterRegion");
+		return (FeatureCollection) this.createFeatureCollection((Geometry) _regionModel.getOutput("WaterRegion"));
 	}
 	
 	private double calculateWaterArea(FeatureCollection fs) throws FactoryException, MismatchedDimensionException, NoSuchElementException, TransformException {
