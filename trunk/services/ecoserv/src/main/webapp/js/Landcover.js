@@ -280,7 +280,7 @@ function mapInit() {
 		},
 		renderTo : 'mainPanel',
 		width : 1000,
-		tbar: [{text: '<b>Land Cover Editor</b>'}, '->', {text: 'EcoServ', handler: function(){window.open('~view.do');}}],
+		tbar: [{text: '<b>Land Cover Editor</b>'}, '->', {text: 'EcoServ', handler: function(){window.open('~map.do');}}],
 		items : [ initMapPanel() ]
 	});
 
@@ -621,5 +621,6 @@ function createLandCover() {
 }
 
 Ext.onReady(function() {
+	checkBrower();
 	mapInit();
 });

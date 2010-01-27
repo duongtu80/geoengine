@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 public class CarbonModelTest extends TestCase {
 	
 	public void testTest1() throws Exception {
-		System.out.println(new Date(101, 5, 1).getTime());
+		System.out.println("test%#23 we".replaceAll("[^\\w\\d]+", "_"));
 	}
 
 	public void atestCalculate() throws Exception {
