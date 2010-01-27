@@ -49,6 +49,20 @@ public interface WaterTable extends Serializable, Cloneable {
 	double getCatchmentVolume();
 	
 	/**
+	 * If the water is over flowing in the catchment(s)
+	 * 
+	 * @return
+	 */
+	boolean isOverFlow();
+	
+	/**
+	 * Get current water volume
+	 * 
+	 * @return
+	 */
+	double getWaterVolume();
+	
+	/**
 	 * Get area for the water unit
 	 * 
 	 * @return
@@ -61,6 +75,13 @@ public interface WaterTable extends Serializable, Cloneable {
 	 * @return
 	 */
 	List<Catchment> getCatchments();
+	
+	/**
+	 * Get elevation zones
+	 * 
+	 * @return
+	 */
+	ElevationZone getZones();
 	
 	/**
 	 * Get water level

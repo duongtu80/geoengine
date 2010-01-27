@@ -46,13 +46,15 @@ public class Catchment implements Serializable, Cloneable {
 	private GeoRaster dem;
 	private String code;
 	private double bottomElevation;
+	private ElevationZone zones;
 	
-	public Catchment(GeoRaster dem, MultiPolygon region, String code) throws IOException{
+	public Catchment(GeoRaster dem, MultiPolygon region, String code) throws Exception{
 		log.info("Create catchment " + code);
 		this.dem = dem;
 		this.region = region;
 		this.code = code;
-		
+		this.zones = new ElevationZone(dem, region);
+			
 		this.bottomElevation = this.calBottomElevation();
 	}
 	
@@ -107,13 +109,13 @@ public class Catchment implements Serializable, Cloneable {
 	 * @return
 	 */
 	public MultiPolygon projectCatchment(MultiPolygon catchment){
-		String _wkt = "PROJCS[\"Google Mercator\",GEOGCS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",SPHEROID[\"WGS 84\",6378137.0,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0.0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.017453292519943295],AXIS[\"Geodetic latitude\",NORTH],AXIS[\"Geodetic longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator (1SP)\",AUTHORITY[\"EPSG\",\"9804\"]],PARAMETER[\"semi_major\",6378137.0],PARAMETER[\"semi_minor\",6378137.0],PARAMETER[\"latitude_of_origin\",0.0],PARAMETER[\"central_meridian\",0.0],PARAMETER[\"scale_factor\",1.0],PARAMETER[\"false_easting\",0.0],PARAMETER[\"false_northing\",0.0],UNIT[\"m\",1.0],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"900913\"]]";
-		CoordinateReferenceSystem _google;
+//		String _wkt = "PROJCS[\"Google Mercator\",GEOGCS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",SPHEROID[\"WGS 84\",6378137.0,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0.0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.017453292519943295],AXIS[\"Geodetic latitude\",NORTH],AXIS[\"Geodetic longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator (1SP)\",AUTHORITY[\"EPSG\",\"9804\"]],PARAMETER[\"semi_major\",6378137.0],PARAMETER[\"semi_minor\",6378137.0],PARAMETER[\"latitude_of_origin\",0.0],PARAMETER[\"central_meridian\",0.0],PARAMETER[\"scale_factor\",1.0],PARAMETER[\"false_easting\",0.0],PARAMETER[\"false_northing\",0.0],UNIT[\"m\",1.0],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"900913\"]]";
+		CoordinateReferenceSystem _prj;
 		try {
-			_google = CRS.parseWKT(_wkt);
+			_prj = CRS.decode("EPSG:32614", true);
 
 			CoordinateReferenceSystem _geo = CRS.decode("EPSG:4326", true);
-			CoordinateOperation _operation = ReferencingFactoryFinder.getCoordinateOperationFactory(GeoTools.getDefaultHints()).createOperation(_geo, _google);
+			CoordinateOperation _operation = ReferencingFactoryFinder.getCoordinateOperationFactory(GeoTools.getDefaultHints()).createOperation(_geo, _prj);
 			
 			return (MultiPolygon) JTS.transform(catchment, _operation.getMathTransform());
 		} catch (Exception e) {
@@ -123,6 +125,15 @@ public class Catchment implements Serializable, Cloneable {
 	}
 
 	
+	/**
+	 * Elevation zones
+	 * 
+	 * @return
+	 */
+	public ElevationZone getZones() {
+		return zones;
+	}
+
 	/**
 	 * Load bottom elevation
 	 * 
@@ -137,10 +148,20 @@ public class Catchment implements Serializable, Cloneable {
 	 * 
 	 * @param dem
 	 * @return
-	 * @throws MalformedURLException
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	public static List<Catchment> loadCatchments(GeoRaster dem, FeatureCollection<SimpleFeatureType, SimpleFeature> catchments) throws MalformedURLException, IOException{
+	public static List<Catchment> loadCatchments(GeoRaster dem, FeatureCollection<SimpleFeatureType, SimpleFeature> catchments) throws Exception{
+		return loadCatchments(dem, catchments, "name");
+	}
+
+	/**
+	 * @param dem
+	 * @param catchments
+	 * @param codeColumn
+	 * @return
+	 * @throws Exception 
+	 */
+	public static List<Catchment> loadCatchments(GeoRaster dem, FeatureCollection<SimpleFeatureType, SimpleFeature> catchments, String codeColumn) throws Exception{
 		List<Catchment> _cats = new ArrayList<Catchment>();
 		
 		FeatureIterator<SimpleFeature> _it = catchments.features();
@@ -148,7 +169,7 @@ public class Catchment implements Serializable, Cloneable {
 			while(_it.hasNext()){
 				Feature _f = _it.next();
 				try{
-					_cats.add(new Catchment(dem, (MultiPolygon) _f.getDefaultGeometryProperty().getValue(), (String)_f.getProperty("name").getValue()));
+					_cats.add(new Catchment(dem, (MultiPolygon) _f.getDefaultGeometryProperty().getValue(), (String)_f.getProperty(codeColumn).getValue()));
 				}
 				catch(IndexOutOfBoundsException e){
 					Logger.getAnonymousLogger().info("Load " + _f.getProperty("NAME").getValue() + " failed because out the raster boundary");
