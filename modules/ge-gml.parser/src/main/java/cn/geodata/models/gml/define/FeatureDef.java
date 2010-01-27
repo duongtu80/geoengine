@@ -78,12 +78,12 @@ public class FeatureDef extends AbstractParser implements FeatureParser {
 			
 			Element _c = new Element(_attributeType.getName().getLocalPart(), _namespace);
 			if(_attributeType.equals(_featureType.getGeometryDescriptor())){
-				_c.addContent(this.finder.encode(_feature.getProperty(_attributeType.getName())));
+				_c.addContent(this.finder.encode(_feature.getProperty(_attributeType.getName()).getValue()));
 			}
 			else{
 				String _val = "";
 				if(_feature.getProperty(_attributeType.getName()) != null){
-					_val = _feature.getProperty(_attributeType.getName()).toString();
+					_val = _feature.getProperty(_attributeType.getName()).getValue() + "";
 				}
 				
 				_c.setText(_val);
