@@ -43,6 +43,15 @@ public class HydrologicalModel {
 	
 	private void generateWaterCatchment(
 			WetlandWater wetland,
+			double et,
+			double precipitation,
+			double saturationPrcp
+			){
+		wetland.generateWater(precipitation, saturationPrcp, et);
+	}
+	
+	private void generateWaterCatchment(
+			WetlandWater wetland,
 			double albedo,
 			double windSpeed,
 			double coefficient,
@@ -70,6 +79,18 @@ public class HydrologicalModel {
 		//Generate water
 		for(WetlandWater _wetland : this.wetlands){
 			this.generateWaterCatchment(_wetland, albedo, windSpeed, coefficient, tday, srad, vpd, precipitation, saturationPrcp);
+		}
+	}
+
+	public void calculateWaterTable(
+			double et,
+			double precipitation,
+			double saturationPrcp
+			) throws IOException{
+		
+		//Generate water
+		for(WetlandWater _wetland : this.wetlands){
+			this.generateWaterCatchment(_wetland, et, precipitation, saturationPrcp);
 		}
 	}
 
@@ -106,25 +127,27 @@ public class HydrologicalModel {
 //		}
 //		
 //		return _changed;
-		for(WaterTable _w : waters){
-			if(this.waterFlow(waters, _w)){
-				return true;
+		for(WaterTable _w : (WaterTable[])waters.toArray(new WaterTable[0])){
+			if(waters.contains(_w)){
+				if(this.waterFlow(waters, _w)){
+//					return true;
+				}
 			}
 		}
 	
 //		this.combineWaterTables(waters, _w);
-		for(WaterTable _w : waters){
-			if(this.combineWaterTables(waters, _w)){
-				return true;
-			}
-		}
+//		for(WaterTable _w : waters){
+//			if(this.combineWaterTables(waters, _w)){
+//				return true;
+//			}
+//		}
 
 		return false;
 	}
 
 	private boolean waterFlow(List<WaterTable> waters, WaterTable water) throws IOException{
-		double _overFlowVol = water.getOverflowVolume();
-		if(_overFlowVol > 0){
+		if(water.isOverFlow()){
+//			double _overFlowVol = water.getOverflowVolume();
 			WaterTable _next = this.findWaterTable(waters, water.getSpillPoint().getCatchment());
 			if(_next == null){
 				log.info("No next catchment found for " + water);
@@ -136,20 +159,24 @@ public class HydrologicalModel {
 				if(_next.getWaterLevel() < water.getWaterLevel()){// water.getSpillPoint().getElevation()){
 					log.info("Flowing " + water + " to " + _next);
 					
-					water.setWaterLevel(water.getSpillPoint().getElevation());
-					//Water over flow
-					_next.addWaterVolume(_overFlowVol);
-					
-					if(_next.getWaterLevel() < _next.getSpillPoint().getElevation()){
+					double _overFlowVol = water.getOverflowVolume();
+
+					if(_next.getCatchmentVolume() >= _overFlowVol){
+						//Water over flow
+						water.setWaterLevel(water.getSpillPoint().getElevation());
+						_next.addWaterVolume(_overFlowVol);
+						
 						return false;
 					}
 					else{
-						if(water.getCatchments().contains(_next.getSpillPoint().getCatchment()) == false){
-							return this.waterFlow(waters, _next);
-						}
-						else{
-							return false;
-						}
+						WaterUnion _union = this.combineWaterTables(waters, water, _next);
+						return this.waterFlow(waters, _union);
+//						if(water.getCatchments().contains(_next.getSpillPoint().getCatchment()) == false){
+//							
+//						}
+//						else{
+//							return false;
+//						}
 					}
 //					this.waterFlow(waters, _next);
 				}
@@ -161,36 +188,60 @@ public class HydrologicalModel {
 		
 		return false;
 	}
+	
+	public WaterUnion combineWaterTables(List<WaterTable> waters, WaterTable water1, WaterTable water2) throws IOException{
+		List<WaterTable> _subs = new ArrayList<WaterTable>();
+		_subs.add(water1);
+		_subs.add(water2);
+		
+		List<Catchment> _cats = new ArrayList<Catchment>();
+		_cats.addAll(water1.getCatchments());
+		_cats.addAll(water2.getCatchments());
+		
+		WaterUnion _union = new WaterUnion(_subs, water1.getSpillPoint().getElevation(), SpillPoint.calculateSpillPoint(dem, this.catchments, _cats));
+		
+		if(water1.isOverFlow() == false || water2.isOverFlow() == false)
+			throw new IOException("Wrong water union");
+		
+		log.info("Combine water units " + _union);				
 
-	public boolean combineWaterTables(List<WaterTable> waters, WaterTable water) throws IOException{
-		double _overFlowVol = water.getOverflowVolume();
-		if(_overFlowVol > 0){
-			WaterTable _next = this.findWaterTable(waters, water.getSpillPoint().getCatchment());
-			if(_next != null && _next.getWaterLevel() >= water.getSpillPoint().getElevation()){
-				//Create water union
+		waters.remove(water1);
+		waters.remove(water2);
 
-				List<WaterTable> _subs = new ArrayList<WaterTable>();
-				_subs.add(water);
-				_subs.add(_next);
-				
-				List<Catchment> _cats = new ArrayList<Catchment>();
-				_cats.addAll(water.getCatchments());
-				_cats.addAll(_next.getCatchments());
-				
-				waters.remove(water);
-				waters.remove(_next);
-
-				WaterUnion _union = new WaterUnion(_subs, water.getSpillPoint().getElevation(), SpillPoint.calculateSpillPoint(dem, this.catchments, _cats));
-				waters.add(_union);
-				log.info("Combine water units " + _union);				
-				
-				this.combineWaterTables(waters, _union);
-
-				return true;
-			}
-		}
-		return false;
+		waters.add(_union);
+		
+		return _union;
 	}
 
+
+//	public boolean combineWaterTables(List<WaterTable> waters, WaterTable water) throws IOException{
+//		double _overFlowVol = water.getOverflowVolume();
+//		if(_overFlowVol > 0){
+//			WaterTable _next = this.findWaterTable(waters, water.getSpillPoint().getCatchment());
+//			if(_next != null && _next.getWaterLevel() >= water.getSpillPoint().getElevation()){
+//				//Create water union
+// 
+//				List<WaterTable> _subs = new ArrayList<WaterTable>();
+//				_subs.add(water);
+//				_subs.add(_next);
+//				
+//				List<Catchment> _cats = new ArrayList<Catchment>();
+//				_cats.addAll(water.getCatchments());
+//				_cats.addAll(_next.getCatchments());
+//				
+//				waters.remove(water);
+//				waters.remove(_next);
+//
+//				WaterUnion _union = new WaterUnion(_subs, water.getSpillPoint().getElevation(), SpillPoint.calculateSpillPoint(dem, this.catchments, _cats));
+//				waters.add(_union);
+//				log.info("Combine water units " + _union);				
+//				
+//				this.combineWaterTables(waters, _union);
+//
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 }

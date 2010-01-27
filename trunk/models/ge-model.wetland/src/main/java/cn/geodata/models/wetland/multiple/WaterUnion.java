@@ -1,5 +1,6 @@
 package cn.geodata.models.wetland.multiple;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,34 +14,47 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class WaterUnion implements WaterTable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5727224071082267102L;
+
 	private Logger log = Logger.getAnonymousLogger();
 	
 	private List<WaterTable> waterTables;
 	private double waterLevel;
 	private SpillPoint spillPoint;
 	private double bottomElevation;
+	private ElevationZone zones;
 	
-	public WaterUnion(List<WaterTable> waterTables, double bottomElevation, SpillPoint spillPoint){
+	public WaterUnion(List<WaterTable> waterTables, double bottomElevation, SpillPoint spillPoint) throws IOException{
 		this.waterLevel = 0;
 		this.spillPoint = spillPoint;
 		this.waterTables = waterTables;
 		this.bottomElevation = bottomElevation;
 		
+		ElevationZone _zones = null;
+		for(WaterTable _table : waterTables){
+			if(_zones == null)
+				_zones = _table.getZones();
+			else
+				_zones = ElevationZone.merge(_zones, _table.getZones());
+		}
+		
 		averageWaterLevel();
 	}
 	
 	private void averageWaterLevel(){
-		double _overFlowVol = 0;
+		double _vol = 0;
 		for(WaterTable _w: this.waterTables){
-			_overFlowVol += _w.getOverflowVolume();
+			_vol += _w.getWaterVolume();
 		}
 		
-		double _waterLevel = _overFlowVol / this.getArea() + this.bottomElevation;
-		for(WaterTable _w: this.waterTables){
-			_w.setWaterLevel(_waterLevel);
-		}
+		this.waterLevel = this.zones.calculateWaterTable(_vol);
 		
-		this.waterLevel = _waterLevel;
+		for(WaterTable _w: this.waterTables){
+			_w.setWaterLevel(this.waterLevel);
+		}
 	}
 	
 	public List<Catchment> getCatchments(){
@@ -76,12 +90,14 @@ public class WaterUnion implements WaterTable {
 	}
 
 	public void addWaterVolume(double volume) {
-		this.waterLevel += volume / this.getArea();
-		
-		for(WaterTable _w : this.waterTables){
-			_w.setWaterLevel(this.waterLevel);
-//			_w.addWaterVolume(volume / _w.getArea());
-		}
+		this.waterLevel = this.zones.calculateWaterTable(this.zones.calculateVolume(this.waterLevel) + volume);
+
+//		this.waterLevel += volume / this.getArea();
+//		
+//		for(WaterTable _w : this.waterTables){
+//			_w.setWaterLevel(this.waterLevel);
+////			_w.addWaterVolume(volume / _w.getArea());
+//		}
 	}
 
 	public double getArea() {
@@ -106,7 +122,12 @@ public class WaterUnion implements WaterTable {
 			return 0;
 		}
 		
-		return (this.spillPoint.getElevation() - this.waterLevel) * this.getArea();
+		return this.zones.calculateVolume(this.spillPoint.getElevation()) - this.zones.calculateWaterTable(this.waterLevel);
+//		if(this.waterLevel >= this.spillPoint.getElevation()){
+//			return 0;
+//		}
+//		
+//		return (this.spillPoint.getElevation() - this.waterLevel) * this.getArea();
 	}
 
 	public double getOverflowVolume() {
@@ -114,7 +135,12 @@ public class WaterUnion implements WaterTable {
 			return 0;
 		}
 		
-		return (this.waterLevel - this.spillPoint.getElevation()) * this.getArea();
+		return this.zones.calculateWaterTable(this.waterLevel) - this.zones.calculateVolume(this.spillPoint.getElevation());
+//		if(this.waterLevel <= this.spillPoint.getElevation()){
+//			return 0;
+//		}
+//		
+//		return (this.waterLevel - this.spillPoint.getElevation()) * this.getArea();
 	}
 
 	public void setWaterLevel(double waterLevel) {
@@ -129,6 +155,10 @@ public class WaterUnion implements WaterTable {
 		}
 		
 		return Arrays.toString(this.getCatchments().toArray()) + "(" + this.waterLevel + ") -> " + _code + "(" + this.spillPoint.getElevation() + ")";  
+	}
+
+	public double getBottomElevation() {
+		return bottomElevation;
 	}
 
 	public MultiPolygon getCatchmentRegion() {
@@ -161,5 +191,17 @@ public class WaterUnion implements WaterTable {
 		}
 		
 		return _polygon;
+	}
+
+	public ElevationZone getZones() {
+		return this.zones;
+	}
+
+	public double getWaterVolume() {
+		return this.zones.calculateVolume(this.waterLevel);
+	}
+
+	public boolean isOverFlow() {
+		return this.waterLevel > this.spillPoint.getElevation();
 	}
 }

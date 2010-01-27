@@ -8,7 +8,7 @@ import cn.geodata.models.raster.GeoRaster;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
-@GeoProcess(title="Water Surface Extent", keywords={"water surface", "geospatial extent"}, description="")
+@GeoProcess(title="Water Surface Extent", keywords={"water surface", "water region", "geospatial extent"}, description="")
 public class WaterRegionModel2 implements Calculate  {
 	private double waterLevel;
 	private MultiPolygon catchment;

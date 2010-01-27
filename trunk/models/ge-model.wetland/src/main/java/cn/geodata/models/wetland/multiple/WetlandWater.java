@@ -20,6 +20,7 @@ public class WetlandWater implements WaterTable {
 	private Catchment catchment;
 	//Water level
 	protected double waterLevel;
+	protected ElevationZone zones;
 	//Bottom elevation
 	protected double bottomElevation;
 	//Spill point
@@ -29,17 +30,9 @@ public class WetlandWater implements WaterTable {
 		this.catchment = catchment;
 		this.bottomElevation = catchment.getBottomElevation();
 		this.waterLevel = catchment.getBottomElevation();
+		this.zones = catchment.getZones();
 	}
 	
-	/**
-	 * If over flowing
-	 * 
-	 * @return
-	 */
-	public boolean isOverFlow(){
-		return this.waterLevel  > this.spillPoint.getElevation();
-	}
-		
 	public List<Catchment> getCatchments() {
 		List<Catchment> _list = new ArrayList<Catchment>();
 		_list.add(this.catchment);
@@ -88,18 +81,26 @@ public class WetlandWater implements WaterTable {
 		
 		if(waterLevel < this.bottomElevation)
 			_pore = 0.3;
-		
+
 		double _waterLevel = 0;
-//		double _waterLevel = 4 * 0.01 * precipitation * _pore - et * 0.001;
 		if(precipitation > saturationPrcp){
-//			_waterLevel = 0.1 * precipitation * _pore - et * 0.001;
 			_waterLevel = 0.01 * precipitation / _pore * (this.getArea() / 100000)  - et * 0.001;
-//			_waterLevel = 0.01 * precipitation / _pore * (this.getArea() / 10000)  - et * 0.001;
 		}
 		else{
 			_waterLevel = 0.01 * precipitation / _pore - et * 0.001;
-//			_waterLevel = 0.1 * precipitation * _pore - et * 0.001;
 		}
+		
+//		double _waterLevel = 0.01 * precipitation / _pore - et * 0.001;
+//		double _waterLevel = 4 * 0.01 * precipitation * _pore - et * 0.001;
+//		if(precipitation > saturationPrcp){
+////			_waterLevel = 0.1 * precipitation * _pore - et * 0.001;
+////			_waterLevel = 0.01 * precipitation / _pore * (this.getArea() / 10000)  - et * 0.001;
+////			_waterLevel = 0.01 * precipitation / _pore * (this.getArea() / 10000)  - et * 0.001;
+//		}
+//		else{
+//			_waterLevel = 0.01 * precipitation / _pore - et * 0.001;
+////			_waterLevel = 0.1 * precipitation * _pore - et * 0.001;
+//		}
 		
 		this.waterLevel = waterLevel + _waterLevel;
 	}
@@ -119,8 +120,9 @@ public class WetlandWater implements WaterTable {
 		return _water;
 	}
 
-	public void addWaterVolume(double waterTable) {
-		this.waterLevel += waterTable / this.getArea();
+	public void addWaterVolume(double volume) {
+//		this.waterLevel += waterTable / this.getArea();
+		this.waterLevel = this.zones.calculateWaterTable(this.zones.calculateVolume(this.waterLevel) + volume);
 	}
 
 	public double getBottomElevation() {
@@ -136,7 +138,8 @@ public class WetlandWater implements WaterTable {
 			return 0;
 		}
 		
-		return (this.spillPoint.getElevation() - this.waterLevel) * this.getArea();
+		return this.zones.calculateVolume(this.spillPoint.getElevation()) - this.zones.calculateWaterTable(this.waterLevel);
+//		return (this.spillPoint.getElevation() - this.waterLevel) * this.getArea();
 	}
 
 	public double getOverflowVolume() {
@@ -144,7 +147,8 @@ public class WetlandWater implements WaterTable {
 			return 0;
 		}
 		
-		return (this.waterLevel - this.spillPoint.getElevation()) * this.getArea();
+		return this.zones.calculateWaterTable(this.waterLevel) - this.zones.calculateVolume(this.spillPoint.getElevation());
+//		return (this.waterLevel - this.spillPoint.getElevation()) * this.getArea();
 	}
 
 	public SpillPoint getSpillPoint() {
@@ -171,5 +175,17 @@ public class WetlandWater implements WaterTable {
 
 	public MultiPolygon getCatchmentRegion() {
 		return this.catchment.getRegion();
+	}
+
+	public ElevationZone getZones() {
+		return this.zones;
+	}
+
+	public double getWaterVolume() {
+		return this.zones.calculateVolume(this.waterLevel);
+	}
+	
+	public boolean isOverFlow() {
+		return this.waterLevel > this.spillPoint.getElevation();
 	}
 }

@@ -16,20 +16,14 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 public class DemAnalysis {
 	private Logger log = Logger.getAnonymousLogger();
 	private GeoRaster raster;
-	private float nodata;
 	private GeometryFactory factory;
 	
-	public DemAnalysis(GeoRaster raster, float nodata){
+	public DemAnalysis(GeoRaster raster){
 		this.raster = raster;
 		if(this.raster == null){
 			this.log.warning("No reader set to DEM Analysis");
 		}
 		this.factory = new GeometryFactory();
-		this.nodata = nodata;
-	}
-	
-	public DemAnalysis(GeoRaster raster){
-		this(raster, 0);
 	}
 	
 	/**
@@ -107,8 +101,9 @@ public class DemAnalysis {
 		for(int _row = extent.getMinY();_row <= extent.getMaxY();_row++){
 			double _x = this.raster.getEnvelope().getMinX() + _cellSize * extent.getMinX() + _cellSize / 2;
 			for(int _col=extent.getMinX(); _col <= extent.getMaxX(); _col++){
-				float _val = this.raster.getCell(_col, _row).floatValue();
-				if(_val != nodata){
+				Number _vv = this.raster.getCell(_col, _row);
+				if(_vv != null){
+					float _val = _vv.floatValue();
 					double _distance = polygon.distance(factory.createPoint(new Coordinate(_x, _y)));
 					if(_distance == 0 && _val < _low){
 						_cell = new RasterCell(this.raster, _row, _col);
