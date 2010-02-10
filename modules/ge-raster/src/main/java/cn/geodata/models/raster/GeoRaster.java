@@ -1,5 +1,9 @@
 package cn.geodata.models.raster;
 
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -7,6 +11,8 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import javax.media.jai.RasterFactory;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
@@ -94,8 +100,7 @@ public class GeoRaster {
 	public GeoRaster(File file, Number nodata) throws IOException {
 		this.file = file;
 		this.nodata = nodata;
-		
-		this.loadImage();
+		this.loadImage(file);
 		
 		this.envelope = this.grid.getEnvelope2D();
 		this.colNum = this.image.getWidth();
@@ -109,15 +114,45 @@ public class GeoRaster {
 		cellSizeX = envelope.getWidth() / colNum;
 		cellSizeY = envelope.getHeight() / rowNum;
 	}
-	
-	private void loadImage() throws IOException{
-		this.grid = this.loadGeoTiff(this.file);
+
+	public GeoRaster(GridCoverage2D raster, Number nodata) throws IOException {
+		this.file = null;
+		this.nodata = nodata;
+		this.loadImage(raster);
+		
+		this.envelope = this.grid.getEnvelope2D();
+		this.colNum = this.image.getWidth();
+		this.rowNum = this.image.getHeight();
+		this.tileWidth = this.image.getTileWidth();
+		this.tileHeight = this.image.getTileHeight();
+		this.type = this.image.getSampleModel().getDataType();
+		this.bandNum = this.image.getSampleModel().getNumBands();
+		this.band = 0;
+		
+		cellSizeX = envelope.getWidth() / colNum;
+		cellSizeY = envelope.getHeight() / rowNum;
+	}
+
+	public GeoRaster(WritableRaster raster, Envelope2D env, Number nodata) throws IOException {
+		this(GeoRaster.createGrid(raster, env), nodata);
+	}
+
+	private void loadImage(File file) throws IOException{
+		this.grid = this.loadGeoTiff(file);
 		this.image = this.grid.getRenderedImage();
 		
 		//Reload envelope
 		this.envelope = this.grid.getEnvelope2D();
 	}
-	
+
+	private void loadImage(GridCoverage2D raster) throws IOException{
+		this.grid = raster;
+		this.image = this.grid.getRenderedImage();
+		
+		//Reload envelope
+		this.envelope = this.grid.getEnvelope2D();
+	}
+
 	protected GridCoverage2D loadGeoTiff(File f) throws IOException{
 		GeoTiffReader _reader = new GeoTiffReader(f, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
 		return (GridCoverage2D) _reader.read(null);
@@ -134,6 +169,25 @@ public class GeoRaster {
 		return this.readCell(col, row);
 	}
 	
+	/**
+	 * Create writable raster that has same parameters to the current one
+	 * 
+	 * @return
+	 */
+	public WritableRaster cloneRaster(){
+		return cloneRaster(this.type);
+	}
+
+	/**
+	 * Create writable raster that has same parameters to the current one except the data type
+	 * 
+	 * @param type data type for the new raster
+	 * @return
+	 */
+	public WritableRaster cloneRaster(int type){
+		return RasterFactory.createBandedRaster(type, this.colNum, this.rowNum, this.bandNum, null);
+	}
+
 	private void initBufferAtLoc(int loc) throws IOException{
 //		System.out.print("buffer...");
 		
@@ -159,7 +213,7 @@ public class GeoRaster {
 	
 	public Number getCell(int col, int row) throws IOException{
 		if(col < 0 || col >= this.colNum || row < 0 || row >= this.rowNum){
-			return this.nodata;
+			return null;
 		}
 
 		int _loc = col + row * this.colNum;
@@ -274,10 +328,29 @@ public class GeoRaster {
 		return _val;
 	}
 	
+	/**
+	 * Write current raster to a GeoTIFF file
+	 * 
+	 * @param outFile
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
 	public void save(File outFile) throws IllegalArgumentException, IOException{
-		GeoRaster.writeTiff(outFile, new GridCoverageFactory().create(outFile.getName(), this.getImage(), this.envelope));
+//		GeoRaster.writeTiff(outFile, new GridCoverageFactory().create(outFile.getName(), this.getImage(), this.envelope));
+		GeoRaster.writeTiff(outFile, this.getGrid());
+		
+		if(this.file == null)
+			this.file = outFile;
 	}
 
+	/**
+	 * Write GridCoverage2D object to a GeoTIFF file
+	 * 
+	 * @param outFile
+	 * @param grid
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
 	public static void writeTiff(File outFile, GridCoverage2D grid) throws IllegalArgumentException, IOException{
 		GeoTiffFormat _format = new GeoTiffFormat();
 		
@@ -290,6 +363,29 @@ public class GeoRaster {
 		_writer.write(grid, null);
 	}
 	
+	public static GridCoverage2D createGrid(WritableRaster raster,
+			Envelope2D env) {
+		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+		ComponentColorModel cm = RasterFactory.createComponentColorModel(
+				raster.getDataBuffer().getDataType(), // dataType
+				cs, // color space
+				false, // has alpha
+				false, // is alphaPremultiplied
+				Transparency.OPAQUE); // transparency
+
+		BufferedImage bimage = new BufferedImage(cm, raster, false, null);
+		return new GridCoverageFactory().create("image", bimage, env);
+	}
+
+	/**
+	 * Write a WritableRaster object to a GeoTIFF file
+	 * 
+	 * @param outFile
+	 * @param env
+	 * @param grid
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
 	public static void writeTiff(File outFile, Envelope2D env, WritableRaster grid) throws IllegalArgumentException, IOException{
 		writeTiff(outFile, new GridCoverageFactory().create(outFile.getName(), grid, env));
 	}
@@ -338,8 +434,12 @@ public class GeoRaster {
 
 	public GridCoverage2D getGrid() throws IOException {
 		if(this.grid == null){
-			this.loadImage();
+			if(this.file != null)
+				this.loadImage(this.file);
+			else
+				throw new IOException("No source raster");
 		}
+		
 		return grid;
 	}
 
@@ -349,7 +449,10 @@ public class GeoRaster {
 
 	public RenderedImage getImage() throws IOException {
 		if(this.image == null){
-			this.loadImage();
+			if(this.file != null)
+				this.loadImage(this.file);
+			else
+				throw new IOException("No source raster");
 		}
 		
 		return image;
