@@ -72,7 +72,7 @@ public class DemAnalysis {
 	 */
 	public boolean isBoundary(int col, int row, MultiLineString border) throws IOException{
 		double _maxDis = Math.hypot(this.raster.getCellSizeX(), this.raster.getCellSizeX()) / 2; 
-		Number _val = this.raster.getCell(col, row).floatValue();
+		Number _val = this.raster.getCell(col, row);
 		
 		if(_val != null){
 			double _distance = border.distance(factory.createPoint(new Coordinate(this.raster.getX(col), this.raster.getY(row))));
