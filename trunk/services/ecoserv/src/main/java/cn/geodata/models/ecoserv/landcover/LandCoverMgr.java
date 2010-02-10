@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.geotools.geometry.Envelope2D;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -101,7 +102,7 @@ public class LandCoverMgr {
 		Connection _con = ConnectionPool.getConnection();
 		PreparedStatement _state = null;
 		try{
-			_state = _con.prepareStatement("SELECT \"owner\", width, height, minx, miny, maxx, maxy, cellx, celly, id, title, note FROM landcover WHERE \"owner\"='" + creator + "' order by update_date desc");
+			_state = _con.prepareStatement("SELECT \"owner\", width, height, minx, miny, maxx, maxy, cellx, celly, id, title, note FROM landcover " + (StringUtils.isBlank(creator) ? "" : "WHERE \"owner\"='" + creator + "' ") + "order by update_date desc");
 
 			_state.execute();
 			ResultSet _rs = _state.getResultSet();

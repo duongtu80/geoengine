@@ -67,7 +67,7 @@ public class Operations {
 		Date _endDate = new Date(_param.getLong("endDate"));
 		String _landcover = _param.getString("landCover");
 		
-		Scenario _output = this.ecoservModel.calculate(_startDate, _endDate, Arrays.asList(new String[] {_landcover}));
+		Scenario _output = this.ecoservModel.calculate(_startDate, _endDate, "b2", Arrays.asList(new String[] {_landcover}));
 		
 		this.outputJSON(_output.toJSON());
 		

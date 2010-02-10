@@ -9,9 +9,31 @@
 		</constructor-arg>
 		<constructor-arg><value type="int">0</value></constructor-arg>
 	</bean>
+	<bean class="cn.geodata.models.ecoserv.simulate.SoilErosionModel" id="soilErosionModel">
+		<constructor-arg ref="dem" />
+		<constructor-arg>
+			<bean class="cn.geodata.models.raster.GeoRaster">
+				<constructor-arg>
+					<bean class="java.io.File">
+						<constructor-arg><value>o:\tmp\rusle\test2\kfcacthwgs84.tif</value></constructor-arg>
+					</bean>
+				</constructor-arg>
+				<constructor-arg><value type="float">-340282346638528860000000000000000000000.0</value></constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
+	<bean class="cn.geodata.models.wetland.dem.ClimateModel" id="climateModel">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg><value>d:\Tank\Data\ecoserv\data\ipcc</value></constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
 	
 	<bean id="ecoservModel" class="cn.geodata.models.ecoserv.simulate.RandomModel" scope="prototype">
 		<constructor-arg ref="dem" />
+		<constructor-arg ref="soilErosionModel" />
+		<constructor-arg ref="climateModel" />
 	</bean>
 	
 	<bean id="multipleWaterSurfaceModel" class="cn.geodata.models.ecoserv.simulate.MultipleWaterSurfaceModel" scope="prototype">

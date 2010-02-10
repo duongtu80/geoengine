@@ -280,7 +280,7 @@ function Maps(x, y, level) {
 		var _styleMap = new OpenLayers.StyleMap( {
 			'default' : layer_style
 		});
-		_styleMap.addUniqueValueRules("default", "v", lookup);
+		_styleMap.addUniqueValueRules("default", "land", lookup);
 
 		var _data = Ext.util.JSON.decode(response.responseText);
 
@@ -290,35 +290,39 @@ function Maps(x, y, level) {
 		vector.setOpacity(0.6);
 
 		//Create and add pixels
-		var features = [];
-		var featureCol = [];
+//		var features = [];
+//		var featureCol = [];
 		vector.store = _data;
-
-		var _pos = 0;
-		var startY = _data.maxy;
-		for ( var y = 0; y < _data.height; y++) {
-			var startX = _data.minx;
-			for ( var x = 0; x < _data.width; x++) {
-				if (_data.data[_pos] != 0) {
-					var poly = new OpenLayers.Bounds(startX, startY
-							- _data.celly, startX + _data.cellx, startY)
-							.toGeometry().transform(
-									this.displayProjection, this.projection);
-					var feature = new OpenLayers.Feature.Vector(poly, {
-						'v' : _data.data[_pos]
-					});
-					features.push(feature);
-					featureCol.push(feature);
-				} else {
-					featureCol.push(null);
-				}
-				_pos++;
-				startX += _data.cellx;
-			}
-			startY -= _data.celly;
-		}
+		
+		var _parse = new OpenLayers.Format.GeoJSON({internalProjection: this.projection, externalProjection: this.displayProjection});
+		var features = _parse.read(_data.data);
 		vector.addFeatures(features);
-		vector.featureCol = featureCol;
+
+//		var _pos = 0;
+//		var startY = _data.maxy;
+//		for ( var y = 0; y < _data.height; y++) {
+//			var startX = _data.minx;
+//			for ( var x = 0; x < _data.width; x++) {
+//				if (_data.data[_pos] != 0) {
+//					var poly = new OpenLayers.Bounds(startX, startY
+//							- _data.celly, startX + _data.cellx, startY)
+//							.toGeometry().transform(
+//									this.displayProjection, this.projection);
+//					var feature = new OpenLayers.Feature.Vector(poly, {
+//						'v' : _data.data[_pos]
+//					});
+//					features.push(feature);
+//					featureCol.push(feature);
+//				} else {
+//					featureCol.push(null);
+//				}
+//				_pos++;
+//				startX += _data.cellx;
+//			}
+//			startY -= _data.celly;
+//		}
+//		vector.addFeatures(features);
+//		vector.featureCol = featureCol;
 
 		this.addLayer(vector);
 		this.landcover = vector;

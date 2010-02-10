@@ -538,7 +538,7 @@ function Main() {
 
 									main.progressQueue.pushTask(
 											'Load Land Cover Sceniaro',
-											'landcover/_loadLand.do', {
+											'landcover/_loadLandMerge.do', {
 												id : _val.get('id')
 											}, map, main.map.parseLandcover);
 								}

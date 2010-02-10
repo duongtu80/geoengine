@@ -16,6 +16,7 @@ import cn.geodata.models.ecoserv.landcover.LandCoverMgr;
 import cn.geodata.models.ecoserv.utils.DayMet;
 import cn.geodata.models.ecoserv.utils.DayMetReader;
 import cn.geodata.models.raster.GeoRaster;
+import cn.geodata.models.wetland.dem.ClimateModel;
 
 public class RandomModel {
 	private Logger log = Logger.getAnonymousLogger();
@@ -23,9 +24,13 @@ public class RandomModel {
 	private List<Long> dates;
 	private List<String> params;
 	private GeoRaster dem;
+	private SoilErosionModel erosionModel; 
+	private ClimateModel climateModel;
 	
-	public RandomModel(GeoRaster dem) throws IOException {
+	public RandomModel(GeoRaster dem, SoilErosionModel erosionModel, ClimateModel climateModel) throws IOException {
 		this.dem = dem;
+		this.erosionModel = erosionModel;
+		this.climateModel = climateModel;
 		
 		this.dates = new ArrayList<Long>();
 		for(int _year=1990;_year<2000;_year++){
@@ -37,7 +42,7 @@ public class RandomModel {
 		this.params = Arrays.asList(new String[]{"Water Storage", "Soil Erosion", "Water Quality", "GW Recharge", "Flor Quality", "Biomass", "CarbonSeq", "GHG", "Amphibians", "Waterfowl", "Shorebirds", "Pollinators"});
 	}
 
-	public Scenario calculate(Date startDate, Date endDate, List<String> scenarios) throws Exception {
+	public Scenario calculate(Date startDate, Date endDate, String climateScenario, List<String> scenarios) throws Exception {
 		this.dates = new ArrayList<Long>();
 		for(int _year=startDate.getYear() + 1900;_year<endDate.getYear() + 1900;_year++){
 			for(int _month=0;_month<12;_month+=3){
@@ -50,6 +55,8 @@ public class RandomModel {
 
 		Map<String, List<Map<String, Double>>> values = new HashMap<String, List<Map<String, Double>>>();
 		List<DateObject<Map<String,Double>>> _waters = null;
+		
+		Map<Integer, Double> _soilErosionCache = new HashMap<Integer, Double>();
 		
 		for(String _s: scenarios){
 			log.info("Start scenario " + _s);
@@ -65,11 +72,9 @@ public class RandomModel {
 			CarbonModel _carbon = new CarbonModel();
 			_carbon.initLandCover(_landcover, _climate);
 			
-			
 			List<Map<String, Double>> _vals = new ArrayList<Map<String, Double>>();
 			for(Long _d: dates){
 				Date _date = new Date(_d);
-				double _dd = (_date.getMonth() + 1) / 12.0;
 				
 				Map<String, Double> _val = new HashMap<String, Double>();
 				for(String _h: this.params){
@@ -92,13 +97,21 @@ public class RandomModel {
 						_val.put(_h, _vv);
 					}
 					else if(_h.equals("Soil Erosion")){
-						//Still use the random model before we come up with the new model
-						double _vv = Double.parseDouble(_modelParams.get(0).get(_h)) * _dd + Double.parseDouble(_modelParams.get(1).get(_h)) + Math.random() * Double.parseDouble(_modelParams.get(2).get(_h));
-						_vv = (_vv - Double.parseDouble(_modelParams.get(3).get(_h))) / (Double.parseDouble(_modelParams.get(4).get(_h)) - Double.parseDouble(_modelParams.get(3).get(_h)));
+						double _vv = 0;
+						int _year = _date.getYear() + 1900;
+						if(_soilErosionCache.containsKey(_year)){
+							_vv = _soilErosionCache.get(_year);
+						}
+						else{
+							_vv = this.erosionModel.soilLossTolerance(this.erosionModel.averageRaster(this.erosionModel.calculate(this.climateModel.precipitationAvgYearly(climateScenario, _year), _landcover.toRaster())));
+							_soilErosionCache.put(_year, _vv);
+						}
 						
 						_val.put(_h, _vv);
 					}
 					else{
+						double _dd = (_date.getMonth() + 1) / 12.0;
+
 						double _vv = Double.parseDouble(_modelParams.get(0).get(_h)) * _dd + Double.parseDouble(_modelParams.get(1).get(_h)) + Math.random() * Double.parseDouble(_modelParams.get(2).get(_h));
 						_vv = (_vv - Double.parseDouble(_modelParams.get(3).get(_h))) / (Double.parseDouble(_modelParams.get(4).get(_h)) - Double.parseDouble(_modelParams.get(3).get(_h)));
 						
