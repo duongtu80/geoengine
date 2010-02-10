@@ -7,15 +7,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
 <title>EcoServ (Prairie Pothole Models)</title>
+
 <script type="text/javascript"
 	src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"> </script>
 
 <style type="text/css">
-@IMPORT url("css/main.css");
-
-@IMPORT url("css/map.css");
-
-@IMPORT url("css/tbar.css");
+	@IMPORT url("css/main.css");
+	@IMPORT url("css/map.css");
+	@IMPORT url("css/tbar.css");
 </style>
 
 <script
@@ -35,14 +34,14 @@
 
 <!-- Load OpenLayers library -->
 <!-- 
-<script type="text/javascript"
-	src="/public/openlayers/lib/OpenLayers.js"></script>
- -->
-
-<script type="text/javascript" src="js/Common.js"></script>
 <script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>
+ -->
+<script type="text/javascript"
+	src="/public/openlayers/OpenLayers.js"></script>
 
 <script type="text/javascript" src="/public/GeoExt/script/GeoExt.js"></script>
+
+<script type="text/javascript" src="js/Common.js"></script>
 <script type="text/javascript" src="js/Utils.js"></script>
 <script type="text/javascript" src="js/ProgressQueue.js"></script>
 <script type="text/javascript" src="js/ModelSetting.js"></script>

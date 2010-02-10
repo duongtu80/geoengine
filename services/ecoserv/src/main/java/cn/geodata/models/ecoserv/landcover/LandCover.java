@@ -1,6 +1,7 @@
 package cn.geodata.models.ecoserv.landcover;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
@@ -20,14 +21,33 @@ import net.sf.json.JSONObject;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
+import org.geotools.data.FeatureStore;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.GeoTools;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.graph.util.geom.GeometryUtil;
 import org.geotools.referencing.CRS;
+import org.geotools.util.Converters;
+import org.geotools.util.GeometryTypeConverterFactory;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
+import cn.geodata.models.geojson.GeoJSON;
+import cn.geodata.models.geojson.UnsupportedGeoJSONType;
 import cn.geodata.models.raster.GeoRaster;
 
+import com.sun.media.jai.codecimpl.util.RasterFactory;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
 
 public class LandCover {
 	private Logger log = Logger.getAnonymousLogger();
@@ -239,6 +259,100 @@ public class LandCover {
 		_data.put("note", this.note);
 		
 		return _data;
+	}
+	
+	public JSONObject createJSONPolygon() throws IOException{
+		Map<Integer, Geometry> _polys = new HashMap<Integer, Geometry>();
+		
+		double _minx = this.extent.getMinX();
+		double _maxy = this.extent.getMaxY();
+		
+		double _cellx = this.getCellX();
+		double _celly = this.getCellY();
+		for(int _row = 0;_row < this.rowCount;_row++){
+			for(int _col = 0; _col < this.colCount; _col++){
+				Polygon _env = JTS.toGeometry(new Envelope(_minx + _col * _cellx, _minx + (_col + 1) * _cellx, _maxy - (_row + 1) * _celly, _maxy - _row * _celly));
+				int _val = this.data[_row * this.colCount + _col];
+				
+				if(_val != 0){
+					if(_polys.containsKey(_val)){
+						_polys.put(_val, _polys.get(_val).union(_env));
+					}
+					else{
+						_polys.put(_val, _env);
+					}
+				}
+			}
+		}
+
+		SimpleFeatureTypeBuilder _typeBd = new SimpleFeatureTypeBuilder();
+		_typeBd.setName("landcover");
+		
+		_typeBd.add("shape", Polygon.class);
+		_typeBd.add("land", Integer.class);
+		
+		SimpleFeatureType _featureType = _typeBd.buildFeatureType();
+		
+		FeatureCollection<SimpleFeatureType, SimpleFeature> _cols = CommonFactoryFinder.getFeatureCollections(GeoTools.getDefaultHints()).newCollection();
+		for(int _val : _polys.keySet()){
+			if (_polys.get(_val) instanceof MultiPolygon) {
+				MultiPolygon _pps = (MultiPolygon) _polys.get(_val);
+				for(int i=0;i<_pps.getNumGeometries();i++){
+					SimpleFeatureBuilder _featureBd = new SimpleFeatureBuilder(_featureType);
+					_featureBd.add(_pps.getGeometryN(i));
+					_featureBd.add(_val);
+					
+					_cols.add(_featureBd.buildFeature(null));
+				}
+			}
+			else{
+				SimpleFeatureBuilder _featureBd = new SimpleFeatureBuilder(_featureType);
+				_featureBd.add(_polys.get(_val));
+				_featureBd.add(_val);
+				
+				_cols.add(_featureBd.buildFeature(null));
+			}
+		}
+		
+		ShapefileDataStore _store = new ShapefileDataStore(File.createTempFile("shape", ".shp").toURL());
+		_store.createSchema(_featureType);		
+		FeatureStore<SimpleFeatureType, SimpleFeature> _fs = (FeatureStore<SimpleFeatureType, SimpleFeature>) _store.getFeatureSource();
+		_fs.addFeatures(_cols);
+		
+		JSONObject _data = new JSONObject();
+		
+		_data.put("width", this.colCount);
+		_data.put("height", this.rowCount);
+		_data.put("minx", this.extent.getMinX());
+		_data.put("maxx", this.extent.getMaxX());
+		_data.put("miny", this.extent.getMinY());
+		_data.put("maxy", this.extent.getMaxY());
+		_data.put("cellx", this.cellX);
+		_data.put("celly", this.cellY);
+		_data.put("data", new GeoJSON().encode(_cols));
+		_data.put("id", this.id);
+		_data.put("title", this.title);
+		_data.put("note", this.note);
+		
+		return _data;
+	}
+	
+	/**
+	 * Output the land-cover scenario to GeoRaster
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public GeoRaster toRaster() throws IOException {
+		WritableRaster _raster = (new RasterFactory()).createBandedRaster(DataBuffer.TYPE_BYTE, this.colCount, this.rowCount, 1, null);
+		
+		for(int _row = 0;_row < this.rowCount;_row++){
+			for(int _col = 0; _col < this.colCount; _col++){
+				_raster.setSample(_col, _row, 0, this.data[_row * this.colCount + _col]);
+			}
+		}
+		
+		return new GeoRaster(_raster, this.extent, 0);
 	}
 	
 	public File outputGeoTIFF() throws Exception {

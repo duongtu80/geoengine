@@ -101,7 +101,25 @@ public class LandcoverOp {
 		
 		return "success";
 	}
-	
+
+	public String loadLandMerge() throws Exception {
+		log.info("Load landcover id " + this.id);
+		
+		LandCover _landCover = null;
+		if(this.id < 0){
+			_landCover = this.initializeLandCover();
+		}
+		else{
+			_landCover = new LandCoverMgr().getLandCover(this.id);
+		}
+			
+		this.stream = new ByteArrayInputStream(_landCover.createJSONPolygon().toString(2).getBytes("utf-8"));
+		this.contentType = "text";
+		this.contentDisposition = "attachment;filename=wetland.txt";
+		
+		return "success";
+	}
+
 	public String saveLand() throws Exception {
 		log.info("Save data " + this.data);
 		
