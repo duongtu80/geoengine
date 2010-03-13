@@ -32,7 +32,7 @@ public class ElevationZone {
 	}
 
 	public ElevationZone(GeoRaster raster, MultiPolygon region) throws Exception {
-		this(550, 1000, 0.1, raster, region);
+		this(550, 10000, 0.01, raster, region);
 	}
 	
 	public ElevationZone(double startElevation, int zoneNum,
@@ -140,6 +140,15 @@ public class ElevationZone {
 		}
 		
 		return _maxElevation;
+	}
+	
+	public double calculateBottomElevation() throws IOException{
+		for(int i=0;i<this.zoneNum;i++){
+			if(this.elevations[i] > 0)
+				return this.startElevation + (this.zoneHeight * (i - 1));
+		}
+		
+		throw new IOException("No area found");
 	}
 
 	/**

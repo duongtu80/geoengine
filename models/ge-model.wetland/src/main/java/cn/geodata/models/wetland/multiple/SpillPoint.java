@@ -28,10 +28,12 @@ public class SpillPoint {
 	private Logger log = Logger.getAnonymousLogger();
 	private double elevation;
 	private Catchment catchment;
+	private Point location;
 	
-	public SpillPoint(Catchment catchment, double elevation){
+	public SpillPoint(Catchment catchment, double elevation, Point pt){
 		this.elevation = elevation;
 		this.catchment = catchment;
+		this.location = pt;
 	}
 	
 	/**
@@ -108,8 +110,9 @@ public class SpillPoint {
 //		double _spillPoint = _raster.readFloat(_lowestB.getRow(), _lowestB.getCol()) - _raster.readFloat(_lowestC.getRow(), _lowestC.getCol());
 		double _spillPoint = dem.getCell(_lowestB.getCol(), _lowestB.getRow()).floatValue();
 		Catchment _catchment = getClosestCatchment(catchmentsAll, catchments, _lowestB, dem.getCellSizeX() * 2);
-
-		return new SpillPoint(_catchment, _spillPoint);
+		
+		Point _pt = new GeometryFactory().createPoint(new Coordinate(dem.getX(_lowestB.getCol()), dem.getY(_lowestB.getRow()), _spillPoint));
+		return new SpillPoint(_catchment, _spillPoint, _pt);
 	}
 
 	/**
@@ -134,5 +137,9 @@ public class SpillPoint {
 
 	public Catchment getCatchment() {
 		return catchment;
+	}
+
+	public Point getLocation() {
+		return location;
 	}
 }

@@ -53,9 +53,11 @@ public class Catchment implements Serializable, Cloneable {
 		this.dem = dem;
 		this.region = region;
 		this.code = code;
-		this.zones = new ElevationZone(dem, region);
-			
-		this.bottomElevation = this.calBottomElevation();
+		
+		if(dem != null){
+			this.zones = new ElevationZone(dem, region);
+			this.bottomElevation = this.calBottomElevation();
+		}
 	}
 	
 	private double calBottomElevation() throws IOException{
