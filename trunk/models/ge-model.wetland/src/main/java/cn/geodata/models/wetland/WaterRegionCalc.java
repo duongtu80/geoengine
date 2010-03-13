@@ -5,15 +5,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
+import org.geotools.data.shapefile.shp.JTSUtilities;
+import org.geotools.factory.GeoTools;
 import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.graph.util.geom.GeometryUtil;
 
 import cn.geodata.models.raster.GeoRaster;
 
+import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -129,20 +138,198 @@ public class WaterRegionCalc {
 			_extent.setMaxY((int) Math.floor((_env.getMaxY() - _env2.getMinY()) / this.raster.getCellSizeY()));
 		}
 		
-		WetlandDemPixel[] _range = this.getPixelRange(this.catchment, _extent);
-//		log.info("Range:" + _range[0].toString() + " - " + _range[1].toString());
-		
-		if(this.waterLevel >= _range[1].getVal()){
-			log.warning("Over float");
-			this.waterRegion = this.catchment;
-		}
-		else{
-			this.waterRegion = this.generateBoundary(this.catchment, _extent, this.waterLevel);
-		}
+//		WetlandDemPixel[] _range = this.getPixelRange(this.catchment, _extent);
+////		log.info("Range:" + _range[0].toString() + " - " + _range[1].toString());
+//		
+//		if(this.waterLevel < _range[0].getVal()){
+//			return null;
+//		}
+//		
+//		if(this.waterLevel >= _range[1].getVal()){
+//			log.warning("Over float");
+//			this.waterRegion = this.catchment;
+//		}
+//		else{
+//			this.waterRegion = this.generateBoundary(this.catchment, _extent, this.waterLevel);
+//		}
+//		this.waterRegion = this.generateBoundary(this.catchment, _extent, this.waterLevel);
+		this.waterRegion = this.generateSurface(this.catchment, _extent, this.waterLevel);
 		
 		return waterRegion;
 	}
+	
+	/**
+	 * Generate water surface by merging water polygons
+	 * 
+	 * @param polygon
+	 * @param extent
+	 * @param evl
+	 * @return
+	 * @throws IOException
+	 */
+	private MultiPolygon generateSurface(MultiPolygon polygon, Extent extent, double evl) throws IOException{
+		List<Polygon> _polys = new ArrayList<Polygon>();
+		
+		double _pixelx2 = this.raster.getCellSizeX() / 2;
+		double _pixely2 = this.raster.getCellSizeY() / 2;
 
+		double _pixelx3 = _pixelx2 * 1.05;
+		double _pixely3 = _pixely2 * 1.05;
+		
+		double _startX = this.raster.getEnvelope().getMinX() + this.raster.getCellSizeX() * extent.getMinX() + _pixelx2;
+		double _startY = this.raster.getEnvelope().getMaxY() - this.raster.getCellSizeY() * extent.getMinY() - _pixely2;
+		
+		double _dis = 0; //this.raster.getCellSizeX() * 3;
+		double _y = _startY;
+		for(int _row = extent.getMinY();_row <= extent.getMaxY();_row++){
+			double _x = _startX;
+			int _col1 = 0;
+			boolean _skip = true;
+			
+			for(int _col=extent.getMinX(); _col <= extent.getMaxX(); _col++){
+				double _distance = polygon.distance(factory.createPoint(new Coordinate(_x, _y)));
+				_skip = true;
+				
+				if(_distance <= _dis){
+					Number _v = this.raster.getCell(_col, _row);
+					if(_v != null){
+						float _val = _v.floatValue();
+						
+						if(_val <= evl) {
+							_col1++;
+							
+							_skip = false;
+						}
+					}
+				}
+				
+				if(_skip && _col1 > 0){
+					double _xx = _x - this.raster.getCellSizeX();
+					this.createPolygon(_polys, _x - _col1 * this.raster.getCellSizeX() - _pixelx3, _xx + _pixelx3, _y - _pixely3, _y + _pixely3);
+
+					_col1 = 0;
+				}
+				
+				_x += this.raster.getCellSizeX();
+			}
+
+			if(_skip && _col1 > 0){
+				double _xx = _x - this.raster.getCellSizeX();
+				this.createPolygon(_polys, _xx - _col1 * this.raster.getCellSizeX() - _pixelx3, _xx + _pixelx3, _y - _pixely3, _y + _pixely3);
+
+				_col1 = 0;
+			}
+
+			_y -= this.raster.getCellSizeY();
+		}
+		
+		if(_polys.size() == 0){
+			log.warning("No polygon be found");
+			return null;
+		}
+		
+		this.mergePolygons(_polys);
+//		_polys.add(_polys.get(0));
+
+//		System.out.println("Polygon numbers:" + _polys.size() + "," + _polys.get(0).getArea());
+		return this.factory.createMultiPolygon(_polys.toArray(new Polygon[0]));
+	}
+
+	private void createPolygon(List<Polygon> polys, double startX, double endX, double startY, double endY){
+		Polygon _p = JTS.toGeometry(new Envelope(startX, endX, startY, endY));
+		
+		int _pos = 0;
+		for(;_pos<polys.size();_pos++){
+			Polygon _pp = polys.get(_pos);
+			if(_pp.distance(_p) == 0){
+				polys.set(_pos, (Polygon) _pp.union(_p));
+				break;
+			}
+		}
+
+		if(_pos == polys.size()){
+			polys.add(_p);
+		}
+	}
+	
+	private void mergePolygons(List<Polygon> polys){
+		List<Polygon> _ppp = Lists.newArrayList();
+		for(int i =0;i < polys.size();i++){
+			Polygon _p = polys.get(i);
+			if(_p == null)
+				continue;
+			
+			polys.set(i, null);
+			for(int j = 0;j< polys.size();j++){
+				if(i != j && polys.get(j) != null && polys.get(j).intersects(_p)){
+					_p = (Polygon) _p.union(polys.get(j));
+					polys.set(j, null);
+				}
+			}
+			
+			_ppp.add(_p);
+		}
+		
+		if(polys.size() > _ppp.size()){
+			polys.clear();
+			polys.addAll(_ppp);
+
+			this.mergePolygons(polys);
+		}
+		else{
+			polys.clear();
+			
+			for(int i=0;i<_ppp.size();i++){
+				Polygon _p = _ppp.get(i);
+				
+				LinearRing _ex_line = _p.getFactory().createLinearRing(this.smoothCoordinates(_p.getExteriorRing().getCoordinates()));
+				if(_ex_line.getLength() <= (this.raster.getCellSizeX() + this.raster.getCellSizeY()) * 2 * 6){
+					continue;
+				}
+				
+				List<LinearRing> _in_lines = Lists.newArrayList();
+				for(int j=0;j<_p.getNumInteriorRing();j++){
+					LineString _in_line = _p.getInteriorRingN(j);
+					if(_in_line.getLength() > (this.raster.getCellSizeX() + this.raster.getCellSizeY()) * 2 * 6){
+						_in_lines.add(_p.getFactory().createLinearRing(smoothCoordinates(_in_line.getCoordinates())));
+					}
+				}
+				
+				
+				
+				polys.add(_p.getFactory().createPolygon(_ex_line, _in_lines.toArray(new LinearRing[0])));
+			}
+		}
+	}
+	
+	private Coordinate[] smoothCoordinates(Coordinate[] cs){
+		List<Coordinate> _css = new ArrayList<Coordinate>();
+		
+		double _dir = Double.NaN;
+		for(int i=0;i<cs.length - 1;i++){
+			Coordinate _cur = new Coordinate((cs[i].x + cs[i + 1].x) / 2, (cs[i].y + cs[i + 1].y) / 2);
+			
+			if(!Double.isNaN(_dir)){
+				double _d = this.direction(_css.get(_css.size() - 1), _cur);
+				if(Math.abs(_d - _dir) > Math.toRadians(2)){
+					_css.add(_cur);
+					_dir = _d;
+				}
+			}
+			else{
+				if(_css.size() > 0){
+					_dir = this.direction(_css.get(_css.size() - 1), _cur);
+				}
+				
+				_css.add(_cur);
+			}
+		}
+		if(_css.size() > 0)
+			_css.add(_css.get(0));
+		
+		return (Coordinate[])_css.toArray(new Coordinate[0]);
+	}
+	
 	private WetlandDemPixel[] getPixelRange(MultiPolygon polygon, Extent extent) throws IOException{
 		WetlandDemPixel _min = null;
 		WetlandDemPixel _max = null;
@@ -174,15 +361,20 @@ public class WaterRegionCalc {
 	private MultiPolygon generateBoundary(MultiPolygon polygon, Extent extent, double evl) throws IOException{
 		ArrayList<WetlandDemPixel> _list = new ArrayList<WetlandDemPixel>();
 		
+		double _dis = this.raster.getCellSizeX() * 3;
 		double _y = this.raster.getEnvelope().getMaxY() - this.raster.getCellSizeY() * extent.getMinY() - this.raster.getCellSizeY() / 2;
 		for(int _row = extent.getMinY();_row <= extent.getMaxY();_row++){
 			double _x = this.raster.getEnvelope().getMinX() + this.raster.getCellSizeX() * extent.getMinX() + this.raster.getCellSizeX() / 2;
 			for(int _col=extent.getMinX(); _col <= extent.getMaxX(); _col++){
 				double _distance = polygon.distance(factory.createPoint(new Coordinate(_x, _y)));
-				if(_distance <= 0){
-					float _val = this.raster.getCell(_col, _row).floatValue();
-					if(_val >= evl && isBoundary(_col, _row, polygon, _val, evl)){
-						_list.add(new WetlandDemPixel(_row, _col, _val, _x, _y, true));
+				if(_distance <= _dis){
+					Number _v = this.raster.getCell(_col, _row);
+					if(_v != null){
+						float _val = _v.floatValue();
+						
+						if(_val <= evl && (_distance > 0 || isBoundary(_col, _row, polygon, _val, evl, _distance))) {
+							_list.add(new WetlandDemPixel(_row, _col, _val, _x, _y, true));
+						}
 					}
 					
 				}
@@ -192,6 +384,20 @@ public class WaterRegionCalc {
 			_y -= this.raster.getCellSizeY();
 		}
 		
+		if(_list.size() == 0){
+			log.warning("No border pixel be found");
+			return null;
+		}
+		
+		List<String> _ll = new ArrayList<String>();
+		_ll.add("lon,lat,deep");
+		
+		for(WetlandDemPixel _w : _list){
+			_ll.add(_w.getLon() + "," + _w.getLat() + "," + _w.getVal());
+		}
+		
+		FileUtils.writeLines(new File("p:\\temp\\storage\\p2.csv"), _ll);
+		
 //		orginzieBoundary(_list);
 		
 		ArrayList<Polygon> _polygons = new ArrayList<Polygon>();
@@ -199,16 +405,15 @@ public class WaterRegionCalc {
 			ArrayList<Coordinate> _coordinates = new ArrayList<Coordinate>();
 			ArrayList<WetlandDemPixel> _line = new ArrayList<WetlandDemPixel>();
 			
-			
-			ArrayList<WetlandDemPixel> _n = null;
 			int _pos = 0;
+			ArrayList<WetlandDemPixel> _n = null;
 			for(;_pos<_list.size();_pos++){
 				_n = findNeighborPixels(_list, _list.get(_pos));
 				if(_n.size() == 2){
-					int _angle = this.angleDifferent(this.computeAngle(_list.get(_pos), _n.get(0)), this.computeAngle(_list.get(_pos), _n.get(1)));
-					 if(_angle == 180){
-						 break;
-					 }
+					break;
+//					int _angle = this.angleDifferent(this.computeAngle(_list.get(_pos), _n.get(0)), this.computeAngle(_list.get(_pos), _n.get(1)));
+//					 if(_angle == 180){
+//					 }
 				}
 			}
 			
@@ -218,13 +423,14 @@ public class WaterRegionCalc {
 			
 			WetlandDemPixel _startPt = _list.get(_pos);
 			
-			_list.set(_pos, null);
 			_line.add(_startPt);
 			_line.add(_n.get(0));
-			
+
+			_list.set(_pos, null);
 			_list.set(_list.indexOf(_n.get(0)), null);
+			
 			if(this.createPointArray(_line, _list, _startPt, _n.get(0), _n.get(1))){
-				if(_line.size() > 2){
+				if(_line.size() > 5){
 					
 					for(int j=0;j<_line.size();j++){
 						_coordinates.add(new Coordinate(_line.get(j).getLon(), _line.get(j).getLat()));
@@ -320,6 +526,33 @@ public class WaterRegionCalc {
 		return 0;
 	}
 	
+	public double direction(Coordinate p1, Coordinate p2){
+		double _x = p2.x - p1.x;
+		double _y = p2.y - p1.y;
+		
+		if(_x == 0){
+			if(_y == 0){
+				return 0;
+			}
+			else if(_y > 0)
+				return Math.PI / 2;
+			else{
+				return Math.PI / 2 + Math.PI;
+			}
+		}
+		
+		double _d = Math.atan(_y / _x);
+		if(_x > 0){
+			if(_y >= 0)
+				return _d;
+			else
+				return Math.PI * 2 + _d;
+		}
+		else{
+			return Math.PI + _d;
+		}
+	}
+	
 	private int angleDifferent(int angle1, int angle2){
 		if(angle1 == -1 || angle2 == -1){
 			return 0;
@@ -410,21 +643,16 @@ public class WaterRegionCalc {
 		return null;
 	}
 
-	private boolean isBoundary(int col, int row, MultiPolygon polygon, double val, double evl) throws IOException{
+	private boolean isBoundary(int col, int row, MultiPolygon polygon, double val, double evl, double distance) throws IOException{
 		for(int _row = row - 1;_row <= row + 1;_row++){
 			for(int _col = col - 1; _col <= col + 1; _col++){
 				if(_row >= 0 && _row < this.raster.getRowNum() && _col >= 0 && _col < this.raster.getColNum()){
 					if(_row != row || _col != col){
-						float _val = this.raster.getCell(_col, _row).floatValue();
+						Number _val = this.raster.getCell(_col, _row);
 	
-						if(_val < evl){
+						if(_val == null || _val.floatValue() > evl){
 							return true;
 						}
-
-//						double _distance = polygon.distance(factory.createPoint(this.raster.getLocation(_row, _col)));
-//						if(_distance > 0){
-//							return true;
-//						}
 					}
 				}
 				else{

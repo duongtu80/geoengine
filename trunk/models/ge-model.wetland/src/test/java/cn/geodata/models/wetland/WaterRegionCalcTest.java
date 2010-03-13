@@ -16,10 +16,11 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import cn.geodata.models.raster.GeoRaster;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 public class WaterRegionCalcTest extends TestCase {
-	public void testMultipleWetland() throws Exception {
+	public void atestMultipleWetland() throws Exception {
 		WaterRegionCalcGeoTiff _calc = new WaterRegionCalcGeoTiff();
 		
 		GeoRaster _raster = new GeoRaster(new File("d:\\Tank\\Data\\ecoserv\\dem\\ned10mbrwgs84.tif"), 0);
@@ -54,5 +55,18 @@ public class WaterRegionCalcTest extends TestCase {
 		
 		FeatureStore _fw = (FeatureStore) _ss.getFeatureSource();
 		_fw.addFeatures(_fc);
+	}
+	
+	public void testDirection() throws Exception {
+		WaterRegionCalc _model = new WaterRegionCalc();
+		
+		System.out.println(Math.toDegrees(_model.direction(new Coordinate(0, 0), new Coordinate(0, 1))));
+		System.out.println(Math.toDegrees(_model.direction(new Coordinate(0, 0), new Coordinate(1, 0))));
+		System.out.println(Math.toDegrees(_model.direction(new Coordinate(0, 0), new Coordinate(1, 1))));
+		System.out.println(Math.toDegrees(_model.direction(new Coordinate(0, 0), new Coordinate(0, -1))));
+		System.out.println(Math.toDegrees(_model.direction(new Coordinate(0, 0), new Coordinate(-1, 0))));
+		System.out.println(Math.toDegrees(_model.direction(new Coordinate(0, 0), new Coordinate(-1, -1))));
+		System.out.println(Math.toDegrees(_model.direction(new Coordinate(0, 0), new Coordinate(-1, 1))));
+		System.out.println(Math.toDegrees(_model.direction(new Coordinate(0, 0), new Coordinate(1, -1))));
 	}
 }

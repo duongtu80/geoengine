@@ -29,8 +29,30 @@ import org.opengis.feature.type.FeatureType;
 import cn.geodata.models.raster.GeoRaster;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
 
 public class HydrologicalModelTest extends TestCase {
+	
+	public void testCalculateSpillPoint() throws Exception {
+		GeoRaster _raster = new GeoRaster(new File("d:\\Tank\\Data\\ecoserv\\data\\dem\\lidar_c_flow_dir.tif"), -9999);
+		
+		List<Catchment> _cats = Catchment.loadCatchments(_raster, new ShapefileDataStore(new File("d:\\Tank\\Data\\ecoserv\\data\\catchment.shp").toURL()).getFeatureSource().getFeatures(), "NAME");
+		for(Catchment _c : _cats){
+			System.out.println(_c.getCode() + " :" + _c.getArea());
+		}
+		
+		HydrologicalModel _model = new HydrologicalModel(_raster, _cats);
+		for(WetlandWater _w : _model.getWetlands()){
+			String _code = "outflow";
+			Catchment _c = _w.getSpillPoint().getCatchment();
+			if(_c != null){
+				_code = _c.getCode();
+			}
+			
+			Point _pt = _w.getSpillPoint().getLocation();
+			System.out.println(_w.getCatchments().get(0).getCode() + "\t" + _pt.getX() + "," + _pt.getY() + "\t" + _w.toString());
+		}
+	}
 
 //	public void atestCalculate() throws Exception {
 //		DemRaster _reader = new DemRaster(

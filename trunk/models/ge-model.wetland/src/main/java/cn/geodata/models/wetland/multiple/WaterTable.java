@@ -49,6 +49,13 @@ public interface WaterTable extends Serializable, Cloneable {
 	double getCatchmentVolume();
 	
 	/**
+	 * Get catchment volumn left for the given water table
+	 * @param waterTable
+	 * @return
+	 */
+	double getCatchmentVolume(double waterTable);
+	
+	/**
 	 * If the water is over flowing in the catchment(s)
 	 * 
 	 * @return
@@ -96,6 +103,13 @@ public interface WaterTable extends Serializable, Cloneable {
 	 * @param waterLevel
 	 */
 	void setWaterLevel(double waterLevel);
+	
+	/**
+	 * Is the catchment full
+	 * 
+	 * @return
+	 */
+	boolean isFull();
 	
 	/**
 	 * Get catchment polygons
