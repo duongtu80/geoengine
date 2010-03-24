@@ -155,7 +155,13 @@ public class GeoRaster {
 
 	protected GridCoverage2D loadGeoTiff(File f) throws IOException{
 		GeoTiffReader _reader = new GeoTiffReader(f, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
-		return (GridCoverage2D) _reader.read(null);
+		try{
+			return (GridCoverage2D) _reader.read(null);
+		}
+		finally{
+			log.info("Dispose raster stream " + f.getAbsolutePath());
+			_reader.dispose();
+		}
 	}
 	
 	public Number getLocationValue(DirectPosition2D pt) throws IOException{
@@ -354,11 +360,11 @@ public class GeoRaster {
 	public static void writeTiff(File outFile, GridCoverage2D grid) throws IllegalArgumentException, IOException{
 		GeoTiffFormat _format = new GeoTiffFormat();
 		
-		GeoTiffWriteParams _wp = new GeoTiffWriteParams();
-		_wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
-		_wp.setCompressionType("LZW");
-		_wp.setCompressionQuality(0.75F);
-		
+		// GeoTiffWriteParams _wp = new GeoTiffWriteParams();
+		// _wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+		// _wp.setCompressionType("LZW");
+		// _wp.setCompressionQuality(0.75F);
+				
 		GridCoverageWriter _writer = _format.getWriter(outFile);
 		_writer.write(grid, null);
 	}
@@ -376,6 +382,19 @@ public class GeoRaster {
 		BufferedImage bimage = new BufferedImage(cm, raster, false, null);
 		return new GridCoverageFactory().create("image", bimage, env);
 	}
+	
+	/**
+	 * Create writable raster
+	 * 
+	 * @param dataType
+	 * @param col
+	 * @param row
+	 * @param band
+	 * @return
+	 */
+	public static WritableRaster createWritableRaster(int dataType, int col, int row, int band){
+		return RasterFactory.createBandedRaster(dataType, col, row, band, null);
+	}
 
 	/**
 	 * Write a WritableRaster object to a GeoTIFF file
@@ -387,7 +406,7 @@ public class GeoRaster {
 	 * @throws IOException
 	 */
 	public static void writeTiff(File outFile, Envelope2D env, WritableRaster grid) throws IllegalArgumentException, IOException{
-		writeTiff(outFile, new GridCoverageFactory().create(outFile.getName(), grid, env));
+		writeTiff(outFile, createGrid(grid, env));
 	}
 	
 	public int getCol(double x){
@@ -457,7 +476,7 @@ public class GeoRaster {
 		
 		return image;
 	}
-
+	
 	public double getCellSizeX() {
 		return cellSizeX;
 	}
