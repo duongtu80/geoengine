@@ -1,5 +1,6 @@
 package cn.geodata.models.raster;
 
+import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +32,10 @@ public class RastersStack {
 
 	private List<GeoRaster> rasters;
 	private GeoRaster lastKey;
+	private Double cellsizeX;
+	private Double cellsizeY;
+	private Envelope2D envelope;
+	private Integer dataType;
 	
 	public static Map<String, RastersStack> initStack(File stackFile) throws IOException {
 		CSVReader _reader = new CSVReader(stackFile);
@@ -142,6 +147,25 @@ public class RastersStack {
 		_writer.write();
 	}
 
+	/**
+	 * Initialize the GeoTIFF files in a folder
+	 * 
+	 * @param folder
+	 * @param nodata
+	 * @return
+	 * @throws IOException
+	 */
+	public static RastersStack initStack(File folder, Number nodata) throws IOException{
+		Collection<File> _files =  FileUtils.listFiles(folder, new String[] {"tif", "TIF"}, true);
+		
+		List<GeoRaster> _rasters = new ArrayList<GeoRaster>();
+		for(File _f : _files){
+			System.out.println("+add file " + _f.getAbsolutePath());
+			_rasters.add(new GeoRaster(_f, nodata));
+		}
+		
+		return new RastersStack(_rasters);
+	}
 
 	public RastersStack(List<GeoRaster> rasters) throws IOException{
 		this.rasters = rasters;
@@ -200,5 +224,55 @@ public class RastersStack {
 	
 	public Number getLocationValue(Point pt) throws IOException {
 		return this.getLocationValue(pt.getX(), pt.getY());
+	}
+	
+	public double getMinCellSizeX() {
+		if(this.cellsizeX == null){
+			this.cellsizeX = Double.MAX_VALUE;
+			
+			for(GeoRaster _r: this.rasters){
+				this.cellsizeX = Math.min(this.cellsizeX, _r.getCellSizeX());
+			}
+		}
+		
+		return this.cellsizeX;
+	}
+
+	public double getMinCellSizeY() {
+		if(this.cellsizeY == null){
+			this.cellsizeY = Double.MAX_VALUE;
+			
+			for(GeoRaster _r: this.rasters){
+				this.cellsizeY = Math.min(this.cellsizeY, _r.getCellSizeY());
+			}
+		}
+		
+		return this.cellsizeY;
+	}
+
+	public Envelope2D getEnvelope() {
+		if(this.envelope == null){
+			for(GeoRaster _r: this.rasters){
+				if(this.envelope == null)
+					this.envelope = _r.getEnvelope();
+				else
+					this.envelope.add(_r.getEnvelope());
+			}
+		}
+		
+		return this.envelope;
+	}
+	
+	public int getDataType(){
+		if(this.dataType == null){
+			for(GeoRaster _r: this.rasters){
+				if(this.dataType == null)
+					this.dataType = _r.getType();
+				else
+					this.dataType = Math.max(this.dataType, _r.getType());
+			}
+		}
+		
+		return this.dataType;
 	}
 }
