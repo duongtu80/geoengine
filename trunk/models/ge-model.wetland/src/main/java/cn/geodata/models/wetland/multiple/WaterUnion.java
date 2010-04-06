@@ -54,7 +54,7 @@ public class WaterUnion extends BasicWaterTable {
 		return _zones;
 	}
 	
-	private void averageWaterLevel(){
+	private void averageWaterLevel() throws IOException{
 		double _vol = 0;
 		for(WaterTable _w: this.waterTables){
 			_vol += _w.getWaterVolume();

@@ -179,7 +179,7 @@ public class WaterRegionCalc {
 		double _startX = this.raster.getEnvelope().getMinX() + this.raster.getCellSizeX() * extent.getMinX() + _pixelx2;
 		double _startY = this.raster.getEnvelope().getMaxY() - this.raster.getCellSizeY() * extent.getMinY() - _pixely2;
 		
-		double _dis = 0; //this.raster.getCellSizeX() * 3;
+		double _dis = Math.hypot(this.raster.getCellSizeX(), this.raster.getCellSizeX()) / 2;
 		double _y = _startY;
 		for(int _row = extent.getMinY();_row <= extent.getMaxY();_row++){
 			double _x = _startX;
@@ -282,6 +282,7 @@ public class WaterRegionCalc {
 			for(int i=0;i<_ppp.size();i++){
 				Polygon _p = _ppp.get(i);
 				
+//				LinearRing _ex_line = _p.getFactory().createLinearRing(_p.getExteriorRing().getCoordinates());
 				LinearRing _ex_line = _p.getFactory().createLinearRing(this.smoothCoordinates(_p.getExteriorRing().getCoordinates()));
 				if(_ex_line.getLength() <= (this.raster.getCellSizeX() + this.raster.getCellSizeY()) * 2 * 6){
 					continue;
@@ -292,10 +293,9 @@ public class WaterRegionCalc {
 					LineString _in_line = _p.getInteriorRingN(j);
 					if(_in_line.getLength() > (this.raster.getCellSizeX() + this.raster.getCellSizeY()) * 2 * 6){
 						_in_lines.add(_p.getFactory().createLinearRing(smoothCoordinates(_in_line.getCoordinates())));
+//						_in_lines.add(_p.getFactory().createLinearRing(_in_line.getCoordinates()));
 					}
 				}
-				
-				
 				
 				polys.add(_p.getFactory().createPolygon(_ex_line, _in_lines.toArray(new LinearRing[0])));
 			}

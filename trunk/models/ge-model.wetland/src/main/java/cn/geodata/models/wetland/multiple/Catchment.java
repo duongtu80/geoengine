@@ -45,7 +45,7 @@ public class Catchment implements Serializable, Cloneable {
 	private MultiPolygon region;
 	private GeoRaster dem;
 	private String code;
-	private double bottomElevation;
+//	private double bottomElevation;
 	private ElevationZone zones;
 	
 	public Catchment(GeoRaster dem, MultiPolygon region, String code) throws Exception{
@@ -56,7 +56,7 @@ public class Catchment implements Serializable, Cloneable {
 		
 		if(dem != null){
 			this.zones = new ElevationZone(dem, region);
-			this.bottomElevation = this.calBottomElevation();
+//			this.bottomElevation = this.calBottomElevation();
 		}
 	}
 	
@@ -65,6 +65,9 @@ public class Catchment implements Serializable, Cloneable {
 		Extent _extent = _dem.calculateExtent(this.region.getEnvelopeInternal());
 		
 		RasterCell _lowestC = _dem.calcuateLowest4Catchment(this.region, _extent);
+		if(_lowestC == null)
+			throw new NullPointerException("Failed to locate lowest point");
+		
 		return this.dem.getCell(_lowestC.getCol(), _lowestC.getRow()).doubleValue();
 	}
 	
@@ -141,9 +144,9 @@ public class Catchment implements Serializable, Cloneable {
 	 * 
 	 * @return
 	 */
-	public double getBottomElevation() {
-		return bottomElevation;
-	}
+//	public double getBottomElevation() {
+//		return bottomElevation;
+//	}
 	
 	/**
 	 * Load all catchments
@@ -173,7 +176,7 @@ public class Catchment implements Serializable, Cloneable {
 				try{
 					_cats.add(new Catchment(dem, (MultiPolygon) _f.getDefaultGeometryProperty().getValue(), (String)_f.getProperty(codeColumn).getValue()));
 				}
-				catch(IndexOutOfBoundsException e){
+				catch(Exception e){
 					Logger.getAnonymousLogger().info("Load " + _f.getProperty("NAME").getValue() + " failed because out the raster boundary");
 				}
 			}
