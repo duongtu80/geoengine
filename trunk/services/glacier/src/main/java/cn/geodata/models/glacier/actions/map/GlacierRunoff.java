@@ -20,7 +20,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureIterator;
-import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 
 import cn.geodata.models.glacier.actions.models.RunoffProcess;
@@ -152,50 +151,8 @@ public class GlacierRunoff {
 		DecimalFormat _numbFormat = new DecimalFormat("0.00");
 		DecimalFormat _leveFormat = new DecimalFormat("0");		
 		
-		List<Object> _dates = _p.getMap().get("Dates");
-		for(String _key : _listCols){
-			List<Object> _item = _p.getMap().get(_key);
-			
-			FileOutputStream _stream = new FileOutputStream(new File(_path, _key + ".csv"));
-			StringBuffer _line = new StringBuffer();
-			
-			_line.append(_key);
-			for(int j=0;j<levels.length;j++){
-				_line.append("," + _leveFormat.format(levels[j]) + "m");
-			}
-			_line.append("\n");
-
-			for(int i=0;i<_item.size();i++){
-				Date _d = (Date) _dates.get(i);
-				_line.append(_dateFormat.format(_d));
-
-				double[] _list = (double[])_item.get(i);
-				for(int j=0;j<_list.length;j++){
-					_line.append("," + _numbFormat.format(_list[j]));
-				}
-				_line.append("\n");
-				
-			}
-			IOUtils.write(_line, _stream);
-			_stream.close();
-		}
-		
-		for(String _key : _valuCols){
-			List<Object> _item = _p.getMap().get(_key);
-			
-			FileOutputStream _stream = new FileOutputStream(new File(_path, _key + ".csv"));
-			StringBuffer _line = new StringBuffer();
-
-			_line.append("Date," + _key + "\n");
-			for(int i=0;i<_item.size();i++){
-				Date _d = (Date) _dates.get(i);
-				_line.append(_dateFormat.format(_d) + "," + _numbFormat.format((Double)_item.get(i)) + "\n");
-				
-			}
-
-			IOUtils.write(_line, _stream);
-			_stream.close();
-		}
+		//雪线高度的分带号
+		List<Integer> _snowLines = new ArrayList<Integer>();
 		
 		//写入雪线高度和年度平衡值
 		List<String> _lines = new ArrayList<String>();
@@ -245,18 +202,79 @@ public class GlacierRunoff {
 			}
 			
 			_lines.add(_year + startYear + "," + _bb + "," + levels[_snowLine1] + "," + levels[_snowLine2]);
+			_snowLines.add(_snowLine1);
 		}
 		
 		FileUtils.writeLines(new File(_path, "SnowLines.csv"), _lines);
+
+		List<Object> _dates = _p.getMap().get("Dates");
+		for(String _key : _valuCols){
+			List<Object> _item = _p.getMap().get(_key);
+			if(_p.getMap().containsKey(_key + "s")){
+				_item = this.retrieveValuesAtLowestZone(_p.getMap().get(_key + "s"), _snowLines);
+			}
+			
+			FileOutputStream _stream = new FileOutputStream(new File(_path, _key + ".csv"));
+			StringBuffer _line = new StringBuffer();
+
+			_line.append("Date," + _key + "\n");
+			for(int i=0;i<_item.size();i++){
+				Date _d = (Date) _dates.get(i);
+				_line.append(_dateFormat.format(_d) + "," + _numbFormat.format((Double)_item.get(i)) + "\n");
+				
+			}
+
+			IOUtils.write(_line, _stream);
+			_stream.close();
+		}
+		
+		for(String _key : _listCols){
+			List<Object> _item = _p.getMap().get(_key);
+			
+			FileOutputStream _stream = new FileOutputStream(new File(_path, _key + ".csv"));
+			StringBuffer _line = new StringBuffer();
+			
+			_line.append(_key);
+			for(int j=0;j<levels.length;j++){
+				_line.append("," + _leveFormat.format(levels[j]) + "m");
+			}
+			_line.append("\n");
+
+			for(int i=0;i<_item.size();i++){
+				Date _d = (Date) _dates.get(i);
+				_line.append(_dateFormat.format(_d));
+
+				double[] _list = (double[])_item.get(i);
+				for(int j=0;j<_list.length;j++){
+					_line.append("," + _numbFormat.format(_list[j]));
+				}
+				_line.append("\n");
+				
+			}
+			IOUtils.write(_line, _stream);
+			_stream.close();
+		}
 	}
 
+	private List<Object> retrieveValuesAtLowestZone(List<Object> values, List<Integer> snowLines){
+		List<Object> _vals = new ArrayList<Object>();
+		for(int i=0;i<values.size();i++){
+			double[] _vv = (double[]) values.get(i);
+			_vals.add(_vv[snowLines.get(i / 12)]);
+		}
+		
+		return _vals;
+	}
+	
 	private MultiPolygon getCatchment(String catchmentName, File path) throws MalformedURLException, IOException {
 		FeatureIterator _it = new ShapefileDataStore(path.toURL(), false, Charset.forName("gb2312"))
 				.getFeatureSource().getFeatures().features();
+		
+		String _fieldName = new String(this.fieldName.getBytes("gb2312"), "UTF-8");
 		try {
 			while (_it.hasNext()) {
 				SimpleFeature _f = (SimpleFeature) _it.next();
-				if (_f.getAttribute(this.fieldName).equals(catchmentName)) {
+				if (_f.getAttribute(_fieldName).equals(catchmentName)) {
 					return (MultiPolygon) _f.getDefaultGeometry();
 				}
 			}
