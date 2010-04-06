@@ -1,5 +1,6 @@
 package cn.geodata.models.raster;
 
+import java.awt.Color;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -10,10 +11,16 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 import javax.media.jai.RasterFactory;
 
+import org.geotools.coverage.Category;
+import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.factory.Hints;
@@ -22,7 +29,13 @@ import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.gce.geotiff.GeoTiffWriteParams;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
+import org.geotools.resources.i18n.Vocabulary;
+import org.geotools.resources.i18n.VocabularyKeys;
+import org.geotools.util.NumberRange;
 import org.opengis.coverage.grid.GridCoverageWriter;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.vividsolutions.jts.geom.Envelope;
 
 public class GeoRaster {
 	private Logger log = Logger.getAnonymousLogger();
@@ -97,10 +110,27 @@ public class GeoRaster {
 		cellSizeY = envelope.getHeight() / rowNum;
 	}
 
+	public GeoRaster(File file) throws IOException {
+		this.file = file;
+		this.loadImage(file, null);
+		
+		this.envelope = this.grid.getEnvelope2D();
+		this.colNum = this.image.getWidth();
+		this.rowNum = this.image.getHeight();
+		this.tileWidth = this.image.getTileWidth();
+		this.tileHeight = this.image.getTileHeight();
+		this.type = this.image.getSampleModel().getDataType();
+		this.bandNum = this.image.getSampleModel().getNumBands();
+		this.band = 0;
+		
+		cellSizeX = envelope.getWidth() / colNum;
+		cellSizeY = envelope.getHeight() / rowNum;
+	}
+
 	public GeoRaster(File file, Number nodata) throws IOException {
 		this.file = file;
+		this.loadImage(file, null);
 		this.nodata = nodata;
-		this.loadImage(file);
 		
 		this.envelope = this.grid.getEnvelope2D();
 		this.colNum = this.image.getWidth();
@@ -137,8 +167,8 @@ public class GeoRaster {
 		this(GeoRaster.createGrid(raster, env), nodata);
 	}
 
-	private void loadImage(File file) throws IOException{
-		this.grid = this.loadGeoTiff(file);
+	private void loadImage(File file, CoordinateReferenceSystem crs) throws IOException{
+		this.grid = this.loadGeoTiff(file, crs);
 		this.image = this.grid.getRenderedImage();
 		
 		//Reload envelope
@@ -153,9 +183,27 @@ public class GeoRaster {
 		this.envelope = this.grid.getEnvelope2D();
 	}
 
-	protected GridCoverage2D loadGeoTiff(File f) throws IOException{
-		GeoTiffReader _reader = new GeoTiffReader(f, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+	protected GridCoverage2D loadGeoTiff(File f, CoordinateReferenceSystem crs) throws IOException{
+		Hints _hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+		if(crs != null)
+			_hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs);
+		
+		GeoTiffReader _reader = new GeoTiffReader(f, _hints);
 		try{
+			if(_reader.getMetadata().hasNoData()){
+				this.nodata = _reader.getMetadata().getNoData();
+				if(this.type == DataBuffer.TYPE_BYTE)
+					this.nodata = this.nodata.byteValue();
+				else if(this.type == DataBuffer.TYPE_INT)
+					this.nodata = this.nodata.intValue();
+				else if(this.type == DataBuffer.TYPE_USHORT)
+					this.nodata = this.nodata.shortValue();
+				else if(this.type == DataBuffer.TYPE_FLOAT)
+					this.nodata = this.nodata.floatValue();
+				else if(this.type == DataBuffer.TYPE_DOUBLE)
+					this.nodata = this.nodata.doubleValue();
+			}
+			
 			return (GridCoverage2D) _reader.read(null);
 		}
 		finally{
@@ -360,27 +408,70 @@ public class GeoRaster {
 	public static void writeTiff(File outFile, GridCoverage2D grid) throws IllegalArgumentException, IOException{
 		GeoTiffFormat _format = new GeoTiffFormat();
 		
-		// GeoTiffWriteParams _wp = new GeoTiffWriteParams();
-		// _wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
-		// _wp.setCompressionType("LZW");
-		// _wp.setCompressionQuality(0.75F);
-				
+//		GeoTiffWriteParams _wp = new GeoTiffWriteParams();
+//		 _wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+//		 _wp.setCompressionType("LZW");
+//		 _wp.setCompressionQuality(0.75F);
+		
 		GridCoverageWriter _writer = _format.getWriter(outFile);
 		_writer.write(grid, null);
 	}
 	
 	public static GridCoverage2D createGrid(WritableRaster raster,
-			Envelope2D env) {
+			Envelope2D env) throws IOException {
 		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
 		ComponentColorModel cm = RasterFactory.createComponentColorModel(
 				raster.getDataBuffer().getDataType(), // dataType
 				cs, // color space
 				false, // has alpha
-				false, // is alphaPremultiplied
-				Transparency.OPAQUE); // transparency
+				true, // is alphaPremultiplied
+				Transparency.TRANSLUCENT); // transparency
 
 		BufferedImage bimage = new BufferedImage(cm, raster, false, null);
-		return new GridCoverageFactory().create("image", bimage, env);
+		
+//		Number nodata = new Byte((byte)0);
+//		Category _nodata = null;
+//		if(nodata != null){
+//			if (nodata instanceof Integer) {
+//				_nodata = new Category(Vocabulary.format(VocabularyKeys.NODATA), new Color(0,0,0,0), nodata.intValue());
+//			}
+//			else if (nodata instanceof Byte) {
+//				_nodata = new Category(Vocabulary.format(VocabularyKeys.NODATA), new Color(0,0,0,0), nodata.byteValue());
+//			}
+//			else if (nodata instanceof Float) {
+//				_nodata = new Category(Vocabulary.format(VocabularyKeys.NODATA), new Color(0,0,0,0), nodata.floatValue());
+//			}
+//			else if (nodata instanceof Long) {
+//				_nodata = new Category(Vocabulary.format(VocabularyKeys.NODATA), new Color(0,0,0,0), nodata.longValue());
+//			}
+//			else if (nodata instanceof Double) {
+//				_nodata = new Category(Vocabulary.format(VocabularyKeys.NODATA), new Color(0,0,0,0), nodata.doubleValue());
+//			}
+//			else{
+//				throw new IOException("Unknown nodata value type " + nodata);
+//			}
+//		}
+//		
+//		Category _values = null;
+//		switch (raster.getDataBuffer().getDataType()) {
+//		case DataBuffer.TYPE_BYTE:
+//			_values = new Category("values", 
+//	                new Color[] {Color.BLUE}, 
+//	                new NumberRange((byte)1, (byte)100),
+//	                new NumberRange((byte)1, (byte)100)); 
+//			break;
+//		default:
+//			break;
+//		}
+//		
+//		List<Category> _cates = new ArrayList<Category>();
+//		_cates.add(_values);
+//		_cates.add(_nodata);
+//		
+//		GridSampleDimension[] _dms = new GridSampleDimension[] {new GridSampleDimension("raster", _cates.toArray(new Category[0]), null)};
+		GridSampleDimension[] _dms = null;
+		
+		return new GridCoverageFactory().create("image", bimage, env, _dms, null, null);
 	}
 	
 	/**
@@ -454,7 +545,7 @@ public class GeoRaster {
 	public GridCoverage2D getGrid() throws IOException {
 		if(this.grid == null){
 			if(this.file != null)
-				this.loadImage(this.file);
+				this.loadImage(this.file, null);
 			else
 				throw new IOException("No source raster");
 		}
@@ -469,7 +560,7 @@ public class GeoRaster {
 	public RenderedImage getImage() throws IOException {
 		if(this.image == null){
 			if(this.file != null)
-				this.loadImage(this.file);
+				this.loadImage(this.file, null);
 			else
 				throw new IOException("No source raster");
 		}
