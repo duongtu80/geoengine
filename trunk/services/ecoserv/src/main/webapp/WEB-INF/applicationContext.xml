@@ -15,7 +15,7 @@
 			<bean class="cn.geodata.models.raster.GeoRaster">
 				<constructor-arg>
 					<bean class="java.io.File">
-						<constructor-arg><value>o:\tmp\rusle\test2\kfcacthwgs84.tif</value></constructor-arg>
+						<constructor-arg><value>d:\Tank\Data\ecoserv\data\rusle\kfcacthwgs84.tif</value></constructor-arg>
 					</bean>
 				</constructor-arg>
 				<constructor-arg><value type="float">-340282346638528860000000000000000000000.0</value></constructor-arg>

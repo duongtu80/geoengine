@@ -80,7 +80,7 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 			if(_c != null){
 				_code = _c.getCode();
 			}
-			_w.setWaterLevel(_w.getCatchments().get(0).getBottomElevation() - _seek);
+			_w.setWaterLevel(_w.getZones().calculateBottomElevation() - _seek);
 		}
 
 		DayMetReader _met = new DayMetReader();
@@ -136,7 +136,7 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 			if(_c != null){
 				_code = _c.getCode();
 			}
-			_w.setWaterLevel(_w.getCatchments().get(0).getBottomElevation() - _seek);
+			_w.setWaterLevel(_w.getZones().calculateBottomElevation() - _seek);
 		}
 
 		List<DateObject<Map<String, Double>>> _data = new ArrayList<DateObject<Map<String,Double>>>();
@@ -164,7 +164,8 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 			Map<String, Double> _ww = new HashMap<String, Double>();
 			for(WaterTable _w: _wet){
 				for(Catchment _c: _w.getCatchments()){
-					_ww.put(_c.getCode(), _w.getWaterLevel() < _c.getBottomElevation() - _seek ? _c.getBottomElevation() - _seek: _w.getWaterLevel());
+					double _bottom = _c.getZones().calculateBottomElevation();
+					_ww.put(_c.getCode(), _w.getWaterLevel() < _bottom - _seek ? _bottom - _seek: _w.getWaterLevel());
 				}
 			}
 			
@@ -208,7 +209,7 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 			if(_c != null){
 				_code = _c.getCode();
 			}
-			_w.setWaterLevel(_w.getCatchments().get(0).getBottomElevation() - _seek);
+			_w.setWaterLevel(_w.getZones().calculateBottomElevation() - _seek);
 		}
 
 		DayMetReader _met = new DayMetReader();
@@ -228,7 +229,8 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 			Map<String, Double> _ww = new HashMap<String, Double>();
 			for(WaterTable _w: _wet){
 				for(Catchment _c: _w.getCatchments()){
-					_ww.put(_c.getCode(), _w.getWaterLevel() < _c.getBottomElevation() - _seek ? _c.getBottomElevation() - _seek: _w.getWaterLevel());
+					double _bottom = _c.getZones().calculateBottomElevation();
+					_ww.put(_c.getCode(), _w.getWaterLevel() < _bottom - _seek ? _bottom - _seek: _w.getWaterLevel());
 				}
 			}
 			
@@ -284,7 +286,7 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 		List<Catchment> _cats = Catchment.loadCatchments(_reader, ConnectionPool.getPGDataStore().getFeatureSource("catchment").getFeatures());
 		
 		for(Catchment _c : _cats){
-			System.out.println(_c.getCode() + " :" + _c.getArea() + " " + _c.getBottomElevation());
+			System.out.println(_c.getCode() + " :" + _c.getArea() + " " + _c.getZones().calculateBottomElevation());
 		}
 		
 		HydrologicalModel _model = new HydrologicalModel(_reader, _cats);
@@ -294,7 +296,7 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 			if(_c != null){
 				_code = _c.getCode();
 			}
-			System.out.println(_w.getCatchments().get(0).getCode() + "->" + _code + " | " + _w.getSpillPoint().getElevation() + "|" + _w.getCatchments().get(0).getBottomElevation());
+			System.out.println(_w.getCatchments().get(0).getCode() + "->" + _code + " | " + _w.getSpillPoint().getElevation() + "|" + _w.getZones().calculateBottomElevation());
 		}
 	}
 	
@@ -303,7 +305,7 @@ public class MultipleWaterSurfaceModelTest extends TestCase {
 		List<Catchment> _cats = Catchment.loadCatchments(_reader, ConnectionPool.getPGDataStore().getFeatureSource("catchment").getFeatures());
 		
 		for(Catchment _c : _cats){
-			System.out.println(_c.getCode() + " :" + _c.getArea() + " " + _c.getBottomElevation());
+			System.out.println(_c.getCode() + " :" + _c.getArea() + " " + _c.getZones().calculateBottomElevation());
 		}
 		
 		HydrologicalModel _model = new HydrologicalModel(_reader, _cats);

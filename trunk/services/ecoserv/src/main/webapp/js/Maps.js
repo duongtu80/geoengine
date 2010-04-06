@@ -5,7 +5,6 @@ function Maps(x, y, level) {
 
 	this.createStateControls = function(m) {
 		m.addControl(new OpenLayers.Control.LayerSwitcher());
-		
 		m.addControl(new OpenLayers.Control.Navigation({group: 'navigation', tid: 'navigation'}));
 		m.addControl(new OpenLayers.Control.ZoomBox({group: 'navigation', tid: 'zoomIn'}));
 		m.addControl(new OpenLayers.Control.ZoomOut({group: 'navigation', tid: 'zoomOut'}));
@@ -42,6 +41,7 @@ function Maps(x, y, level) {
 
 		this.maps.push(this.createGoogleSatellite(options));
 		this.maps.push(this.createGoogleTerrain(options));
+//		this.maps.push(this.createGoogleTerrain(options));
 		
 		//Add common layers for analysis result
 		this.addCommonLayers();
@@ -176,11 +176,11 @@ function Maps(x, y, level) {
 
 	this.createGoogleSatellite = function(options) {
 		var map = new OpenLayers.Map(options);
-		map.id = 'map_google_sat';
+//		map.id = 'map_google_sat';
 		map.title = 'Satellite';
 
 		var _layer = new OpenLayers.Layer.Google("Satellite", {
-			type : G_SATELLITE_MAP,
+			type : G_HYBRID_MAP,
 			numZoomLevels : 30,
 			sphericalMercator : true
 		});
@@ -198,7 +198,7 @@ function Maps(x, y, level) {
 
 	this.createGoogleStreat = function(options) {
 		var map = new OpenLayers.Map(options);
-		map.id = 'map_google_str';
+//		map.id = 'map_google_str';
 		map.title = 'Street';
 
 		var _layer = new OpenLayers.Layer.Google("Street", {
@@ -216,7 +216,7 @@ function Maps(x, y, level) {
 
 	this.createGoogleTerrain = function(options) {
 		var map = new OpenLayers.Map(options);
-		map.id = 'map_google_ter';
+//		map.id = 'map_google_ter';
 		map.title = 'Terrain';
 
 		var _layer = new OpenLayers.Layer.Google("Google Terrain", {

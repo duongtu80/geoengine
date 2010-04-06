@@ -65,7 +65,7 @@ public class MultipleWaterTableTest extends TestCase {
 			if (_c != null) {
 				_code = _c.getCode();
 			}
-			_w.setWaterLevel(_w.getCatchments().get(0).getBottomElevation()
+			_w.setWaterLevel(_w.getZones().calculateBottomElevation()
 					- _seek);
 		}
 
@@ -112,9 +112,9 @@ public class MultipleWaterTableTest extends TestCase {
 			Map<String, Double> _ww = new HashMap<String, Double>();
 			for (WaterTable _w : _wet) {
 				for (Catchment _c : _w.getCatchments()) {
-					_ww.put(_c.getCode(), _w.getWaterLevel() < _c
-							.getBottomElevation()
-							- _seek ? _c.getBottomElevation() - _seek : _w
+					double _bottom = _c.getZones().calculateBottomElevation();
+					_ww.put(_c.getCode(), _w.getWaterLevel() < _bottom
+							- _seek ? _bottom - _seek : _w
 							.getWaterLevel());
 				}
 			}
