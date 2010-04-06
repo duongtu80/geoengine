@@ -3,7 +3,7 @@
 <beans>
 	<!-- 90m DEM配置参数 -->
 	<bean id="DemModel90m" class="cn.geodata.models.glacier.DemModel">
-		<property name="demPath" value="o:\mfeng\data\dem\geotiff"></property>
+		<property name="demPath" value="o:\mfeng\data\dem\china\geotiff"></property>
 		<property name="nodata" value="0"></property>
 	</bean>
 	
