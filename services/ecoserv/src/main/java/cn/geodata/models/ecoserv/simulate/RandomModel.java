@@ -17,6 +17,7 @@ import cn.geodata.models.ecoserv.utils.DayMet;
 import cn.geodata.models.ecoserv.utils.DayMetReader;
 import cn.geodata.models.raster.GeoRaster;
 import cn.geodata.models.wetland.dem.ClimateModel;
+import cn.geodata.models.wetland.pollinator.ModelPollinator;
 
 public class RandomModel {
 	private Logger log = Logger.getAnonymousLogger();
@@ -72,6 +73,10 @@ public class RandomModel {
 			CarbonModel _carbon = new CarbonModel();
 			_carbon.initLandCover(_landcover, _climate);
 			
+			log.info("Pollinator calculations");
+			double _pollinator = new PollinatorModel().calculate(_landcover.toRaster());
+			log.info("Pollinator value:" + _pollinator);
+			
 			List<Map<String, Double>> _vals = new ArrayList<Map<String, Double>>();
 			for(Long _d: dates){
 				Date _date = new Date(_d);
@@ -109,11 +114,26 @@ public class RandomModel {
 						
 						_val.put(_h, _vv);
 					}
+					else if(_h.equals("Pollinators")){
+						_val.put(_h, _pollinator);
+					}
 					else{
 						double _dd = (_date.getMonth() + 1) / 12.0;
+						
+						double _r = 0;
+						//Manually change the result by reducing or increasing the value
+//						if(_h.equals("Pollinators") && !_s.toLowerCase().contains("crop")){
+//							_r = 0.2;
+//						}
+//						else if(_h.equals("Amphibians") && _s.toLowerCase().contains("crop")){
+//							_r = -0.3;
+//						}
 
 						double _vv = Double.parseDouble(_modelParams.get(0).get(_h)) * _dd + Double.parseDouble(_modelParams.get(1).get(_h)) + Math.random() * Double.parseDouble(_modelParams.get(2).get(_h));
-						_vv = (_vv - Double.parseDouble(_modelParams.get(3).get(_h))) / (Double.parseDouble(_modelParams.get(4).get(_h)) - Double.parseDouble(_modelParams.get(3).get(_h)));
+						_vv = (_vv - Double.parseDouble(_modelParams.get(3).get(_h))) / (Double.parseDouble(_modelParams.get(4).get(_h)) - Double.parseDouble(_modelParams.get(3).get(_h))) + _r;
+						
+						_vv = _vv < 0 ? 0: _vv;
+						_vv = _vv > 1 ? 1: _vv;
 						
 						_val.put(_h, _vv);
 					}
