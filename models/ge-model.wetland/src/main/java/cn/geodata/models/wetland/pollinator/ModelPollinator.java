@@ -35,7 +35,7 @@ public class ModelPollinator {
 
 		return new GeoRaster(_e, this.land.getEnvelope(), this.land.getNodata());
 	}
-	
+
 	private int pollinator(int col, int row) throws IOException{
 		int _upland = 0;
 		int _grass = 0;
@@ -58,6 +58,6 @@ public class ModelPollinator {
 		if(_upland == 0)
 			return 0;
 		else
-			return _grass * 100 / _upland;
+			return (_grass * 100) / _upland;
 	}
 }

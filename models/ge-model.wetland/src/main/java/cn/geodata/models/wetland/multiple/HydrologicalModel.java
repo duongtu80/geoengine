@@ -3,6 +3,7 @@ package cn.geodata.models.wetland.multiple;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.logging.Logger;
 
 import com.google.common.collect.Lists;
@@ -97,6 +98,13 @@ public class HydrologicalModel {
 		}
 	}
 
+	/**
+	 * @return
+	 * @throws IOException
+	 * 
+	 * @Deprecated
+	 * @see calculateWaterFlowEx
+	 */
 	public List<WaterTable> calculateWaterFlow(
 			) throws IOException{
 		List<WaterTable> _waters = new ArrayList<WaterTable>();
@@ -123,7 +131,13 @@ public class HydrologicalModel {
 		return null;
 	}
 	
-	public List<WaterTable> calculateWaterFlow2() throws IOException {
+	/**
+	 * Upgraded water flow calculation algorithem
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public List<WaterTable> calculateWaterFlowEx() throws IOException {
 		List<WaterTable> _waters = new ArrayList<WaterTable>();
 
 		// Generate water
@@ -131,7 +145,7 @@ public class HydrologicalModel {
 			_waters.add(_wetland);
 		}
 
-		this.waterFlow2(_waters);
+		this.waterFlow3(_waters);
 		
 		return _waters;
 	}
@@ -144,6 +158,75 @@ public class HydrologicalModel {
 		}
 	}
 	
+	private void waterFlow3(List<WaterTable> waters) throws IOException {
+		WaterTable _water = this.findOverflowWater(waters);
+		while(_water != null){
+			Stack<WaterTable> _stack = new Stack<WaterTable>();
+			_stack.push(_water);
+			
+			while(!_stack.empty()){
+				WaterTable _w = _stack.pop();
+				log.info("Process " + _w.toString());
+				double _v = _w.getOverflowVolume();
+				while(_v > 0){
+					SpillPoint _sp = _w.getSpillPoint();
+					if(_sp.getCatchment() == null){
+						log.info("Out flow");
+						
+						_w.setWaterLevel(_sp.getElevation());
+						_v = 0;
+					}
+					else{
+						WaterTable _w2 = this.findWaterTable(waters, _sp.getCatchment());
+						if(_w2.isOverFlow() && _w2.getSpillPoint().getElevation() < _sp.getElevation()){
+							log.info("Pre-process neighbor catchment");
+							
+							_stack.push(_w);
+							_stack.push(_w2);
+							
+							break;
+						}
+
+						if(_w2.getWaterLevel() >= _sp.getElevation()){
+							log.info("Union");
+
+							List<WaterTable> _subs = new ArrayList<WaterTable>();
+							_subs.add(_w);
+							_subs.add(_w2);
+							
+							List<Catchment> _cats = new ArrayList<Catchment>();
+							_cats.addAll(_w.getCatchments());
+							_cats.addAll(_w2.getCatchments());
+
+							WaterUnion _union = new WaterUnion(_subs, SpillPoint.calculateSpillPoint(dem, this.catchments, _cats));
+							waters.add(_union);
+							
+							log.info("Remove " + _w.toString());
+							log.info("Remove " + _w2.toString());
+							log.info("Add " + _union.toString());
+							
+							waters.remove(_w);
+							waters.remove(_w2);
+							
+							_w = _union;
+						}
+						else{
+							log.info("Flow");
+							
+							_w2.addWaterVolume(_v);
+							_w.setWaterLevel(_sp.getElevation());
+							
+							_w = _w2;
+						}
+						_v = _w.getOverflowVolume();
+					}
+				}
+			}
+			
+			_water = this.findOverflowWater(waters);
+		}
+	}
+	
 	private WaterTable findOverflowWater(List<WaterTable> waters){
 		for(WaterTable _w : waters){
 			if(_w.isOverFlow()){
@@ -153,22 +236,28 @@ public class HydrologicalModel {
 		
 		return null;
 	}
-	
+
 	private void waterFlow2(List<WaterTable> waters, WaterTable water) throws IOException {
 		log.info("Process " + water.toString());
 		WaterTable _w = water;
 		double _v = water.getOverflowVolume();
 		while(_v > 0){
 			SpillPoint _sp = _w.getSpillPoint();
-			if(_sp == null || _sp.getCatchment() == null){
+			if(_sp.getCatchment() == null){
 				log.info("Out flow");
-
+				
+				_w.setWaterLevel(_sp.getElevation());
 				_v = 0;
 			}
 			else{
 				WaterTable _w2 = this.findWaterTable(waters, _sp.getCatchment());
-				
-				if(_w2.isFull()){
+				if(_w2.getSpillPoint().getElevation() < _sp.getElevation()){
+					log.info("Pre-process neighbor catchment");
+					this.waterFlow2(waters, _w2);
+				}
+
+				if(_w2.getWaterLevel() >= _sp.getElevation()){
+//				if(_w2.isFull()){
 					log.info("Union");
 
 					List<WaterTable> _subs = new ArrayList<WaterTable>();
@@ -197,9 +286,9 @@ public class HydrologicalModel {
 					_w2.addWaterVolume(_v);
 					_w.setWaterLevel(_sp.getElevation());
 					
-					_v = _w2.getOverflowVolume();
 					_w = _w2;
 				}
+				_v = _w.getOverflowVolume();
 			}
 		}
 	}

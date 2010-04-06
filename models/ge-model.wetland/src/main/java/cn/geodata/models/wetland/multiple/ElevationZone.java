@@ -2,6 +2,7 @@ package cn.geodata.models.wetland.multiple;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import org.geotools.data.ows.CRSEnvelope;
 import org.geotools.referencing.CRS;
@@ -14,6 +15,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 public class ElevationZone {
+	private Logger log = Logger.getAnonymousLogger();
 	
 	private double startElevation;
 	private int zoneNum;
@@ -32,7 +34,7 @@ public class ElevationZone {
 	}
 
 	public ElevationZone(GeoRaster raster, MultiPolygon region) throws Exception {
-		this(550, 10000, 0.01, raster, region);
+		this(500, 50000, 0.01, raster, region);
 	}
 	
 	public ElevationZone(double startElevation, int zoneNum,
@@ -93,6 +95,9 @@ public class ElevationZone {
 		for(int i=1;i<this.zoneNum;i++){
 			this.elevations[i] = this.elevations[i] + this.elevations[i-1]; 
 		}
+		
+		if(this.elevations[this.elevations.length - 1] == 0)
+			throw new IOException("No elevation area found");
 	}
 
 	public double calculateFullVolume(){
@@ -106,14 +111,24 @@ public class ElevationZone {
 	
 	public double calculateVolume(double waterTable){
 		int _pos = (int) Math.floor((waterTable - this.startElevation) / this.zoneHeight);
+		
+		if(_pos <= 0)
+			return 0;
+		
+		if(_pos > this.elevations.length - 1){
+			log.warning("Water table is higher than elevation range (" + waterTable + ")");
+		}
+		
 		double _vol = 0;
-		for(int i=0;i<=_pos;i++){
-			_vol += this.elevations[i] * this.pixelSize * this.zoneHeight;
+		for(int i=0;i<_pos;i++){
+			long _ele = i < this.elevations.length? this.elevations[i]: this.elevations[this.elevations.length - 1];
+			_vol +=_ele * this.pixelSize * this.zoneHeight;
 		}
 		
 		double _delta = waterTable - (this.startElevation + this.zoneHeight * _pos);
 		if(_delta > 0){
-			_vol += this.elevations[_pos + 1] * this.pixelSize * _delta;
+			long _ele = _pos < this.elevations.length? this.elevations[_pos]: this.elevations[this.elevations.length - 1];
+			_vol += _ele * this.pixelSize * _delta;
 		}
 		
 		return _vol;
@@ -121,25 +136,27 @@ public class ElevationZone {
 	
 	public double calculateWaterTable(double volume){
 		double _vol = volume;
-		double _maxElevation = 0;
-		for(int i=0;i<this.zoneNum;i++){
-			if(this.elevations[i] <= 0)
+		
+		int _pos = 0;
+		while(true){
+			long _ele = _pos < this.elevations.length? this.elevations[_pos]: this.elevations[this.elevations.length - 1];
+			_pos++;
+			
+			if(_ele <= 0){
 				continue;
+			}
 			
-			_maxElevation = Math.max(_maxElevation, this.startElevation + i * this.zoneNum);
-			if(_vol <= 0)
-				return this.startElevation + i * this.zoneHeight;
-			
-			double _vv = this.elevations[i] * this.pixelSize * this.zoneHeight;
+			double _vv = _ele * this.pixelSize * this.zoneHeight;
 			if(_vol > _vv){
 				_vol -= _vv;
+				
+				if(_vol <= 0)
+					return this.startElevation + _pos * this.zoneHeight;
 			}
 			else{
-				return this.startElevation + (this.zoneHeight * (i - 1)) + _vol / (this.elevations[i] * this.pixelSize);
+				return this.startElevation + (this.zoneHeight * (_pos - 1 + _vol / _vv));
 			}
 		}
-		
-		return _maxElevation;
 	}
 	
 	public double calculateBottomElevation() throws IOException{

@@ -46,7 +46,7 @@ public class ElevationZoneTest extends TestCase {
 	public void testVolumeAndWaterTable() throws Exception {
 		ElevationZone _model = this.loadZone("P1");
 		
-		double _waterTable = 567.005;
+		double _waterTable = 570;
 		this.assertEquals(_waterTable, _model.calculateWaterTable(_model.calculateVolume(_waterTable)));
 	}
 	

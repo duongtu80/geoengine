@@ -128,6 +128,7 @@ public class DemAnalysis {
 	 */
 	public RasterCell calculateLowest4Boundary(MultiLineString border, Extent extent) throws IOException {
 		double _cellSize = this.raster.getCellSizeX();
+		double _maxDis = Math.hypot(this.raster.getCellSizeX(), this.raster.getCellSizeY()) / 2; 
 		
 		RasterCell _cell = null;
 		double _low = Double.MAX_VALUE;
@@ -135,13 +136,24 @@ public class DemAnalysis {
 		for(int _row = extent.getMinY();_row <= extent.getMaxY();_row++){
 			double _x = this.raster.getEnvelope().getMinX() + this.raster.getCellSizeX() * extent.getMinX() + this.raster.getCellSizeX() / 2;
 			for(int _col=extent.getMinX(); _col <= extent.getMaxX(); _col++){
-				if(this.isBoundary(_col, _row, border)){
-					float _val = this.raster.getCell(_col, _row).floatValue();
-					if(_val < _low){
-						_cell = new RasterCell(this.raster, _row, _col);
-						_low = _val;
+				Number _val = this.raster.getCell(_col, _row);
+				
+				if(_val != null){
+					double _distance = border.distance(factory.createPoint(new Coordinate(_x, _y)));
+					if(_distance <= _maxDis){
+						if(_val.floatValue() < _low){
+							_cell = new RasterCell(this.raster, _row, _col);
+							_low = _val.floatValue();
+						}
+					}
+					else{
+						int _skip = (int) Math.floor(_distance / _cellSize);
+						
+						_col += _skip;
+						_x += _cellSize * _skip;
 					}
 				}
+
 				_x += _cellSize;
 			}
 			_y -= _cellSize;

@@ -96,7 +96,7 @@ public class StorageTest extends TestCase {
 		
 		SimpleFeatureType _ft = _ftbld.buildFeatureType();
 		
-		ShapefileDataStore _fs = new ShapefileDataStore(new File("p:\\temp\\storage\\test16.shp").toURL());
+		ShapefileDataStore _fs = new ShapefileDataStore(new File("p:\\temp\\storage\\test17.shp").toURL());
 		_fs.createSchema(_ft);
 		
 		FeatureStore<SimpleFeatureType, SimpleFeature> _fz = (FeatureStore<SimpleFeatureType, SimpleFeature>) _fs.getFeatureSource();
@@ -112,7 +112,7 @@ public class StorageTest extends TestCase {
 			
 		}
 		
-		for(WaterTable _w : _model.calculateWaterFlow2()){
+		for(WaterTable _w : _model.calculateWaterFlowEx()){
 			System.out.println(_w.toString() + "\t" + _w.getWaterLevel() + "\t" + _w.getWaterVolume());
 
 			SimpleFeatureBuilder _fbld = new SimpleFeatureBuilder(_ft);
