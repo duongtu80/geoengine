@@ -136,9 +136,12 @@ public class RunoffModelEx implements Calculate{
 			//计算产流
 			double _runoffYieldBand = (_snowMeltBand + _iceMeltBand) * (1 - snowFrozenRatio);
 			//冰川积累
-			double _accumulationBand = _snowBand + _rainBand * snowFrozenRatio;
+//			double _accumulationBand = _snowBand + _rainBand * snowFrozenRatio;
+			double _accumulationBand = _snowBand +(_snowMeltBand + _iceMeltBand) *  snowFrozenRatio;
 			//计算径流
-			double _runoffBand = _runoffYieldBand + _rainBand * (1 - snowFrozenRatio);
+//			double _runoffBand = _runoffYieldBand + _rainBand * (1 - snowFrozenRatio);
+			double _runoffBand = _runoffYieldBand + _rainBand ;
+			
 			//计算物质平衡
 			double _balanceBand = _accumulationBand - _runoffYieldBand;
 			
@@ -155,6 +158,7 @@ public class RunoffModelEx implements Calculate{
 			return;
 		}
 		
+		//根据总积累，调整各分带
 		double _totalLandArea = 0;
 		double _totalSnowArea = 0;
 		double _totalGlacierArea = 0;
