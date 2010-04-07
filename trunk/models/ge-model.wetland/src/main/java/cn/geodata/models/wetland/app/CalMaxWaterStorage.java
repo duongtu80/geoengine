@@ -48,8 +48,13 @@ public class CalMaxWaterStorage {
 			_w.setWaterLevel(_waterTable);
 		}
 		
-		System.out.println("Generate water surface");
-		for(WaterTable _w : _model.calculateWaterFlowEx()){
+		System.out.println("Generate water surface & spill point");
+		List<WaterTable> _waters = _model.calculateWaterFlowEx();
+		
+		for(int i=0;i<_waters.size();i++){
+			System.out.println(" Water " + (i + 1) + "/" + _waters.size());
+			
+			WaterTable _w = _waters.get(i);
 			SpillPoint _sp = _w.getSpillPoint();
 			if(_sp == null)
 				continue;
