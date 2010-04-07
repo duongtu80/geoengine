@@ -169,11 +169,13 @@ public class Catchment implements Serializable, Cloneable {
 	public static List<Catchment> loadCatchments(GeoRaster dem, FeatureCollection<SimpleFeatureType, SimpleFeature> catchments, String codeColumn) throws Exception{
 		List<Catchment> _cats = new ArrayList<Catchment>();
 		
+		int _pos=0;
 		FeatureIterator<SimpleFeature> _it = catchments.features();
 		try{
 			while(_it.hasNext()){
 				Feature _f = _it.next();
 				try{
+					System.out.println(" Initialize catchment " + (++_pos) + "/" + catchments.size());
 					_cats.add(new Catchment(dem, (MultiPolygon) _f.getDefaultGeometryProperty().getValue(), (String)_f.getProperty(codeColumn).getValue()));
 				}
 				catch(Exception e){

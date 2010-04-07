@@ -39,8 +39,10 @@ public class HydrologicalModel {
 		this.dem = dem;
 		this.wetlands = new ArrayList<WetlandWater>();
 		
+		int _pos = 0;
 		for(Catchment _c : this.catchments){
 			log.info("Calculate spill point for " + _c.getCode());
+			System.out.println(" Calculate spill point " + (++_pos) + "/" + catchments.size());
 			this.wetlands.add(new WetlandWater(_c, SpillPoint.calculateSpillPoint(dem, catchments, _c)));
 		}
 	}
@@ -166,7 +168,10 @@ public class HydrologicalModel {
 			
 			while(!_stack.empty()){
 				WaterTable _w = _stack.pop();
+				
+				System.out.println(" Water flow (" + _w.toString() + ")");
 				log.info("Process " + _w.toString());
+				
 				double _v = _w.getOverflowVolume();
 				while(_v > 0){
 					SpillPoint _sp = _w.getSpillPoint();
@@ -179,7 +184,7 @@ public class HydrologicalModel {
 					else{
 						WaterTable _w2 = this.findWaterTable(waters, _sp.getCatchment());
 						if(_w2.isOverFlow() && _w2.getSpillPoint().getElevation() < _sp.getElevation()){
-							log.info("Pre-process neighbor catchment");
+							log.info("Pre-process neighbor catchment " + _w2.getSpillPoint().getCatchment() + "(" + _w2.getSpillPoint().getElevation() + "), " + _sp.getCatchment() + "(" + _sp.getElevation() + ")");
 							
 							_stack.push(_w);
 							_stack.push(_w2);

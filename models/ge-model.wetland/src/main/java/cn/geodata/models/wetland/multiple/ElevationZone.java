@@ -34,7 +34,7 @@ public class ElevationZone {
 	}
 
 	public ElevationZone(GeoRaster raster, MultiPolygon region) throws Exception {
-		this(500, 50000, 0.01, raster, region);
+		this(400, 50000, 0.01, raster, region);
 	}
 	
 	public ElevationZone(double startElevation, int zoneNum,
@@ -110,6 +110,10 @@ public class ElevationZone {
 	}
 	
 	public double calculateVolume(double waterTable){
+		if(waterTable < this.startElevation){
+			log.warning("Water table is lower than the minimum elevation value");
+		}
+			
 		int _pos = (int) Math.floor((waterTable - this.startElevation) / this.zoneHeight);
 		
 		if(_pos <= 0)
