@@ -114,7 +114,7 @@ public class ElevationZone {
 			log.warning("Water table is lower than the minimum elevation value");
 		}
 			
-		int _pos = (int) Math.floor((waterTable - this.startElevation) / this.zoneHeight);
+		long _pos = (long) Math.floor((waterTable - this.startElevation) / this.zoneHeight);
 		
 		if(_pos <= 0)
 			return 0;
@@ -124,14 +124,14 @@ public class ElevationZone {
 		}
 		
 		double _vol = 0;
-		for(int i=0;i<_pos;i++){
-			long _ele = i < this.elevations.length? this.elevations[i]: this.elevations[this.elevations.length - 1];
+		for(long i=0;i<_pos;i++){
+			long _ele = i < this.elevations.length? this.elevations[(int)i]: this.elevations[this.elevations.length - 1];
 			_vol +=_ele * this.pixelSize * this.zoneHeight;
 		}
 		
 		double _delta = waterTable - (this.startElevation + this.zoneHeight * _pos);
 		if(_delta > 0){
-			long _ele = _pos < this.elevations.length? this.elevations[_pos]: this.elevations[this.elevations.length - 1];
+			long _ele = _pos < this.elevations.length? this.elevations[(int)_pos]: this.elevations[this.elevations.length - 1];
 			_vol += _ele * this.pixelSize * _delta;
 		}
 		
@@ -141,9 +141,9 @@ public class ElevationZone {
 	public double calculateWaterTable(double volume){
 		double _vol = volume;
 		
-		int _pos = 0;
+		long _pos = 0;
 		while(true){
-			long _ele = _pos < this.elevations.length? this.elevations[_pos]: this.elevations[this.elevations.length - 1];
+			long _ele = _pos < this.elevations.length && _pos >= 0? this.elevations[(int)_pos]: this.elevations[this.elevations.length - 1];
 			_pos++;
 			
 			if(_ele <= 0){

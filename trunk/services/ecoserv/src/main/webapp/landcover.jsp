@@ -20,12 +20,12 @@
 	src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<s:property value="key" />"
 	type="text/javascript"></script>
 
-<!-- 
 <script type="text/javascript"
-	src="/public/openlayers/lib/OpenLayers.js"></script>
- -->
+	src="/public/openlayers/OpenLayers.js"></script>
 
+<!-- 
 <script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>
+ -->
 <script type="text/javascript" src="/public/GeoExt/script/GeoExt.js"></script>
 
 <link rel="stylesheet" type="text/css" href="css/landcover.css">
@@ -43,7 +43,7 @@
 <div id="mapPanel"></div>
 <div id="zoomSlider"></div>
 <div
-	style="background-image: url(img/EcoServ_Logo7.jpg); background-repeat: x-repeat; height: 100px;"></div>
+	style="background-image: url(img/EcoServ_Logo12.jpg); background-repeat: x-repeat; height: 100px;"></div>
 <div id="mainPanel"></div>
 <div style="heigth: 50px;"></div>
 <form id="frmDownloadTiff" action="landcover/_downloadGeoTIFF.do"
