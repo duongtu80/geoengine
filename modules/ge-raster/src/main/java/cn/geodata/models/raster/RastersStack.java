@@ -192,10 +192,17 @@ public class RastersStack {
 		return this.getLocationValue(keys, pt.getX(), pt.getY());
 	}
 
+	public Number getLocationValue(List<GeoRaster> keys, DirectPosition2D pt, int band) throws IOException{
+		return this.getLocationValue(keys, pt.getX(), pt.getY(), band);
+	}
+
 	public Number getLocationValue(List<GeoRaster> keys, double x, double y) throws IOException{
-//		return new Integer(10);
+		return getLocationValue(keys, x, y, 0);
+	}
+	
+	public Number getLocationValue(List<GeoRaster> keys, double x, double y, int band) throws IOException{
 		if(this.lastKey != null){
-			Number _val = this.lastKey.getLocationValue(x, y);
+			Number _val = this.lastKey.getLocationValue(x, y, band);
 			if(_val != null){
 				return _val;
 			}
@@ -207,7 +214,7 @@ public class RastersStack {
 		
 		for(GeoRaster _key : _keys){
 			if(_key.equals(this.lastKey) == false){
-				Number _val = _key.getLocationValue(x, y);
+				Number _val = _key.getLocationValue(x, y, band);
 				if(_val != null){
 					this.lastKey = _key;
 					return _val;
@@ -218,10 +225,18 @@ public class RastersStack {
 		return null;
 	}
 
+	public Number getLocationValue(double x, double y, int band) throws IOException{
+		return this.getLocationValue(null, x, y, band);
+	}
+
 	public Number getLocationValue(double x, double y) throws IOException{
 		return this.getLocationValue(null, x, y);
 	}
 	
+	public Number getLocationValue(Point pt, int band) throws IOException {
+		return this.getLocationValue(pt.getX(), pt.getY(), band);
+	}
+
 	public Number getLocationValue(Point pt) throws IOException {
 		return this.getLocationValue(pt.getX(), pt.getY());
 	}
