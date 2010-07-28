@@ -213,16 +213,24 @@ public class GeoRaster {
 	}
 	
 	public Number getLocationValue(DirectPosition2D pt) throws IOException{
-		return this.getLocationValue(pt.getX(), pt.getY());
+		return this.getLocationValue(pt.getX(), pt.getY(), this.band);
+	}
+
+	public Number getLocationValue(DirectPosition2D pt, int band) throws IOException{
+		return this.getLocationValue(pt.getX(), pt.getY(), band);
 	}
 
 	public Number getLocationValue(double x, double y) throws IOException{
+		return this.getLocationValue(x, y, this.band);
+	}
+
+	public Number getLocationValue(double x, double y, int band) throws IOException{
 		int col =  (int)Math.floor(((x - envelope.getMinX()) / cellSizeX));
 		int row = (int)Math.floor(((envelope.getMaxY() - y) / cellSizeY));
 		
-		return this.readCell(col, row);
+		return this.readCell(col, row, band);
 	}
-	
+
 	/**
 	 * Create writable raster that has same parameters to the current one
 	 * 
@@ -243,52 +251,54 @@ public class GeoRaster {
 	}
 
 	private void initBufferAtLoc(int loc) throws IOException{
-//		System.out.print("buffer...");
-		
 		int _end = loc + this.bufferSize;
-		if(_end > this.colNum * this.rowNum){
-			_end = this.colNum * this.rowNum;
+		if(_end > this.colNum * this.rowNum * this.bandNum){
+			_end = this.colNum * this.rowNum * this.bandNum;
 		}
 		
 		int _len = _end - loc;
+		_len = _len - (_len % this.bandNum);
+		
 		this.buffer = new Number[_len];
 		this.startPos = loc;
 		
-		for(int i=0;i< _len;i++){
-//			System.out.println(i);
-			int _row = (i + loc) / this.colNum;
-			int _col = (i + loc) % this.colNum;
+		for(int i=0;i< _len;i+= this.bandNum){
+			int _loc = (i + loc) / this.bandNum;
+			int _row =  _loc / this.colNum;
+			int _col = _loc % this.colNum;
 			
-			this.buffer[i] = this.readCell(_col, _row);
+			for(int _b=0;_b<this.bandNum;_b++){
+				this.buffer[i+_b] = this.readCell(_col, _row, _b);
+			}
 		}
-		
-//		System.out.println(" " + this.buffer.length);
 	}
 	
 	public Number getCell(int col, int row) throws IOException{
+		return this.getCell(col, row, this.band);
+	}
+
+	public Number getCell(int col, int row, int band) throws IOException{
 		if(col < 0 || col >= this.colNum || row < 0 || row >= this.rowNum){
 			return null;
 		}
 
-		int _loc = col + row * this.colNum;
-		if(this.buffer == null || _loc < this.startPos || _loc >= this.startPos + this.buffer.length){
+		int _loc = (col + row * this.colNum) * this.bandNum;
+		if(this.buffer == null || _loc < this.startPos || (_loc + this.bandNum) >= this.startPos + this.buffer.length){
 			this.initBufferAtLoc(_loc);
 		}
 		
-		return this.buffer[_loc - this.startPos];
+		return this.buffer[_loc - this.startPos + band];
 	}
 
-	private Number readCell(int col, int row) throws IOException{
+	private Number readCell(int col, int row, int band) throws IOException{
 		if(col < 0 || col >= this.colNum || row < 0 || row >= this.rowNum){
 			return null;
 		}
 
-//		System.out.println(col + "|" + row);
 		if(this.rasterCache == null || 
 				col < this.rasterCache.getMinX() || col >= this.rasterCache.getMinX() + this.rasterCache.getWidth() ||
 				row < this.rasterCache.getMinY() || row >= this.rasterCache.getMinY() + this.rasterCache.getHeight()
 				){
-//			System.out.println("Read tile");
 			
 			int _tileX = col / this.tileWidth;
 			int _tileY = row / this.tileHeight;
@@ -305,13 +315,13 @@ public class GeoRaster {
 			case DataBuffer.TYPE_SHORT:
 			case DataBuffer.TYPE_USHORT:
 			case DataBuffer.TYPE_INT:
-				_val = this.rasterCache.getSample(col, row, this.band);
+				_val = this.rasterCache.getSample(col, row, band);
 				break;
 			case DataBuffer.TYPE_FLOAT:
-				_val = this.rasterCache.getSampleFloat(col, row, this.band);
+				_val = this.rasterCache.getSampleFloat(col, row, band);
 				break;
 			case DataBuffer.TYPE_DOUBLE:
-				_val = this.rasterCache.getSampleDouble(col, row, this.band);
+				_val = this.rasterCache.getSampleDouble(col, row, band);
 				break;
 			default:
 				throw new IOException("Unsupported data type: " + this.type);
@@ -322,7 +332,7 @@ public class GeoRaster {
 		
 		return _val;
 	}
-	
+
 	public Raster getTile(int x, int y) throws IOException{
 		Raster _raster = null;
 		if(this.rasterCache != null && this.lastTileX == x && this.lastTileY == y){
