@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.FactoryRegistryException;
 import org.geotools.factory.GeoTools;
@@ -40,37 +41,6 @@ public class MultipleWaterSurfaceModel {
 	}
 
 	/**
-	 *  Initializes each catchment using same water table. Only for test
-	 * 
-	 * @param waterTable
-	 * @return
-	 * @throws Exception
-	 */
-	@Deprecated
-	public FeatureCollection<SimpleFeatureType, SimpleFeature> calculate(double waterTable) throws Exception {
-		List<Catchment> _cats = Catchment.loadCatchments(dem, ConnectionPool.getPGDataStore().getFeatureSource("catchment").getFeatures());
-		HydrologicalModel _model = new HydrologicalModel(dem, _cats);
-		
-		//Initialize the wetland catchments
-		for(WetlandWater _w : _model.getWetlands()){
-			String _code = "outflow";
-			Catchment _c = _w.getSpillPoint().getCatchment();
-			if(_c != null){
-				_code = _c.getCode();
-			}
-			
-//			_w.setWaterLevel(_w.getSpillPoint().getElevation() + waterTable);
-			_w.setWaterLevel(548 + waterTable);
-		}
-
-		//Calcaulate water table for each catchment after adjust the water volume
-		List<WaterTable> _waters = null;
-		_waters = _model.calculateWaterFlow();
-		
-		return this.writeWaters(_waters);
-	}
-	
-	/**
 	 * Initializes each catchment using give water tables
 	 * 
 	 * @param watertables
@@ -78,7 +48,7 @@ public class MultipleWaterSurfaceModel {
 	 * @throws Exception
 	 */
 	public FeatureCollection<SimpleFeatureType, SimpleFeature> calculate(Map<String, Double> watertables) throws Exception {
-		List<Catchment> _cats = Catchment.loadCatchments(dem, ConnectionPool.getPGDataStore().getFeatureSource("catchment").getFeatures());
+		List<Catchment> _cats = Catchment.loadCatchments(dem, (new ShapefileDataStore(this.getClass().getResource("/wetland-data/shp/catchment.shp")).getFeatureSource().getFeatures()));
 		HydrologicalModel _model = new HydrologicalModel(dem, _cats);
 		
 		//Initialize the wetland catchments
@@ -129,7 +99,7 @@ public class MultipleWaterSurfaceModel {
 	}
 
 	public List<DateObject<Map<String,Double>>> calculateWaterTable(Date startDate, Date endDate, ArrayList<DayMet> climate) throws Exception {
-		List<Catchment> _cats = Catchment.loadCatchments(dem, ConnectionPool.getPGDataStore().getFeatureSource("catchment").getFeatures());
+		List<Catchment> _cats = Catchment.loadCatchments(dem, (new ShapefileDataStore(this.getClass().getResource("/wetland-data/shp/catchment.shp")).getFeatureSource().getFeatures()));
 		HydrologicalModel _model = new HydrologicalModel(dem, _cats);
 
 		//Initialize the wetland catchments
