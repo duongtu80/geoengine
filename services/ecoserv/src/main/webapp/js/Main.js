@@ -56,14 +56,26 @@ function Main() {
 				handler : function() {
 					window.open('~landcover.do');
 				}
+			}, '->', 
+			{
+				id : 'usernameText',
+				xtype : 'label'
 			}, {
+				id : 'loginText',
 				text : 'Login',
-				iconCls : 'logginCls',
 				scope : this,
-				handler : function() {
-					Ext.Msg.alert('Login...');
-				}
+				handler : this.loginEvent
 			}, {
+				id : 'registerText',
+				text : 'Register',
+				scope : this,
+				handler : this.registerEvent
+			}, {
+				id : 'logoutText',
+				text : 'Logout',
+				scope : this,
+				handler : this.logoutEvent
+			} , {
 				text : 'Help',
 				iconCls : 'helpCls',
 				scope : this,
@@ -79,6 +91,7 @@ function Main() {
 		this.progressQueue.init(this);
 		this.model.init(this);
 		this.map.resetExtent();
+		this.login(username, realname);
 
 		// this.progressQueue.pushTask('test',
 		// 'http://127.0.0.1:59080/ecoserv/_loadScenario.do', null, this,

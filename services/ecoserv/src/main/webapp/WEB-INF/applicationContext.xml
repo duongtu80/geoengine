@@ -1,33 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
-	<bean class="cn.geodata.models.raster.GeoRaster" id="dem">
+	<bean id="database" class="cn.geodata.models.ecoserv.landcover.ConnectionPool">
+		<constructor-arg value="localhost" />
+		<constructor-arg value="wetland" />
+		<constructor-arg value="wetland" />
+		<constructor-arg value="123456" />
+	</bean>
+
+	<bean id="dem" class="cn.geodata.models.raster.GeoRaster">
 		<constructor-arg>
 			<bean class="java.io.File">
-				<constructor-arg><value>d:\Tank\Data\ecoserv\data\dem\ned10m.tif</value></constructor-arg>
+				<constructor-arg value="c:\mfeng\data\ecoserv\data\dem\ned10m.tif" />
 			</bean>
 		</constructor-arg>
 		<constructor-arg><value type="int">0</value></constructor-arg>
 	</bean>
-	<bean class="cn.geodata.models.ecoserv.simulate.SoilErosionModel" id="soilErosionModel">
+	
+	<bean id="soilErosionModel" class="cn.geodata.models.ecoserv.simulate.SoilErosionModel">
 		<constructor-arg ref="dem" />
 		<constructor-arg>
 			<bean class="cn.geodata.models.raster.GeoRaster">
 				<constructor-arg>
 					<bean class="java.io.File">
-						<constructor-arg><value>d:\Tank\Data\ecoserv\data\rusle\kfcacthwgs84.tif</value></constructor-arg>
+						<constructor-arg value="c:\mfeng\data\ecoserv\data\rusle\kfcacthwgs84.tif" />
 					</bean>
 				</constructor-arg>
 				<constructor-arg><value type="float">-340282346638528860000000000000000000000.0</value></constructor-arg>
 			</bean>
 		</constructor-arg>
 	</bean>
-	<bean class="cn.geodata.models.wetland.dem.ClimateModel" id="climateModel">
+	
+	<bean id="climateModel" class="cn.geodata.models.wetland.dem.ClimateModel">
 		<constructor-arg>
 			<bean class="java.io.File">
-				<constructor-arg><value>d:\Tank\Data\ecoserv\data\ipcc</value></constructor-arg>
+				<constructor-arg value="c:\mfeng\data\ecoserv\data\ipcc" />
 			</bean>
 		</constructor-arg>
+	</bean>
+	
+	<bean id="operations" class="cn.geodata.models.ecoserv.actions.Operations" scope="prototype">
+		<constructor-arg ref="ecoservModel"></constructor-arg>
+		<constructor-arg ref="multipleWaterSurfaceModel"></constructor-arg>
+		<constructor-arg value="c:\mfeng\data\ecoserv\data\watertable"></constructor-arg>
 	</bean>
 	
 	<bean id="ecoservModel" class="cn.geodata.models.ecoserv.simulate.RandomModel" scope="prototype">
@@ -40,26 +55,14 @@
 		<constructor-arg ref="dem" />
 	</bean>
 	
-	<bean id="operations" class="cn.geodata.models.ecoserv.actions.Operations" scope="prototype">
-		<constructor-arg ref="ecoservModel"></constructor-arg>
-		<constructor-arg ref="multipleWaterSurfaceModel"></constructor-arg>
-		<constructor-arg value="d:\Tank\Data\ecoserv\data\watertable"></constructor-arg>
-	</bean>
-	
 	<bean id="landcoverOp" class="cn.geodata.models.ecoserv.actions.LandcoverOp" scope="prototype">
 	</bean>
+
 	<bean id="actions" class="cn.geodata.models.ecoserv.actions.Actions">
-		<!-- 192.168.17.68 -->
-		<!-- 
-		<constructor-arg value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhTWJU3iTM3S7D_jdM2wjgrA5XSJxBS_VlRR5AGcVBTdVAZ4fRrgYQSrXg"></constructor-arg>
-		 -->
 		<!-- 127.0.0.1 -->
 		<constructor-arg value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhRZ0h71EejNDbDdGWk164Mwb7a9sxRDuI2F_YB8Wbq3G-zIFsVwNcookQ"></constructor-arg>
-		<!-- EcoServ -->
-		<!-- 
-		<constructor-arg value="ABQIAAAAk-Uzugzx7RIytO9MnngcPhSVdhCGY0N1tIg7F9kosXFLbzLenhRzJ-6hxfWvTHSAjkKzm1rFgIPUHg"></constructor-arg>
-		 -->
 	</bean>
+
 	<bean id="errorAction" class="cn.geodata.models.ecoserv.actions.ErrorAction" scope="prototype">
 	</bean>
 </beans>

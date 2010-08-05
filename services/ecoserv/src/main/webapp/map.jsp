@@ -49,8 +49,11 @@
 <script type="text/javascript" src="js/Maps.js"></script>
 <script type="text/javascript" src="js/Model.js"></script>
 <script type="text/javascript" src="js/Main.js"></script>
+<script type="text/javascript" src="js/User.js"></script>
 <script type="text/javascript">
-	var username = 'test';
+	var username = null;
+	var realname = null;
+
 	google.load('visualization', '1', {'packages':['annotatedtimeline']});
 </script>
 </head>
